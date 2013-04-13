@@ -30,7 +30,7 @@ namespace AlumnoEjemplos.Overflow
         /// </summary>
         public override string getName()
         {
-            return "Grupo 00";
+            return "Grupo 2";
         }
 
         /// <summary>
