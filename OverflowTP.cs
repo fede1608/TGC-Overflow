@@ -61,11 +61,13 @@ namespace AlumnoEjemplos.Overflow
 
             //Crear una UserVar
             GuiController.Instance.UserVars.addVar("variablePrueba");
+            GuiController.Instance.UserVars.addVar("variablePrueba2");
+            GuiController.Instance.UserVars.addVar("variablePrueba3");
 
             //Cargar valor en UserVar
-            GuiController.Instance.UserVars.setValue("variablePrueba", 5451);
-
-
+            GuiController.Instance.UserVars.setValue("variablePrueba", 54251);
+            GuiController.Instance.UserVars.setValue("variablePrueba2", 542251);
+            GuiController.Instance.UserVars.setValue("variablePrueba2", 25451);
 
             ///////////////MODIFIERS//////////////////
 
