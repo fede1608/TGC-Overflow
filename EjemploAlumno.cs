@@ -483,14 +483,18 @@ namespace AlumnoEjemplos.Manoja
                             if (d3dInput.keyDown(Key.W))
                             {
                                 setComboToZero();
+                                //mod by fede
                                 pj1.actions.jump = 15;
+
                                 pj1.actions.moving = true;
                             }
                         }//Esta en el salto
                         else
                         {
                             setComboToZero();
+                            //mod by fede
                             pj1.actions.jump -= 15.0f * (float)elapsedTime;
+
                             if (pj1.mesh.Position.Y < 8) pj1.actions.jump = 0;
                             pj1.actions.moving = (pj1.actions.jump != 0);
                         }
@@ -499,7 +503,9 @@ namespace AlumnoEjemplos.Manoja
                         movePlayer2(elapsedTime);
                         if (pj2.actions.jump != 0)
                         {
-                            pj2.actions.jump -= 10.0f * (float)elapsedTime;
+                            //mod by fede
+                            pj2.actions.jump -= 15.0f * (float)elapsedTime;
+
                             if (pj2.mesh.Position.Y + pj2.actions.jump < 10) pj2.actions.jump = 0;
                             pj2.actions.moving = (pj2.actions.jump != 0);
                         }
@@ -1228,7 +1234,8 @@ namespace AlumnoEjemplos.Manoja
                         case 5:
                             if (pj2.actions.jump == 0)
                             {
-                                pj2.actions.jump = 30;
+                                //mod by fede Harcodeado, arreglar
+                                pj2.actions.jump = 15;
                                 pj2.actions.moveForward = velocidadCaminar * (face ? 1 : -1);
                                 pj2.actions.moving = true;
                             }
@@ -1237,7 +1244,8 @@ namespace AlumnoEjemplos.Manoja
                         case 6:
                             if (pj2.actions.jump == 0)
                             {
-                                pj2.actions.jump = 30;
+                                //mod by fede Harcodeado, arreglar
+                                pj2.actions.jump = 15;
                                 pj2.actions.moveForward = velocidadCaminar * (face ? -1 : 1);
                                 pj2.actions.moving = true;
                             }
