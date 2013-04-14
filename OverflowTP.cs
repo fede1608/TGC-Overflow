@@ -87,6 +87,7 @@ namespace AlumnoEjemplos.MiGrupo2
 
             //Crear un modifier para un valor FLOAT
             GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 2000f, 100f);
+            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 1500f, 100f);
 
             //Crear un modifier para un ComboBox con opciones
             string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
@@ -184,6 +185,7 @@ namespace AlumnoEjemplos.MiGrupo2
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
             {
                 //Tecla F apretada
+                
             }
 
             //Capturar Input Mouse
@@ -192,6 +194,15 @@ namespace AlumnoEjemplos.MiGrupo2
                 //Boton izq apretado
             }
             skyBox.render();
+            //Renderiza escenario
+            foreach (TgcMesh mesh in escenario.Meshes)
+            {
+                mesh.render();
+                if (true)
+                {
+                    mesh.BoundingBox.render();
+                }
+            }
         }
 
         /// <summary>
