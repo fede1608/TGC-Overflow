@@ -7,9 +7,10 @@ using Microsoft.DirectX.Direct3D;
 using System.Drawing;
 using Microsoft.DirectX;
 using TgcViewer.Utils.Modifiers;
+using TgcViewer.Utils.Terrain;
+using TgcViewer.Utils.TgcSceneLoader;
 
-namespace AlumnoEjemplos.Overflow
-
+namespace AlumnoEjemplos.MiGrupo2
 {
     /// <summary>
     /// Ejemplo del alumno
@@ -22,7 +23,7 @@ namespace AlumnoEjemplos.Overflow
         /// </summary>
         public override string getCategory()
         {
-            return "Overflow";
+            return "AlumnoEjemplos";
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace AlumnoEjemplos.Overflow
         /// </summary>
         public override string getName()
         {
-            return "Grupo 2";
+            return "Grupo Overflow";
         }
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace AlumnoEjemplos.Overflow
         /// </summary>
         public override string getDescription()
         {
-            return "MiIdea - Descripcion de la idea";
+            return "Juego de Pelea con efecto de Luces";
         }
 
         /// <summary>
@@ -46,6 +47,18 @@ namespace AlumnoEjemplos.Overflow
         /// Escribir aquí todo el código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.
         /// Borrar todo lo que no haga falta
         /// </summary>
+
+
+
+        TgcSkyBox skyBox;
+        TgcScene escenario;
+        string mediaMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\";
+        string textureMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\" + "SkeletalAnimations\\Robot\\Textures\\";
+        string mediaPath = GuiController.Instance.ExamplesMediaDir;
+        string texturePath = GuiController.Instance.ExamplesMediaDir + "SkeletalAnimations\\Robot\\Textures\\";
+        Size screenSize = GuiController.Instance.Panel3d.Size;
+
+
         public override void init()
         {
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
@@ -55,7 +68,8 @@ namespace AlumnoEjemplos.Overflow
 
             //Carpeta de archivos Media del alumno
             string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
-
+            TgcSceneLoader loader = new TgcSceneLoader();
+            escenario = loader.loadSceneFromFile(mediaMPath + "\\Ambiental\\CuartoLucha-TgcScene.xml");
 
             ///////////////USER VARS//////////////////
 
@@ -100,7 +114,18 @@ namespace AlumnoEjemplos.Overflow
             GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 0));
             */
 
-
+            //Crear SkyBox
+            skyBox = new TgcSkyBox();
+            skyBox.Center = new Vector3(0, 0, 0);
+            skyBox.Size = new Vector3(10000, 10000, 10000);
+            string skyboxPath = mediaMPath + "Ambiental\\Textures\\sky20\\";
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, skyboxPath + "roof.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, skyboxPath + "floor.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, skyboxPath + "right.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, skyboxPath + "left.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, skyboxPath + "back.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, skyboxPath + "front.jpg");
+            skyBox.updateValues();
 
             ///////////////LISTAS EN C#//////////////////
             //crear
@@ -166,7 +191,7 @@ namespace AlumnoEjemplos.Overflow
             {
                 //Boton izq apretado
             }
-
+            skyBox.render();
         }
 
         /// <summary>
