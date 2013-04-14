@@ -1232,14 +1232,9 @@ namespace AlumnoEjemplos.Manoja
                             delayplus = 7;
                             break;
                         case 5:
-                            if (pj2.actions.jump == 0)
-                            {
-                                //mod by fede Harcodeado, arreglar
-                                pj2.actions.jump = 15;
-                                pj2.actions.moveForward = velocidadCaminar * (face ? 1 : -1);
-                                pj2.actions.moving = true;
-                            }
-                            delayplus = 1;
+                            pj2.actions.moveForward = velocidadCaminar * (face ? 1 : -1);
+                            pj2.actions.moving = true;
+                            delayplus = 10;
                             break;
                         case 6:
                             if (pj2.actions.jump == 0)
@@ -1254,13 +1249,14 @@ namespace AlumnoEjemplos.Manoja
                         default:
                             if (pj2.actions.jump == 0)
                             {
-                                pj2.actions.jump = 30;
+                                pj2.actions.jump = 15;
                                 pj2.actions.moving = true;
                             }
                             delayplus = 1;
                             break;
                     }
-                    delayPJ2 = hitdelay * elapsedTime * delayplus;
+                    
+                    delayPJ2 = hitdelay * elapsedTime * delayplus*(350/60);
                 }
 
                 delayPJ2--;
