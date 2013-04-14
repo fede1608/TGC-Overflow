@@ -86,7 +86,6 @@ namespace AlumnoEjemplos.MiGrupo2
             ///////////////MODIFIERS//////////////////
 
             //Crear un modifier para un valor FLOAT
-            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 2000f, 100f);
             GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 1500f, 100f);
 
             //Crear un modifier para un ComboBox con opciones
