@@ -86,7 +86,7 @@ namespace AlumnoEjemplos.MiGrupo2
             ///////////////MODIFIERS//////////////////
 
             //Crear un modifier para un valor FLOAT
-            GuiController.Instance.Modifiers.addFloat("valorFloat", -50f, 200f, 0f);
+            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 2000f, 100f);
 
             //Crear un modifier para un ComboBox con opciones
             string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
@@ -172,10 +172,10 @@ namespace AlumnoEjemplos.MiGrupo2
 
 
             //Obtener valores de Modifiers
-            float valorFloat = (float)GuiController.Instance.Modifiers["valorFloat"];
+            float distanciaCam = (float)GuiController.Instance.Modifiers["distanciaCam"];
             string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
             Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
-
+            GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
 
             ///////////////INPUT//////////////////
             //conviene deshabilitar ambas camaras para que no haya interferencia
