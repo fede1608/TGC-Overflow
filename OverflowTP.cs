@@ -118,13 +118,13 @@ namespace AlumnoEjemplos.MiGrupo2
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 0, 0);
             skyBox.Size = new Vector3(10000, 10000, 10000);
-            string skyboxPath = mediaMPath + "Ambiental\\Textures\\sky20\\";
+            string skyboxPath = mediaMPath + "Ambiental\\Textures\\sky26\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, skyboxPath + "roof.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, skyboxPath + "floor.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, skyboxPath + "right.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, skyboxPath + "left.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, skyboxPath + "back.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, skyboxPath + "front.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, skyboxPath + "back.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, skyboxPath + "front.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, skyboxPath + "left.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, skyboxPath + "right.jpg");
             skyBox.updateValues();
 
             ///////////////LISTAS EN C#//////////////////
