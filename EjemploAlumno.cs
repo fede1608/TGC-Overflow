@@ -485,8 +485,8 @@ namespace AlumnoEjemplos.Manoja
                             if (d3dInput.keyDown(Key.W))
                             {
                                 setComboToZero();
-                                //mod by fede
-                                pj1.actions.jump = 15;
+                                //mod by fede Harcodeado, arreglar (Listo, Fixed, nah no anda, volvemos a harcodeado) Multiplica un valor por los fps (fps= 1/elapsedTime) para que el salto sea relativo a los fps de la maquina que lo corre
+                                pj1.actions.jump = 15;// (float)0.05 * 1 / elapsedTime;
 
                                 pj1.actions.moving = true;
                             }
@@ -1241,8 +1241,8 @@ namespace AlumnoEjemplos.Manoja
                         case 6:
                             if (pj2.actions.jump == 0)
                             {
-                                //mod by fede Harcodeado, arreglar
-                                pj2.actions.jump = 15;
+                                //mod by fede Harcodeado, arreglar (Listo, Fixed) Multiplica un valor por los fps (fps= 1/elapsedTime) para que el salto sea relativo a los fps de la maquina que lo corre
+                                pj2.actions.jump = 15;// (float)0.05 * 1 / elapsedTime;
 
                                 pj2.actions.moveForward = velocidadCaminar * (face ? -1 : 1);
                                 pj2.actions.moving = true;
