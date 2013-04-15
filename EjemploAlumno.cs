@@ -457,7 +457,9 @@ namespace AlumnoEjemplos.Manoja
                         if (d3dInput.keyDown(Key.K))
                         {
                             pj1.poder.combo[2] = hitdelay * elapsedTime;
-                            if (comboReady())
+
+                            //si se apreta j mientras punching con k tira el poder by fede
+                            if (comboReady() || d3dInput.keyPressed(Key.J))
                                 pj1.actions.power = true;
                             else
                                 pj1.actions.punch = true;
@@ -1241,6 +1243,7 @@ namespace AlumnoEjemplos.Manoja
                             {
                                 //mod by fede Harcodeado, arreglar
                                 pj2.actions.jump = 15;
+
                                 pj2.actions.moveForward = velocidadCaminar * (face ? -1 : 1);
                                 pj2.actions.moving = true;
                             }
