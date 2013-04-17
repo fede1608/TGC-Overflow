@@ -53,6 +53,13 @@ namespace AlumnoEjemplos.overflowDT
 
         TgcSkyBox skyBox;
         TgcScene escenario;
+        Size screenSize = GuiController.Instance.Panel3d.Size;
+        Vector3 gravity = new Vector3(0f, -10f, 0f);
+        float velocidadCaminar = 400f;
+        int hitdelay = 1000;
+        static int damagepunch = 2;
+        static int damagekick = 5;
+        static int damagepower = 10;
         private string mediaMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\";
         public string MediaMPath
         {
@@ -77,9 +84,7 @@ namespace AlumnoEjemplos.overflowDT
             get { return texturePath; }
             set { texturePath = value; }
         }
-        Size screenSize = GuiController.Instance.Panel3d.Size;
-
-
+        
         public override void init()
         {
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
@@ -95,12 +100,12 @@ namespace AlumnoEjemplos.overflowDT
             ///////////////USER VARS//////////////////
 
             //Crear una UserVar
-            GuiController.Instance.UserVars.addVar("variablePrueba");
+            GuiController.Instance.UserVars.addVar("velocidadX");
             GuiController.Instance.UserVars.addVar("variablePrueba2");
             GuiController.Instance.UserVars.addVar("variablePrueba3");
 
             //Cargar valor en UserVar
-            GuiController.Instance.UserVars.setValue("variablePrueba", 54251);
+            GuiController.Instance.UserVars.setValue("velocidadX", 0);
             GuiController.Instance.UserVars.setValue("variablePrueba2", 542251);
             GuiController.Instance.UserVars.setValue("variablePrueba2", 25451);
 
@@ -150,13 +155,13 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1 = new Personaje();
             personaje1.Init();
-            personaje1.setPosition(new Vector3(-300f, 6f, 0f));
-            personaje1.setRotation(Geometry.DegreeToRadian(270f));
+            personaje1.setPosition(new Vector3(300f, 6f, 0f));
+            personaje1.setRotation(Geometry.DegreeToRadian(90f));
 
             personaje2 = new Personaje();
             personaje2.Init();
-            personaje2.setPosition(new Vector3(300f, 6f, 0f));
-            personaje2.setRotation(Geometry.DegreeToRadian(90f));
+            personaje2.setPosition(new Vector3(-300f, 6f, 0f));
+            personaje2.setRotation(Geometry.DegreeToRadian(270f));
 
 
 
@@ -204,10 +209,11 @@ namespace AlumnoEjemplos.overflowDT
         {
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
-
+                      
+           
 
             //Obtener valor de UserVar (hay que castear)
-            int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
+            //int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
 
 
             //Obtener valores de Modifiers
@@ -225,6 +231,32 @@ namespace AlumnoEjemplos.overflowDT
                 //Tecla F apretada
                 
             }
+            //izquierda
+            if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
+            {
+                personaje1.actions.moveForward = -velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
+                personaje1.actions.moving = true;
+                personaje1.mesh.playAnimation("CaminandoRev", true);
+            }
+            //derecha
+            else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
+            {
+                personaje1.actions.moveForward = velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
+                personaje1.actions.moving = true;
+                personaje1.mesh.playAnimation("Caminando", true);
+
+            }
+                //ninguna de las dos
+            else
+            {
+                personaje1.actions.moveForward = 0;
+                personaje1.actions.moving = false;
+                personaje1.mesh.playAnimation("Parado", true);
+            }
+            
+
+            //derecha
+            
 
             //Capturar Input Mouse
             if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
@@ -241,8 +273,14 @@ namespace AlumnoEjemplos.overflowDT
                     mesh.BoundingBox.render();
                 }
             }
+            personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward,0f,0f));
             personaje1.mesh.animateAndRender();
             personaje2.mesh.animateAndRender();
+
+
+
+            //settear uservars
+            GuiController.Instance.UserVars.setValue("velocidadX", (personaje1.actions.moveForward*1/elapsedTime));
         }
 
         /// <summary>

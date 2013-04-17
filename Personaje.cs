@@ -37,7 +37,7 @@ namespace AlumnoEjemplos.overflowDT
         FightGameManager fightGameManager = new FightGameManager();
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();
-        bool face = true;
+        int direccion = 1;
         Device d3dDevice = GuiController.Instance.D3dDevice;
         BoundingMultiSphere spheres = new BoundingMultiSphere();
 
@@ -48,7 +48,11 @@ namespace AlumnoEjemplos.overflowDT
             get { return playername; }
             set { playername = value; }
         }
-
+        public int Direccion
+        {
+            get { return direccion; }
+            set { direccion = value; }
+        }
         //end Get & Set
         
         //structs
@@ -109,7 +113,7 @@ namespace AlumnoEjemplos.overflowDT
            poder.mesh.Scale = new Vector3(3f, 3f, 3f);
            poder.mesh.Position = mesh.Position + new Vector3(0, -1000, 500);
            poder.movementVector = Vector3.Empty;
-           poder.mesh.rotateY(Geometry.DegreeToRadian(((face ? 0f : -180f))));
+           poder.mesh.rotateY(Geometry.DegreeToRadian( direccion==1 ? 0f : -180f));
            poder.globalSphere = new TgcBoundingSphere(poder.mesh.BoundingBox.calculateBoxCenter(), poder.mesh.BoundingBox.calculateAxisRadius().Y);
            mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, fightGameManager.TexturePath + "uvw.jpg") });
            spheres.getVerticesForBox(fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml", mesh);
@@ -149,10 +153,16 @@ namespace AlumnoEjemplos.overflowDT
         //setea la position del personaje
             mesh.Position = vec3;
         }
+        public Vector3 getPosition()
+        {
+            //getea la position del personaje
+            return mesh.Position;
+        }
         public void setRotation(float radianes)
         {
         //setea la rotacion del pj
          mesh.rotateY(radianes);
+         direccion = (radianes == 270) ? 1 : -1; ;
         }
         
     }
