@@ -54,12 +54,13 @@ namespace AlumnoEjemplos.overflowDT
         TgcSkyBox skyBox;
         TgcScene escenario;
         Size screenSize = GuiController.Instance.Panel3d.Size;
-        Vector3 gravity = new Vector3(0f, -10f, 0f);
-        float velocidadCaminar = 400f;
+        float velocidadCaminar = 300f;
         int hitdelay = 1000;
         static int damagepunch = 2;
         static int damagekick = 5;
         static int damagepower = 10;
+        bool gravity = true;
+
         private string mediaMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\";
         public string MediaMPath
         {
@@ -253,11 +254,30 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.actions.moving = false;
                 personaje1.mesh.playAnimation("Parado", true);
             }
-            
 
-            //derecha
-            
+            //saltar
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.W) && !personaje1.actions.jumping)
+            {
+                
+                personaje1.actions.jumping = true;
+                gravity = false;
+            }
 
+            if (personaje1.actions.jumping && personaje1.getPosition().Y < 90)
+            {
+                personaje1.actions.jump += 5 * elapsedTime ;
+            }
+            else if (!gravity)
+            {
+                personaje1.actions.jump -= 5 * elapsedTime;
+                gravity = personaje1.getPosition().Y <= 5;
+                personaje1.actions.jumping = false;
+            }
+            else
+            {
+                personaje1.actions.jump = 0;
+                personaje1.actions.jumping = false;
+            }
             //Capturar Input Mouse
             if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
             {
@@ -273,7 +293,7 @@ namespace AlumnoEjemplos.overflowDT
                     mesh.BoundingBox.render();
                 }
             }
-            personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward,0f,0f));
+            personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward, personaje1.actions.jump, 0f));
             personaje1.mesh.animateAndRender();
             personaje2.mesh.animateAndRender();
 

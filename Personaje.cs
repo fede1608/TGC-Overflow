@@ -63,6 +63,7 @@ namespace AlumnoEjemplos.overflowDT
             public bool punch;
             public bool hit;
             public bool power;
+            public bool jumping;
             public float hittimer;
             public float jump;
             public float moveForward;
