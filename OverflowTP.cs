@@ -256,7 +256,7 @@ namespace AlumnoEjemplos.overflowDT
             }
 
             //saltar
-            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.W) && !personaje1.actions.jumping)
+            if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.W)|| GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.Space))&& !personaje1.actions.jumping)
             {
                 
                 personaje1.actions.jumping = true;
