@@ -15,7 +15,7 @@ namespace AlumnoEjemplos.overflowDT
     /// <summary>
     /// Ejemplo del alumno
     /// </summary>
-    public class EjemploAlumno : TgcExample
+    public class FightGameManager : TgcExample
     {
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -48,14 +48,35 @@ namespace AlumnoEjemplos.overflowDT
         /// Borrar todo lo que no haga falta
         /// </summary>
 
-
+        Personaje personaje1;
+        Personaje personaje2;
 
         TgcSkyBox skyBox;
         TgcScene escenario;
-        string mediaMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\";
-        string textureMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\" + "SkeletalAnimations\\Robot\\Textures\\";
-        string mediaPath = GuiController.Instance.ExamplesMediaDir;
-        string texturePath = GuiController.Instance.ExamplesMediaDir + "SkeletalAnimations\\Robot\\Textures\\";
+        private string mediaMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\";
+        public string MediaMPath
+        {
+            get { return mediaMPath; }
+            set { mediaMPath = value; }
+        }
+        private string textureMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\" + "SkeletalAnimations\\Robot\\Textures\\";
+        public string TextureMPath
+        {
+            get { return textureMPath; }
+            set { textureMPath = value; }
+        }
+        private string mediaPath = GuiController.Instance.ExamplesMediaDir;
+        public string MediaPath
+        {
+            get { return mediaPath; }
+            set { mediaPath = value; }
+        }
+        private string texturePath = GuiController.Instance.ExamplesMediaDir + "SkeletalAnimations\\Robot\\Textures\\";
+        public string TexturePath
+        {
+            get { return texturePath; }
+            set { texturePath = value; }
+        }
         Size screenSize = GuiController.Instance.Panel3d.Size;
 
 
@@ -126,6 +147,24 @@ namespace AlumnoEjemplos.overflowDT
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, skyboxPath + "left.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, skyboxPath + "right.jpg");
             skyBox.updateValues();
+
+            personaje1 = new Personaje();
+            personaje1.Init();
+            personaje1.setPosition(new Vector3(-300f, 6f, 0f));
+            personaje1.setRotation(Geometry.DegreeToRadian(270f));
+
+            personaje2 = new Personaje();
+            personaje2.Init();
+            personaje2.setPosition(new Vector3(300f, 6f, 0f));
+            personaje2.setRotation(Geometry.DegreeToRadian(90f));
+
+
+
+
+
+
+
+
 
             ///////////////LISTAS EN C#//////////////////
             //crear
@@ -202,6 +241,8 @@ namespace AlumnoEjemplos.overflowDT
                     mesh.BoundingBox.render();
                 }
             }
+            personaje1.mesh.animateAndRender();
+            personaje2.mesh.animateAndRender();
         }
 
         /// <summary>

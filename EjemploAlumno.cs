@@ -247,6 +247,7 @@ namespace AlumnoEjemplos.Manoja
         #endregion
 
         #region Sprites - carga y seteo
+            //fede: hacer una lista de sprites para que renderize uno a no 
             //Carga estructura de barras
             barras = new TgcSprite();
             barras.Texture = TgcTexture.createTexture(mediaMPath + "\\Life\\Barra_de_vida.png");
@@ -277,6 +278,8 @@ namespace AlumnoEjemplos.Manoja
             pj2.life.bloodybar.Scaling = new Vector2(0.54f * ((float)screenSize.Width / 961f), 0.59f * ((float)screenSize.Height / 507f));
             pj2.life.bloodybar.Position = new Vector2(screenSize.Width * 0.553f, screenSize.Height * 0.085f);
 
+
+            //fede: obetener nombre de la instancia de personaje pj.Playername
             //Carga nombre personaje 1
             pj1.playername = new TgcText2d();
             pj1.playername.Text = "TGC-Robot";
