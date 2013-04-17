@@ -10,7 +10,7 @@ using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.TgcSceneLoader;
 
-namespace AlumnoEjemplos.MiGrupo2
+namespace AlumnoEjemplos.overflowDT
 {
     /// <summary>
     /// Ejemplo del alumno
@@ -86,7 +86,7 @@ namespace AlumnoEjemplos.MiGrupo2
             ///////////////MODIFIERS//////////////////
 
             //Crear un modifier para un valor FLOAT
-            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 1500f, 100f);
+            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 1500f, 500f);
 
             //Crear un modifier para un ComboBox con opciones
             string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
@@ -101,7 +101,7 @@ namespace AlumnoEjemplos.MiGrupo2
             //Es la camara que viene por default, asi que no hace falta hacerlo siempre
             GuiController.Instance.RotCamera.Enable = true;
             //Configurar centro al que se mira y distancia desde la que se mira
-            GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 100);
+            GuiController.Instance.RotCamera.setCamera(new Vector3(0, 500, 1500), 500);
 
 
             /*
