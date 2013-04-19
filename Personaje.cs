@@ -106,12 +106,13 @@ namespace AlumnoEjemplos.overflowDT
                     fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\" + "Win-TgcSkeletalAnim.xml",
                     fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Arrojar-TgcSkeletalAnim.xml",
                 });
-           
+           mesh.Scale = new Vector3(0.05f, 0.05f, 0.05f);
            poder.mesh = keyFrameLoader.loadMeshAndAnimationsFromFile(
                fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\" + "ball-TgcKeyFrameMesh.xml",
                fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\",
                new string[] { fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\" + "ball-TgcKeyFrameAnim.xml", });
-           poder.mesh.Scale = new Vector3(3f, 3f, 3f);
+           poder.mesh.Scale = new Vector3(0.5f, 0.5f, 0.5f);
+
            poder.mesh.Position = mesh.Position + new Vector3(0, -1000, 500);
            poder.movementVector = Vector3.Empty;
            poder.mesh.rotateY(Geometry.DegreeToRadian( direccion==1 ? 0f : -180f));

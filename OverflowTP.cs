@@ -54,7 +54,7 @@ namespace AlumnoEjemplos.overflowDT
         TgcSkyBox skyBox;
         TgcScene escenario;
         Size screenSize = GuiController.Instance.Panel3d.Size;
-        float velocidadCaminar = 300f;
+        float velocidadCaminar = 30f;
         int hitdelay = 1000;
         static int damagepunch = 2;
         static int damagekick = 5;
@@ -96,24 +96,25 @@ namespace AlumnoEjemplos.overflowDT
             //Carpeta de archivos Media del alumno
             string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
             TgcSceneLoader loader = new TgcSceneLoader();
-            escenario = loader.loadSceneFromFile(mediaMPath + "\\Ambiental\\CuartoLucha-TgcScene.xml");
+            escenario = loader.loadSceneFromFile(mediaMPath + "\\Escenario\\lvl01-TgcScene.xml");
 
             ///////////////USER VARS//////////////////
 
             //Crear una UserVar
             GuiController.Instance.UserVars.addVar("velocidadX");
-            GuiController.Instance.UserVars.addVar("variablePrueba2");
-            GuiController.Instance.UserVars.addVar("variablePrueba3");
-
+            GuiController.Instance.UserVars.addVar("camX");
+            GuiController.Instance.UserVars.addVar("camY");
+            GuiController.Instance.UserVars.addVar("camZ");
             //Cargar valor en UserVar
             GuiController.Instance.UserVars.setValue("velocidadX", 0);
-            GuiController.Instance.UserVars.setValue("variablePrueba2", 542251);
-            GuiController.Instance.UserVars.setValue("variablePrueba2", 25451);
+            GuiController.Instance.UserVars.setValue("camX", 0);
+            GuiController.Instance.UserVars.setValue("camY", 0);
+            GuiController.Instance.UserVars.setValue("camZ", 0);
 
             ///////////////MODIFIERS//////////////////
 
             //Crear un modifier para un valor FLOAT
-            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 1500f, 500f);
+            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 1500f, 1f);
 
             //Crear un modifier para un ComboBox con opciones
             string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
@@ -126,20 +127,20 @@ namespace AlumnoEjemplos.overflowDT
 
             ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
             //Es la camara que viene por default, asi que no hace falta hacerlo siempre
-            GuiController.Instance.RotCamera.Enable = true;
+            //GuiController.Instance.RotCamera.Enable = true;
             //Configurar centro al que se mira y distancia desde la que se mira
-            GuiController.Instance.RotCamera.setCamera(new Vector3(0, 500, 1500), 500);
+            //GuiController.Instance.RotCamera.setCamera(new Vector3(0, 500, 1500), 500);
+           // GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 0);
 
-
-            /*
+            
             ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
             //Camara en primera persona, tipo videojuego FPS
             //Solo puede haber una camara habilitada a la vez. Al habilitar la camara FPS se deshabilita la camara rotacional
             //Por default la camara FPS viene desactivada
             GuiController.Instance.FpsCamera.Enable = true;
             //Configurar posicion y hacia donde se mira
-            GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 0));
-            */
+            GuiController.Instance.FpsCamera.setCamera(new Vector3(1942, 9, -3257), new Vector3(0, 0, 0));
+            
 
             //Crear SkyBox
             skyBox = new TgcSkyBox();
@@ -156,12 +157,12 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1 = new Personaje();
             personaje1.Init();
-            personaje1.setPosition(new Vector3(300f, 6f, 0f));
+            personaje1.setPosition(new Vector3(1956f, 6f, -3209f));
             personaje1.setRotation(Geometry.DegreeToRadian(90f));
 
             personaje2 = new Personaje();
             personaje2.Init();
-            personaje2.setPosition(new Vector3(-300f, 6f, 0f));
+            personaje2.setPosition(new Vector3(1900f, 6f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(270f));
 
 
@@ -263,14 +264,14 @@ namespace AlumnoEjemplos.overflowDT
                 gravity = false;
             }
 
-            if (personaje1.actions.jumping && personaje1.getPosition().Y < 90)
+            if (personaje1.actions.jumping && personaje1.getPosition().Y < 10)
             {
                 personaje1.actions.jump += 5 * elapsedTime ;
             }
             else if (!gravity)
             {
                 personaje1.actions.jump -= 5 * elapsedTime;
-                gravity = personaje1.getPosition().Y <= 5;
+                gravity = personaje1.getPosition().Y <= 6;
                 personaje1.actions.jumping = false;
             }
             else
@@ -301,6 +302,9 @@ namespace AlumnoEjemplos.overflowDT
 
             //settear uservars
             GuiController.Instance.UserVars.setValue("velocidadX", (personaje1.actions.moveForward*1/elapsedTime));
+            GuiController.Instance.UserVars.setValue("camX", GuiController.Instance.FpsCamera.Position.X);
+            GuiController.Instance.UserVars.setValue("camY", GuiController.Instance.FpsCamera.Position.Y);
+            GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.FpsCamera.Position.Z);
         }
 
         /// <summary>
