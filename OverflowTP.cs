@@ -157,13 +157,13 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1 = new Personaje();
             personaje1.Init();
-            personaje1.setPosition(new Vector3(1956f, 6f, -3209f));
-            personaje1.setRotation(Geometry.DegreeToRadian(90f));
+            personaje1.setPosition(new Vector3(1900f, 2f, -3209f));
+            personaje1.setRotation(Geometry.DegreeToRadian(270f));
 
             personaje2 = new Personaje();
             personaje2.Init();
-            personaje2.setPosition(new Vector3(1900f, 6f, -3209f));
-            personaje2.setRotation(Geometry.DegreeToRadian(270f));
+            personaje2.setPosition(new Vector3(1956f, 2f, -3209f));
+            personaje2.setRotation(Geometry.DegreeToRadian(90f));
 
 
 
@@ -264,14 +264,14 @@ namespace AlumnoEjemplos.overflowDT
                 gravity = false;
             }
 
-            if (personaje1.actions.jumping && personaje1.getPosition().Y < 10)
+            if (personaje1.actions.jumping && personaje1.getPosition().Y < 5)
             {
                 personaje1.actions.jump += 5 * elapsedTime ;
             }
             else if (!gravity)
             {
                 personaje1.actions.jump -= 5 * elapsedTime;
-                gravity = personaje1.getPosition().Y <= 6;
+                gravity = personaje1.getPosition().Y <= 2;
                 personaje1.actions.jumping = false;
             }
             else
@@ -289,7 +289,7 @@ namespace AlumnoEjemplos.overflowDT
             foreach (TgcMesh mesh in escenario.Meshes)
             {
                 mesh.render();
-                if (true)
+                if (false)
                 {
                     mesh.BoundingBox.render();
                 }
