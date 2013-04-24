@@ -41,11 +41,11 @@ namespace AlumnoEjemplos.overflowDT
             set { bones = value; }
         }
 
-        private TgcBoundingSphere globalSphere;
+        private TgcElipsoid globalSphere;
         /// <summary>
         /// TgcBoundingSphere que envuelve a todo el personajo.
         /// </summary>
-        public TgcBoundingSphere GlobalSphere
+        public TgcElipsoid GlobalSphere
         {
             get { return globalSphere; }
             set { globalSphere = value; }
@@ -54,7 +54,7 @@ namespace AlumnoEjemplos.overflowDT
         public BoundingMultiSphere()
         {
             bones = new Dictionary<string, Sphere>();
-            globalSphere = new TgcBoundingSphere();
+            globalSphere = new TgcElipsoid();
         }
         #endregion
 

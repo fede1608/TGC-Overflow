@@ -27,8 +27,7 @@ namespace AlumnoEjemplos.overflowDT
 
         public TgcKeyFrameMesh mesh;
         public TgcBoundingSphere globalSphere;
-        public bool active;
-        public bool powerhit;
+        public int powerhit = 5;
         public Vector3 movementVector;
         FightGameManager fightGameManager = new FightGameManager();
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();

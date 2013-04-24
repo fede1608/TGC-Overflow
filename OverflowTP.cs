@@ -9,6 +9,7 @@ using Microsoft.DirectX;
 using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.TgcSceneLoader;
+using TgcViewer.Utils.Collision.ElipsoidCollision;
 
 namespace AlumnoEjemplos.overflowDT
 {
@@ -50,6 +51,9 @@ namespace AlumnoEjemplos.overflowDT
 
         Personaje personaje1;
         Personaje personaje2;
+
+        List<Collider> objetosColisionables = new List<Collider>();
+        ElipsoidCollisionManager collisionManager;
 
         TgcSkyBox skyBox;
         TgcScene escenario;
@@ -114,7 +118,7 @@ namespace AlumnoEjemplos.overflowDT
             ///////////////MODIFIERS//////////////////
 
             //Crear un modifier para un valor FLOAT
-            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 1500f, 1f);
+            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 300f, 40f);
 
             //Crear un modifier para un ComboBox con opciones
             string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
@@ -137,9 +141,10 @@ namespace AlumnoEjemplos.overflowDT
             //Camara en primera persona, tipo videojuego FPS
             //Solo puede haber una camara habilitada a la vez. Al habilitar la camara FPS se deshabilita la camara rotacional
             //Por default la camara FPS viene desactivada
-            GuiController.Instance.FpsCamera.Enable = true;
+            //GuiController.Instance.FpsCamera.Enable = true;
             //Configurar posicion y hacia donde se mira
-            GuiController.Instance.FpsCamera.setCamera(new Vector3(1942, 9, -3257), new Vector3(0, 0, 0));
+            //GuiController.Instance.FpsCamera.setCamera(new Vector3(1942, 9, -3257), new Vector3(0, 0, 0));
+            //Configurar camara en estado inicial
             
 
             //Crear SkyBox
@@ -157,16 +162,21 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1 = new Personaje();
             personaje1.Init();
-            personaje1.setPosition(new Vector3(1900f, 2f, -3209f));
+            personaje1.setPosition(new Vector3(1900f, 0f, -3209f));
             personaje1.setRotation(Geometry.DegreeToRadian(270f));
 
             personaje2 = new Personaje();
             personaje2.Init();
-            personaje2.setPosition(new Vector3(1956f, 2f, -3209f));
+            personaje2.setPosition(new Vector3(1956f, 0f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
 
 
-
+            GuiController.Instance.ThirdPersonCamera.Enable = true;
+            GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
+                                                                           (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
+                                                                            personaje2.getPosition().Z),
+                                                               10, -40);
+            GuiController.Instance.ThirdPersonCamera.TargetDisplacement = new Vector3(0, 12, 0);
 
 
 
@@ -224,7 +234,7 @@ namespace AlumnoEjemplos.overflowDT
             float distanciaCam = (float)GuiController.Instance.Modifiers["distanciaCam"];
             string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
             Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
-            GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
+            //GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
 
             ///////////////INPUT//////////////////
             //conviene deshabilitar ambas camaras para que no haya interferencia
@@ -238,14 +248,14 @@ namespace AlumnoEjemplos.overflowDT
             //izquierda
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
             {
-                personaje1.actions.moveForward = -velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
+                personaje1.actions.moveForward = velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
                 personaje1.actions.moving = true;
                 personaje1.mesh.playAnimation("CaminandoRev", true);
             }
             //derecha
             else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
             {
-                personaje1.actions.moveForward = velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
+                personaje1.actions.moveForward = -velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
                 personaje1.actions.moving = true;
                 personaje1.mesh.playAnimation("Caminando", true);
 
@@ -305,9 +315,17 @@ namespace AlumnoEjemplos.overflowDT
 
             //settear uservars
             GuiController.Instance.UserVars.setValue("velocidadX", (personaje1.actions.moveForward*1/elapsedTime));
-            GuiController.Instance.UserVars.setValue("camX", GuiController.Instance.FpsCamera.Position.X);
-            GuiController.Instance.UserVars.setValue("camY", GuiController.Instance.FpsCamera.Position.Y);
-            GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.FpsCamera.Position.Z);
+            GuiController.Instance.UserVars.setValue("camX", GuiController.Instance.ThirdPersonCamera.Position.X);
+            GuiController.Instance.UserVars.setValue("camY", GuiController.Instance.ThirdPersonCamera.Position.Y);
+            GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.ThirdPersonCamera.Position.Z);
+
+
+            float offsetforward = Math.Abs(personaje2.getPosition().X - personaje1.getPosition().X) / (-2) - (10+(personaje2.getPosition().X - personaje1.getPosition().X)/50);
+            GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
+                                                                           (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
+                                                                            personaje2.getPosition().Z),
+                                                                            13, (offsetforward < -40 ? offsetforward : -40));
+
         }
 
         /// <summary>

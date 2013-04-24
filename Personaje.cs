@@ -38,7 +38,7 @@ namespace AlumnoEjemplos.overflowDT
         FightGameManager fightGameManager = new FightGameManager();
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();
-        int direccion = -1;
+        int direccion = 1;
         Device d3dDevice = GuiController.Instance.D3dDevice;
         BoundingMultiSphere spheres = new BoundingMultiSphere();
 
@@ -79,15 +79,7 @@ namespace AlumnoEjemplos.overflowDT
             public TgcText2d hpText;
         }
 
-        public struct Power
-        {
-            public TgcKeyFrameMesh mesh;
-            public TgcBoundingSphere globalSphere;
-            public bool active;
-            public bool powerhit;
-            public Vector3 movementVector;
-            public float[] combo;
-        }
+        
 
         
        public void Init()
@@ -113,8 +105,7 @@ namespace AlumnoEjemplos.overflowDT
            mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, fightGameManager.TexturePath + "uvw.jpg") });
            spheres.getVerticesForBox(fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml", mesh);
            mesh.AutoUpdateBoundingBox = false;
-           spheres.GlobalSphere = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(),
-                                                             mesh.BoundingBox.calculateBoxRadius());
+           spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(),new Vector3(2,mesh.BoundingBox.calculateBoxRadius(),2));
            actions.jump = 0f;
            actions.hittimer = 0;
           // poder.powerhit = false;
@@ -154,6 +145,8 @@ namespace AlumnoEjemplos.overflowDT
         {
         //setea la position del personaje
             mesh.Position = vec3;
+
+            mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + vec3, vec3 + new Vector3(1, 0, 1));
         }
         public Vector3 getPosition()
         {
@@ -173,15 +166,21 @@ namespace AlumnoEjemplos.overflowDT
         {
             //mesh.move(movementVector * elapsedTime);
             //globalSphere.moveCenter(movementVector * elapsedTime);
+            //Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, movementVector, objetosColisionables);
+            //this.mesh.move(realMovement);
+           // mesh.BoundingBox.Position = vec3;
+            spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
             foreach (Poder pow in poder)
             {
                 pow.update(elapsedTime);
-
+                
             }
         }
         public void render(float elapsedTime)
         {
             mesh.animateAndRender();
+            spheres.GlobalSphere.render();
+            //mesh.BoundingBox.render();
             foreach (Poder pow in poder)
                 {
                     pow.render(elapsedTime);
