@@ -30,14 +30,15 @@ namespace AlumnoEjemplos.overflowDT
         public Vector3 movementVector;
         public Life life;
         private string playername = "TGC Player";
-        public Power poder;
+        
+        List<Poder> poder = new List<Poder>();
 
 
 
         FightGameManager fightGameManager = new FightGameManager();
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();
-        int direccion = 1;
+        int direccion = -1;
         Device d3dDevice = GuiController.Instance.D3dDevice;
         BoundingMultiSphere spheres = new BoundingMultiSphere();
 
@@ -107,16 +108,8 @@ namespace AlumnoEjemplos.overflowDT
                     fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Arrojar-TgcSkeletalAnim.xml",
                 });
            mesh.Scale = new Vector3(0.05f, 0.05f, 0.05f);
-           poder.mesh = keyFrameLoader.loadMeshAndAnimationsFromFile(
-               fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\" + "ball-TgcKeyFrameMesh.xml",
-               fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\",
-               new string[] { fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\" + "ball-TgcKeyFrameAnim.xml", });
-           poder.mesh.Scale = new Vector3(0.5f, 0.5f, 0.5f);
-
-           poder.mesh.Position = mesh.Position + new Vector3(0, -1000, 500);
-           poder.movementVector = Vector3.Empty;
-           poder.mesh.rotateY(Geometry.DegreeToRadian( direccion==1 ? 0f : -180f));
-           poder.globalSphere = new TgcBoundingSphere(poder.mesh.BoundingBox.calculateBoxCenter(), poder.mesh.BoundingBox.calculateAxisRadius().Y);
+           
+            
            mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, fightGameManager.TexturePath + "uvw.jpg") });
            spheres.getVerticesForBox(fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml", mesh);
            mesh.AutoUpdateBoundingBox = false;
@@ -124,7 +117,7 @@ namespace AlumnoEjemplos.overflowDT
                                                              mesh.BoundingBox.calculateBoxRadius());
            actions.jump = 0f;
            actions.hittimer = 0;
-           poder.powerhit = false;
+          // poder.powerhit = false;
            life.healthpoints = 100;
            life.bloodypoints = 100;
 
@@ -145,6 +138,13 @@ namespace AlumnoEjemplos.overflowDT
             
         }
 
+        public void tirarPoder()
+        {
+            Poder pow = new Poder();
+            pow.Init(direccion, mesh.Position + new Vector3(0,3,0), new Vector3(40, 0, 0));
+            poder.Add(pow);
+
+        }
         public void setColor (Color color)
         {
         //setea el color del personaje
@@ -166,6 +166,28 @@ namespace AlumnoEjemplos.overflowDT
          mesh.rotateY(radianes);
          direccion = (radianes == 270) ? 1 : -1; ;
         }
-        
+
+
+
+        public void update(float elapsedTime)
+        {
+            //mesh.move(movementVector * elapsedTime);
+            //globalSphere.moveCenter(movementVector * elapsedTime);
+            foreach (Poder pow in poder)
+            {
+                pow.update(elapsedTime);
+
+            }
+        }
+        public void render(float elapsedTime)
+        {
+            mesh.animateAndRender();
+            foreach (Poder pow in poder)
+                {
+                    pow.render(elapsedTime);
+
+                }
+            
+        }
     }
 }

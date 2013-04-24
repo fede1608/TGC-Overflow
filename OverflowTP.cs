@@ -209,6 +209,8 @@ namespace AlumnoEjemplos.overflowDT
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime)
         {
+            personaje1.update(elapsedTime);
+            personaje2.update(elapsedTime);
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
                       
@@ -231,7 +233,7 @@ namespace AlumnoEjemplos.overflowDT
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
             {
                 //Tecla F apretada
-                
+                personaje1.tirarPoder();
             }
             //izquierda
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
@@ -295,8 +297,9 @@ namespace AlumnoEjemplos.overflowDT
                 }
             }
             personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward, personaje1.actions.jump, 0f));
-            personaje1.mesh.animateAndRender();
-            personaje2.mesh.animateAndRender();
+            personaje1.render(elapsedTime);
+            personaje2.render(elapsedTime);
+            
 
 
 
