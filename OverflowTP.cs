@@ -89,9 +89,14 @@ namespace AlumnoEjemplos.overflowDT
             get { return texturePath; }
             set { texturePath = value; }
         }
-        
+        public List<Collider> ObjetosColisionables
+        {
+            get { return objetosColisionables; }
+            set { objetosColisionables = value; }
+        }
         public override void init()
         {
+
             //GuiController.Instance: acceso principal a todas las herramientas del Framework
 
             //Device de DirectX para crear primitivas
@@ -109,11 +114,15 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.UserVars.addVar("camX");
             GuiController.Instance.UserVars.addVar("camY");
             GuiController.Instance.UserVars.addVar("camZ");
+            GuiController.Instance.UserVars.addVar("Movement");
+            GuiController.Instance.UserVars.addVar("Position");
             //Cargar valor en UserVar
             GuiController.Instance.UserVars.setValue("velocidadX", 0);
             GuiController.Instance.UserVars.setValue("camX", 0);
             GuiController.Instance.UserVars.setValue("camY", 0);
             GuiController.Instance.UserVars.setValue("camZ", 0);
+            GuiController.Instance.UserVars.setValue("Movement", 0);
+            GuiController.Instance.UserVars.setValue("Position", 0);
 
             ///////////////MODIFIERS//////////////////
 
@@ -143,7 +152,7 @@ namespace AlumnoEjemplos.overflowDT
             //Por default la camara FPS viene desactivada
             //GuiController.Instance.FpsCamera.Enable = true;
             //Configurar posicion y hacia donde se mira
-            //GuiController.Instance.FpsCamera.setCamera(new Vector3(1942, 9, -3257), new Vector3(0, 0, 0));
+            GuiController.Instance.FpsCamera.setCamera(new Vector3(1942, 9, -3257), new Vector3(0, 0, 0));
             //Configurar camara en estado inicial
             
 
@@ -162,15 +171,15 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1 = new Personaje();
             personaje1.Init();
-            personaje1.setPosition(new Vector3(1900f, 0f, -3209f));
+            personaje1.setPosition(new Vector3(1900f, 0.5f, -3209f));
             personaje1.setRotation(Geometry.DegreeToRadian(270f));
 
             personaje2 = new Personaje();
             personaje2.Init();
-            personaje2.setPosition(new Vector3(1956f, 0f, -3209f));
+            personaje2.setPosition(new Vector3(1956f, 0.5f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
-
-
+            
+            
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
                                                                            (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
@@ -178,8 +187,28 @@ namespace AlumnoEjemplos.overflowDT
                                                                10, -40);
             GuiController.Instance.ThirdPersonCamera.TargetDisplacement = new Vector3(0, 12, 0);
 
-
-
+            //Almacenar volumenes de colision del escenario
+           // objetosColisionables.Clear();
+            foreach (TgcMesh mesh in escenario.Meshes)
+            {
+                //Los objetos del layer "TriangleCollision" son colisiones a nivel de triangulo
+                if (mesh.Name == "Room-1-Floor-0")
+                {
+                    objetosColisionables.Add(TriangleMeshCollider.fromMesh(mesh));
+                }
+                //El resto de los objetos son colisiones de BoundingBox. Las colisiones a nivel de triangulo son muy costosas asi que deben utilizarse solo
+                //donde es extremadamente necesario (por ejemplo en el piso). El resto se simplifica con un BoundingBox
+                else
+                {
+                    objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
+                }
+            }
+            
+            objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
+           // objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(personaje2.Spheres.GlobalSphere));
+            //Crear manejador de colisiones
+            collisionManager = new ElipsoidCollisionManager();
+            collisionManager.GravityEnabled = true;
 
 
 
@@ -273,6 +302,7 @@ namespace AlumnoEjemplos.overflowDT
             {
                 
                 personaje1.actions.jumping = true;
+                collisionManager.GravityEnabled = false;
                 gravity = false;
             }
 
@@ -290,6 +320,7 @@ namespace AlumnoEjemplos.overflowDT
             {
                 personaje1.actions.jump = 0;
                 personaje1.actions.jumping = false;
+                collisionManager.GravityEnabled = true;
             }
             //Capturar Input Mouse
             if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
@@ -301,12 +332,18 @@ namespace AlumnoEjemplos.overflowDT
             foreach (TgcMesh mesh in escenario.Meshes)
             {
                 mesh.render();
-                if (false)
+                if (true)
                 {
                     mesh.BoundingBox.render();
                 }
             }
-            personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward, personaje1.actions.jump, 0f));
+            //personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward, personaje1.actions.jump, 0f));
+            //if (personaje1.actions.moving || personaje1.actions.jumping)
+            //{
+                Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objetosColisionables);
+                personaje1.move(realMovement);
+                
+            //}
             personaje1.render(elapsedTime);
             personaje2.render(elapsedTime);
             
@@ -318,9 +355,10 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.UserVars.setValue("camX", GuiController.Instance.ThirdPersonCamera.Position.X);
             GuiController.Instance.UserVars.setValue("camY", GuiController.Instance.ThirdPersonCamera.Position.Y);
             GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.ThirdPersonCamera.Position.Z);
+            GuiController.Instance.UserVars.setValue("Movement", TgcParserUtils.printVector3(realMovement));
+            GuiController.Instance.UserVars.setValue("Position", TgcParserUtils.printVector3(personaje1.getPosition()));
 
-
-            float offsetforward = Math.Abs(personaje2.getPosition().X - personaje1.getPosition().X) / (-2) - (10+(personaje2.getPosition().X - personaje1.getPosition().X)/50);
+            float offsetforward = Math.Abs(personaje2.getPosition().X - personaje1.getPosition().X) / (-2) - (10+(personaje2.getPosition().X - personaje1.getPosition().X)/10);
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
                                                                            (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
                                                                             personaje2.getPosition().Z),

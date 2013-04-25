@@ -58,6 +58,7 @@ namespace AlumnoEjemplos.overflowDT
         public void render(float elapsedTime)
     {
         mesh.animateAndRender();
+        globalSphere.render();
     }
     }
 }

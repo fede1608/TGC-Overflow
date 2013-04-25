@@ -24,10 +24,10 @@ namespace AlumnoEjemplos.overflowDT
 {
     class Personaje
     {
-       
+        ElipsoidCollisionManager collisionManager;
         public TgcSkeletalMesh mesh;
         public Actions actions;
-        public Vector3 movementVector;
+        public Vector3 movementVector=new Vector3 (30,0,0);
         public Life life;
         private string playername = "TGC Player";
         
@@ -41,9 +41,14 @@ namespace AlumnoEjemplos.overflowDT
         int direccion = 1;
         Device d3dDevice = GuiController.Instance.D3dDevice;
         BoundingMultiSphere spheres = new BoundingMultiSphere();
-
+        
 
         //Getters y Setters
+        public BoundingMultiSphere Spheres
+        {
+            get { return spheres; }
+            set { spheres = value; }
+        }
         public string Playername
         {
             get { return playername; }
@@ -106,6 +111,7 @@ namespace AlumnoEjemplos.overflowDT
            spheres.getVerticesForBox(fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml", mesh);
            mesh.AutoUpdateBoundingBox = false;
            spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(),new Vector3(2,mesh.BoundingBox.calculateBoxRadius(),2));
+           //spheres.GlobalSphere = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), mesh.BoundingBox.calculateBoxRadius());
            actions.jump = 0f;
            actions.hittimer = 0;
           // poder.powerhit = false;
@@ -128,7 +134,11 @@ namespace AlumnoEjemplos.overflowDT
         //comment
             
         }
-
+        public void move(Vector3 movement)
+        {
+            mesh.move(movement);
+            mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + movement , movement  + new Vector3(1, 0, 1));
+        }
         public void tirarPoder()
         {
             Poder pow = new Poder();
@@ -145,8 +155,8 @@ namespace AlumnoEjemplos.overflowDT
         {
         //setea la position del personaje
             mesh.Position = vec3;
-
             mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + vec3, vec3 + new Vector3(1, 0, 1));
+            spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
         }
         public Vector3 getPosition()
         {
@@ -166,10 +176,11 @@ namespace AlumnoEjemplos.overflowDT
         {
             //mesh.move(movementVector * elapsedTime);
             //globalSphere.moveCenter(movementVector * elapsedTime);
-            //Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, movementVector, objetosColisionables);
-            //this.mesh.move(realMovement);
+
+           // Vector3 realMovement = collisionManager.moveCharacter(spheres.GlobalSphere, movementVector, fightGameManager.ObjetosColisionables);
+           // mesh.move(realMovement);
            // mesh.BoundingBox.Position = vec3;
-            spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
+            //spheres.GlobalSphere.moveCenter((mesh.Position.X - spheres.GlobalSphere.Position.X,); //= new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
             foreach (Poder pow in poder)
             {
                 pow.update(elapsedTime);
@@ -180,7 +191,7 @@ namespace AlumnoEjemplos.overflowDT
         {
             mesh.animateAndRender();
             spheres.GlobalSphere.render();
-            //mesh.BoundingBox.render();
+            mesh.BoundingBox.render();
             foreach (Poder pow in poder)
                 {
                     pow.render(elapsedTime);
