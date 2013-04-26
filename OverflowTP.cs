@@ -10,6 +10,9 @@ using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Collision.ElipsoidCollision;
+using TgcViewer.Utils.Shaders;
+using TgcViewer.Utils.Interpolation;
+using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.overflowDT
 {
@@ -51,6 +54,14 @@ namespace AlumnoEjemplos.overflowDT
 
         Personaje personaje1;
         Personaje personaje2;
+
+        //luces
+        Effect effect;
+        TgcBox[] lightMeshes;
+        InterpoladorVaiven interp;
+        Vector3[] origLightPos;
+
+        //FinLuces
 
         List<Collider> objetosColisionables = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
@@ -105,7 +116,8 @@ namespace AlumnoEjemplos.overflowDT
             //Carpeta de archivos Media del alumno
             string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
             TgcSceneLoader loader = new TgcSceneLoader();
-            escenario = loader.loadSceneFromFile(mediaMPath + "\\Escenario\\lvl01-TgcScene.xml");
+           // escenario = loader.loadSceneFromFile(mediaMPath + "\\Escenario\\lvl01-TgcScene.xml");
+            escenario = loader.loadSceneFromFile(mediaMPath + "\\Nivel_Militar\\lvl_01a-TgcScene.xml");
 
             ///////////////USER VARS//////////////////
 
@@ -187,6 +199,42 @@ namespace AlumnoEjemplos.overflowDT
                                                                10, -40);
             GuiController.Instance.ThirdPersonCamera.TargetDisplacement = new Vector3(0, 12, 0);
 
+
+
+
+
+
+
+            //Luces
+            
+            
+            effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\MultiDiffuseLights.fx");
+
+
+            //Crear 4 mesh para representar las 4 para la luces. Las ubicamos en distintas posiciones del escenario, cada una con un color distinto.
+            lightMeshes = new TgcBox[4];
+            origLightPos = new Vector3[lightMeshes.Length];
+            Color[] c = new Color[4] { Color.Red, Color.Blue, Color.Green, Color.Yellow };
+            for (int i = 0; i < lightMeshes.Length; i++)
+            {
+                Color co = c[i % c.Length];
+                lightMeshes[i] = TgcBox.fromSize(new Vector3(5, 5, 5), co);
+                origLightPos[i] = new Vector3(1900f, 0.5f, -3209f);//-40, 20 + i * 20, 400);
+            }
+
+
+
+            //Interpolador para mover las luces de un lado para el otro
+            interp = new InterpoladorVaiven();
+            interp.Min = -100f;
+            interp.Max = 100f;
+            interp.Speed = 50f;
+            interp.Current = 0f;
+            //Fin Luces
+
+
+
+
             //Almacenar volumenes de colision del escenario
            // objetosColisionables.Clear();
             foreach (TgcMesh mesh in escenario.Meshes)
@@ -252,8 +300,72 @@ namespace AlumnoEjemplos.overflowDT
             personaje2.update(elapsedTime);
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
-                      
-           
+                 
+     
+
+
+           /////LUCES
+            Effect currentShader;
+            String currentTechnique;
+            currentShader = this.effect;
+            currentTechnique = "MultiDiffuseLightsTechnique";
+            foreach (TgcMesh mesh in escenario.Meshes)
+            {
+                mesh.Effect = currentShader;
+                mesh.Technique = currentTechnique;
+            }
+            //personaje1.mesh.Effect = currentShader;
+            //personaje2.mesh.Effect = currentShader;
+
+            //personaje1.mesh.Technique = currentTechnique;
+            //personaje2.mesh.Technique = currentTechnique;
+
+            Vector3 move = new Vector3(interp.update(), 0,0  );
+            ColorValue[] lightColors = new ColorValue[lightMeshes.Length];
+            Vector4[] pointLightPositions = new Vector4[lightMeshes.Length];
+            float[] pointLightIntensity = new float[lightMeshes.Length];
+            float[] pointLightAttenuation = new float[lightMeshes.Length];
+            for (int i = 0; i < lightMeshes.Length; i++)
+            {
+                TgcBox lightMesh = lightMeshes[i];
+                lightMesh.Position = origLightPos[i] + Vector3.Scale(move, i + 1);
+
+                lightColors[i] = ColorValue.FromColor(lightMesh.Color);
+                pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
+                pointLightIntensity[i] = 38f;
+                pointLightAttenuation[i] = 0.15f;
+            }
+
+            //Renderizar meshes
+            foreach (TgcMesh mesh in escenario.Meshes)
+            {
+                
+                    //Cargar variables de shader
+                    mesh.Effect.SetValue("lightColor", lightColors);
+                    mesh.Effect.SetValue("lightPosition", pointLightPositions);
+                    mesh.Effect.SetValue("lightIntensity", pointLightIntensity);
+                    mesh.Effect.SetValue("lightAttenuation", pointLightAttenuation);
+                    mesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)Color.Black));
+                    mesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)Color.White));
+                
+
+                //Renderizar modelo
+                mesh.render();
+            }
+
+
+            //Renderizar meshes de luz
+            for (int i = 0; i < lightMeshes.Length; i++)
+            {
+                TgcBox lightMesh = lightMeshes[i];
+                lightMesh.render();
+            }
+
+
+            ////////FINLUCES
+
+
+
 
             //Obtener valor de UserVar (hay que castear)
             //int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
@@ -332,7 +444,7 @@ namespace AlumnoEjemplos.overflowDT
             foreach (TgcMesh mesh in escenario.Meshes)
             {
                 mesh.render();
-                if (true)
+                if (false)
                 {
                     mesh.BoundingBox.render();
                 }
