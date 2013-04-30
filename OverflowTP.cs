@@ -206,23 +206,26 @@ namespace AlumnoEjemplos.overflowDT
 
 
             //Luces
-            
-            
-            effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\MultiDiffuseLights.fx");
+
+
+            effect = TgcShaders.loadEffect(mediaMPath + "Shaders\\MultiDiffuseLights.fx");
 
 
             //Crear 4 mesh para representar las 4 para la luces. Las ubicamos en distintas posiciones del escenario, cada una con un color distinto.
             lightMeshes = new TgcBox[4];
             origLightPos = new Vector3[lightMeshes.Length];
-            Color[] c = new Color[4] { Color.Red, Color.Blue, Color.Green, Color.Yellow };
+            Color[] c = new Color[5] { Color.Red, Color.Blue, Color.Green, Color.Yellow,Color.Violet };
             for (int i = 0; i < lightMeshes.Length; i++)
             {
                 Color co = c[i % c.Length];
                 lightMeshes[i] = TgcBox.fromSize(new Vector3(5, 5, 5), co);
-                origLightPos[i] = new Vector3(1900f, 0.5f, -3209f);//-40, 20 + i * 20, 400);
+                
             }
-
-
+            origLightPos[0] = new Vector3(1880f, 70f, -3169f);//-40, 20 + i * 20, 400);
+            origLightPos[1] = new Vector3(1880f, 70f, -3249f);//-40, 20 + i * 20, 400);
+            origLightPos[2] = new Vector3(1960f, 70f, -3169f);//-40, 20 + i * 20, 400);
+            origLightPos[3] = new Vector3(1960f, 70f, -3249f);
+           
 
             //Interpolador para mover las luces de un lado para el otro
             interp = new InterpoladorVaiven();
@@ -328,12 +331,13 @@ namespace AlumnoEjemplos.overflowDT
             for (int i = 0; i < lightMeshes.Length; i++)
             {
                 TgcBox lightMesh = lightMeshes[i];
-                lightMesh.Position = origLightPos[i] + Vector3.Scale(move, i + 1);
 
+                lightMesh.Position = origLightPos[i];// +Vector3.Scale(move, i + 1);
+                
                 lightColors[i] = ColorValue.FromColor(lightMesh.Color);
                 pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
-                pointLightIntensity[i] = 38f;
-                pointLightAttenuation[i] = 0.15f;
+                pointLightIntensity[i] = 15f;
+                pointLightAttenuation[i] = 0.20f;
             }
 
             //Renderizar meshes
