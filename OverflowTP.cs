@@ -13,6 +13,8 @@ using TgcViewer.Utils.Collision.ElipsoidCollision;
 using TgcViewer.Utils.Shaders;
 using TgcViewer.Utils.Interpolation;
 using TgcViewer.Utils.TgcGeometry;
+using TgcViewer.Utils._2D;
+
 
 namespace AlumnoEjemplos.overflowDT
 {
@@ -51,6 +53,10 @@ namespace AlumnoEjemplos.overflowDT
         /// Escribir aquí todo el código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.
         /// Borrar todo lo que no haga falta
         /// </summary>
+
+          //Creo el sprite drawer
+            Drawer spriteDrawer = new Drawer();
+            Sprite newSprite;
 
         Personaje personaje1;
         Personaje personaje2;
@@ -201,7 +207,16 @@ namespace AlumnoEjemplos.overflowDT
 
 
 
+            //sprites
+            Bitmap barra = new Bitmap(mediaMPath  + "//barra1.png", GuiController.Instance.D3dDevice);
+            Vector2 spriteSize = new Vector2(379, 81);
+            newSprite = new Sprite();
+            newSprite.Bitmap = barra;
+            newSprite.SrcRect = new Rectangle((int)spriteSize.X, 0, (int)spriteSize.X, (int)spriteSize.Y);
+            newSprite.Scaling = new Vector2(1f, 1f);
 
+
+            //fin sprites
 
 
 
@@ -296,6 +311,14 @@ namespace AlumnoEjemplos.overflowDT
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         public override void render(float elapsedTime)
         {
+
+            //sprites
+            spriteDrawer.BeginDrawSprite();
+            spriteDrawer.DrawSprite(newSprite);
+            spriteDrawer.EndDrawSprite();
+            //fsprites
+
+
             personaje1.update(elapsedTime);
             personaje2.update(elapsedTime);
             //Device de DirectX para renderizar
