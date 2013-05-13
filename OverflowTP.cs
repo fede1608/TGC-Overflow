@@ -199,7 +199,7 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje2 = new Personaje();
             personaje2.Init();
-            personaje2.setPosition(new Vector3(1956f, 0.5f, -3209f));
+            personaje2.setPosition(new Vector3(1956f, 1f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
             
             
@@ -341,6 +341,7 @@ namespace AlumnoEjemplos.overflowDT
             }
             time1 = 0;
 
+            
         }
         /// <summary>
         /// Método que se llama cada vez que hay que refrescar la pantalla.
@@ -354,6 +355,9 @@ namespace AlumnoEjemplos.overflowDT
             time1 += elapsedTime;
             if (time1 >= 1) update(elapsedTime);
 
+
+            //Device de DirectX para renderizar
+            Device d3dDevice = GuiController.Instance.D3dDevice;
             //texts
             clock1.render();
             clock2.render();
@@ -368,8 +372,7 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1.update(elapsedTime);
             personaje2.update(elapsedTime);
-            //Device de DirectX para renderizar
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            
                  
      
 
@@ -505,6 +508,65 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.actions.jumping = false;
                 collisionManager.GravityEnabled = true;
             }
+
+            //player2
+            //Capturar Input teclado 
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightControl))
+            {
+                //Tecla control right apretada
+                personaje2.tirarPoder();
+            }
+            //izquierda
+            if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.LeftArrow))
+            {
+                personaje2.actions.moveForward = velocidadCaminar * elapsedTime * (float)personaje2.Direccion;
+                personaje2.actions.moving = true;
+                personaje2.mesh.playAnimation("CaminandoRev", true);
+            }
+            //derecha
+            else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.RightArrow))
+            {
+                personaje2.actions.moveForward = -velocidadCaminar * elapsedTime * (float)personaje2.Direccion;
+                personaje2.actions.moving = true;
+                personaje2.mesh.playAnimation("Caminando", true);
+
+            }
+            //ninguna de las dos
+            else
+            {
+                personaje2.actions.moveForward = 0;
+                personaje2.actions.moving = false;
+                personaje2.mesh.playAnimation("Parado", true);
+            }
+
+            //saltar
+            if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.UpArrow) || GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightShift)) && !personaje2.actions.jumping)
+            {
+
+                personaje2.actions.jumping = true;
+                collisionManager.GravityEnabled = false;
+                gravity = false;
+            }
+
+            if (personaje2.actions.jumping && personaje2.getPosition().Y < 5)
+            {
+                personaje2.actions.jump += 5 * elapsedTime;
+            }
+            else if (!gravity)
+            {
+                personaje2.actions.jump -= 5 * elapsedTime;
+                gravity = personaje2.getPosition().Y <= 2;
+                personaje2.actions.jumping = false;
+            }
+            else
+            {
+                personaje2.actions.jump = 0;
+                personaje2.actions.jumping = false;
+                collisionManager.GravityEnabled = true;
+            }
+
+
+
             //Capturar Input Mouse
             if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
             {
@@ -525,7 +587,8 @@ namespace AlumnoEjemplos.overflowDT
             //{
                 Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objetosColisionables);
                 personaje1.move(realMovement);
-                
+                Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objetosColisionables);
+                personaje2.move(realMovement2);
             //}
             personaje1.render(elapsedTime);
             personaje2.render(elapsedTime);
