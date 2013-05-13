@@ -56,7 +56,7 @@ namespace AlumnoEjemplos.overflowDT
 
           //Creo el sprite drawer
             Drawer spriteDrawer = new Drawer();
-            Sprite newSprite;
+            Sprite newSprite; Sprite newSprite2;
 
         Personaje personaje1;
         Personaje personaje2;
@@ -71,6 +71,11 @@ namespace AlumnoEjemplos.overflowDT
 
         List<Collider> objetosColisionables = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
+
+        TgcText2d clock1;
+        TgcText2d clock2;
+        int clock = 90;
+        float time1=0;
 
         TgcSkyBox skyBox;
         TgcScene escenario;
@@ -123,7 +128,7 @@ namespace AlumnoEjemplos.overflowDT
             string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
             TgcSceneLoader loader = new TgcSceneLoader();
            // escenario = loader.loadSceneFromFile(mediaMPath + "\\Escenario\\lvl01-TgcScene.xml");
-            escenario = loader.loadSceneFromFile(mediaMPath + "\\Nivel_Militar\\lvl_01a-TgcScene.xml");
+            escenario = loader.loadSceneFromFile(mediaMPath + "\\Nivel_Militar\\lvl_01a2-TgcScene.xml");
 
             ///////////////USER VARS//////////////////
 
@@ -208,17 +213,38 @@ namespace AlumnoEjemplos.overflowDT
 
 
             //sprites
-            Bitmap barra = new Bitmap(mediaMPath  + "//barra1.png", GuiController.Instance.D3dDevice);
-            Vector2 spriteSize = new Vector2(379, 81);
+            Bitmap barra = new Bitmap(mediaMPath  + "//barras3.png", GuiController.Instance.D3dDevice);
+            Vector2 spriteSize = new Vector2(1100, 130);
             newSprite = new Sprite();
             newSprite.Bitmap = barra;
-            newSprite.SrcRect = new Rectangle((int)spriteSize.X, 0, (int)spriteSize.X, (int)spriteSize.Y);
-            newSprite.Scaling = new Vector2(1f, 1f);
-
+            newSprite.SrcRect = new Rectangle(-25, -10, (int)spriteSize.X, (int)spriteSize.Y);
+            newSprite.Scaling = new Vector2(0.9f, 0.7f);
+            newSprite2 = new Sprite();
+            newSprite2.Bitmap = barra;
+            newSprite2.SrcRect = new Rectangle( 0/*(int)(GuiController.Instance.D3dDevice.Viewport.Width * 0.5f)*/, 0, 600+(int)spriteSize.X, 600+(int)spriteSize.Y);
+            newSprite2.Scaling = new Vector2(-0.8f, 0.8f);
 
             //fin sprites
 
+            //text
 
+            clock1 = new TgcText2d();
+            clock1.Text = "90";
+            clock1.Color = Color.DarkBlue;
+            clock1.Align = TgcText2d.TextAlign.LEFT;
+            clock1.Position = new Point(463, 33);
+            clock1.Size = new Size(300, 100);
+            clock1.changeFont(new System.Drawing.Font("TimesNewRoman", 25, FontStyle.Bold));
+            
+            clock2 = new TgcText2d();
+            clock2.Text = "90";
+            clock2.Color = Color.Blue;
+            clock2.Align = TgcText2d.TextAlign.LEFT;
+            clock2.Position = new Point(460, 30);
+            clock2.Size = new Size(300, 100);
+            clock2.changeFont(new System.Drawing.Font("TimesNewRoman", 25, FontStyle.Bold));
+
+            //Fintexts
 
             //Luces
 
@@ -305,19 +331,37 @@ namespace AlumnoEjemplos.overflowDT
 
         }
 
+        public void update(float elapsedTime)
+        {
+            clock -= 1;
+            if (clock > 0)
+            {
+                clock1.Text = clock.ToString();
+                clock2.Text = clock.ToString();
+            }
+            time1 = 0;
 
+        }
         /// <summary>
         /// Método que se llama cada vez que hay que refrescar la pantalla.
         /// Escribir aquí todo el código referido al renderizado.
         /// Borrar todo lo que no haga falta
         /// </summary>
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
+        
         public override void render(float elapsedTime)
         {
+            time1 += elapsedTime;
+            if (time1 >= 1) update(elapsedTime);
+
+            //texts
+            clock1.render();
+            clock2.render();
 
             //sprites
             spriteDrawer.BeginDrawSprite();
             spriteDrawer.DrawSprite(newSprite);
+            spriteDrawer.DrawSprite(newSprite2);
             spriteDrawer.EndDrawSprite();
             //fsprites
 
