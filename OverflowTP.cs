@@ -86,6 +86,7 @@ namespace AlumnoEjemplos.overflowDT
         static int damagekick = 5;
         static int damagepower = 10;
         bool gravity = true;
+        bool gravity2= true;
 
         private string mediaMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\";
         public string MediaMPath
@@ -506,7 +507,7 @@ namespace AlumnoEjemplos.overflowDT
             {
                 personaje1.actions.jump = 0;
                 personaje1.actions.jumping = false;
-                collisionManager.GravityEnabled = true;
+                //collisionManager.GravityEnabled = true;
             }
 
             //player2
@@ -538,31 +539,31 @@ namespace AlumnoEjemplos.overflowDT
                 personaje2.actions.moving = false;
                 personaje2.mesh.playAnimation("Parado", true);
             }
-
+            
             //saltar
             if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.UpArrow) || GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightShift)) && !personaje2.actions.jumping)
             {
 
                 personaje2.actions.jumping = true;
                 collisionManager.GravityEnabled = false;
-                gravity = false;
+                gravity2 = false;
             }
 
             if (personaje2.actions.jumping && personaje2.getPosition().Y < 5)
             {
                 personaje2.actions.jump += 5 * elapsedTime;
             }
-            else if (!gravity)
+            else if (!gravity2)
             {
                 personaje2.actions.jump -= 5 * elapsedTime;
-                gravity = personaje2.getPosition().Y <= 2;
+                gravity2 = personaje2.getPosition().Y <= 2;
                 personaje2.actions.jumping = false;
             }
             else
             {
                 personaje2.actions.jump = 0;
                 personaje2.actions.jumping = false;
-                collisionManager.GravityEnabled = true;
+                //collisionManager.GravityEnabled = true;
             }
 
 

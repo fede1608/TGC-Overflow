@@ -137,7 +137,7 @@ namespace AlumnoEjemplos.overflowDT
         public void move(Vector3 movement)
         {
             mesh.move(movement);
-            mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + movement , movement  + new Vector3(1, 0, 1));
+            //mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + movement , movement  + new Vector3(1, 0, 1));
         }
         public void tirarPoder()
         {
