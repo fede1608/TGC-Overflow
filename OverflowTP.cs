@@ -195,12 +195,12 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1 = new Personaje();
             personaje1.Init();
-            personaje1.setPosition(new Vector3(1900f, 0.5f, -3209f));
+            personaje1.setPosition(new Vector3(1900f, 2f, -3209f));
             personaje1.setRotation(Geometry.DegreeToRadian(270f));
 
             personaje2 = new Personaje();
             personaje2.Init();
-            personaje2.setPosition(new Vector3(1956f, 1f, -3209f));
+            personaje2.setPosition(new Vector3(1956f, 2f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
             
             
@@ -587,9 +587,10 @@ namespace AlumnoEjemplos.overflowDT
             //if (personaje1.actions.moving || personaje1.actions.jumping)
             //{
                 Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objetosColisionables);
-                personaje1.move(realMovement);
+                
                 Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objetosColisionables);
-                personaje2.move(realMovement2);
+                if (realMovement != new Vector3(0f,0f,0f)) personaje1.move(realMovement);
+                if (realMovement2 != new Vector3(0f,0f,0f)) personaje2.move(realMovement2);
             //}
             personaje1.render(elapsedTime);
             personaje2.render(elapsedTime);
@@ -601,7 +602,7 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.UserVars.setValue("velocidadX", (personaje1.actions.moveForward*1/elapsedTime));
             GuiController.Instance.UserVars.setValue("camX", GuiController.Instance.ThirdPersonCamera.Position.X);
             GuiController.Instance.UserVars.setValue("camY", GuiController.Instance.ThirdPersonCamera.Position.Y);
-            GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.ThirdPersonCamera.Position.Z);
+            //GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.ThirdPersonCamera.Position.Z);
             GuiController.Instance.UserVars.setValue("Movement", TgcParserUtils.printVector3(realMovement));
             GuiController.Instance.UserVars.setValue("Position", TgcParserUtils.printVector3(personaje1.getPosition()));
 

@@ -117,7 +117,7 @@ namespace AlumnoEjemplos.overflowDT
           // poder.powerhit = false;
            life.healthpoints = 100;
            life.bloodypoints = 100;
-
+           mesh.AutoUpdateBoundingBox = true;
            //Configurar animacion inicial
            mesh.playAnimation("Parado", true);
 
@@ -136,7 +136,11 @@ namespace AlumnoEjemplos.overflowDT
         }
         public void move(Vector3 movement)
         {
-            mesh.move(movement);
+            if (movement != new Vector3 (0,0,0))
+                mesh.move(movement);
+            GuiController.Instance.UserVars.setValue("camZ", mesh.BoundingBox.PMax.X);   
+            //mesh.Position += movement;
+            //mesh.createBoundingBox();
             //mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + movement , movement  + new Vector3(1, 0, 1));
         }
         public void tirarPoder()
@@ -155,7 +159,8 @@ namespace AlumnoEjemplos.overflowDT
         {
         //setea la position del personaje
             mesh.Position = vec3;
-            mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + vec3, vec3 + new Vector3(1, 0, 1));
+            GuiController.Instance.UserVars.setValue("camZ", mesh.BoundingBox.PMax);   
+            //mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + vec3, vec3 + new Vector3(1, 0, 1));
             spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
         }
         public Vector3 getPosition()
@@ -181,6 +186,7 @@ namespace AlumnoEjemplos.overflowDT
            // mesh.move(realMovement);
            // mesh.BoundingBox.Position = vec3;
             //spheres.GlobalSphere.moveCenter((mesh.Position.X - spheres.GlobalSphere.Position.X,); //= new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
+            
             foreach (Poder pow in poder)
             {
                 pow.update(elapsedTime);
