@@ -19,6 +19,7 @@ using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.Sound;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Collision.ElipsoidCollision;
+using System.Threading;
 
 namespace AlumnoEjemplos.overflowDT
 {
@@ -26,13 +27,21 @@ namespace AlumnoEjemplos.overflowDT
     {
 
         public TgcKeyFrameMesh mesh;
-        public TgcBoundingSphere globalSphere;
+        public TgcElipsoid globalSphere;
         public int powerhit = 5;
         public Vector3 movementVector;
         FightGameManager fightGameManager = new FightGameManager();
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();
-        
+        Personaje owner;
+        ElipsoidCollisionManager collisionManager;
+        Vector3 realmove;
+
+        public Personaje Owner
+        {
+            get { return owner; }
+            set { owner = value; }
+        }
         Device d3dDevice = GuiController.Instance.D3dDevice;
         BoundingMultiSphere spheres = new BoundingMultiSphere();
         public void Init(int direccion, Vector3 pos, Vector3 mov)
@@ -45,13 +54,20 @@ namespace AlumnoEjemplos.overflowDT
             mesh.Position = pos;
             movementVector = mov;
             mesh.rotateY(Geometry.DegreeToRadian(mov.X  > 0 ? 0f : -180f));
-            globalSphere = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), mesh.BoundingBox.calculateAxisRadius().Y);
+            globalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(mesh.BoundingBox.calculateAxisRadius().Y,mesh.BoundingBox.calculateAxisRadius().Y,mesh.BoundingBox.calculateAxisRadius().Y));
         }
         public void update(float elapsedTime)
         {
-            mesh.move(movementVector * elapsedTime);
+            owner.Sem.WaitOne();
+            realmove = collisionManager.moveCharacter(globalSphere, (movementVector * elapsedTime), owner.ObjCol);
+            owner.Sem.Release();
+            mesh.move(realmove);
             globalSphere.moveCenter(movementVector * elapsedTime);
-        
+            if (collisionManager.Result.collisionFound)
+            {
+                owner.Enemigo.restarVida(4);
+                owner.sacarPoder(this);
+            }
         }
 
 
@@ -60,5 +76,10 @@ namespace AlumnoEjemplos.overflowDT
         mesh.animateAndRender();
         globalSphere.render();
     }
+        public void dispose()
+        {
+            mesh.dispose();
+            globalSphere.dispose();
+        }
     }
 }

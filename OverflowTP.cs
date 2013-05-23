@@ -68,10 +68,7 @@ namespace AlumnoEjemplos.overflowDT
         Vector3[] origLightPos;
 
 
-        Surface g_pDepthStencil;     // Depth-stencil buffer 
-        Texture g_pRenderTarget;
-        Texture g_pNormals;
-        VertexBuffer g_pVBV3D;
+        
         //FinLuces
 
         List<Collider> objetosColisionables = new List<Collider>();
@@ -204,12 +201,14 @@ namespace AlumnoEjemplos.overflowDT
             personaje1.Init();
             personaje1.setPosition(new Vector3(1900f, 2f, -3209f));
             personaje1.setRotation(Geometry.DegreeToRadian(270f));
-           
+            personaje1.Enemigo = personaje2;
             personaje2 = new Personaje();
             personaje2.Init();
             personaje2.setPosition(new Vector3(1956f, 2f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
-            
+
+            personaje1.Enemigo = personaje2;
+            personaje2.Enemigo = personaje1;
             
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,

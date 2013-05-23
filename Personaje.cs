@@ -19,19 +19,22 @@ using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.Sound;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Collision.ElipsoidCollision;
+using System.Threading;
 
 namespace AlumnoEjemplos.overflowDT
 {
     class Personaje
     {
         ElipsoidCollisionManager collisionManager;
+        List<Collider> objCol = new List<Collider>();
         public TgcSkeletalMesh mesh;
         public Actions actions;
         public Vector3 movementVector=new Vector3 (30,0,0);
-        public Life life;
+        public int life=100;
         private string playername = "TGC Player";
-        
+        Personaje enemigo;
         List<Poder> poder = new List<Poder>();
+        Semaphore sem = new Semaphore(1, 1);
 
 
 
@@ -54,10 +57,25 @@ namespace AlumnoEjemplos.overflowDT
             get { return playername; }
             set { playername = value; }
         }
+        public Semaphore  Sem
+        {
+            get { return sem; }
+            set { sem = value; }
+        }
+        public Personaje Enemigo
+        {
+            get { return enemigo; }
+            set { enemigo = value; }
+        }
         public int Direccion
         {
             get { return direccion; }
             set { direccion = value; }
+        }
+        public List<Collider> ObjCol
+        {
+            get { return objCol; }
+            set { objCol = value; }
         }
         //end Get & Set
         
@@ -75,14 +93,7 @@ namespace AlumnoEjemplos.overflowDT
             public float moveForward;
         }
 
-        public struct Life
-        {
-            public TgcSprite lifebar;
-            public TgcSprite bloodybar;
-            public decimal healthpoints;
-            public decimal bloodypoints;
-            public TgcText2d hpText;
-        }
+        
 
         
 
@@ -115,8 +126,7 @@ namespace AlumnoEjemplos.overflowDT
            actions.jump = 0f;
            actions.hittimer = 0;
           // poder.powerhit = false;
-           life.healthpoints = 100;
-           life.bloodypoints = 100;
+         
            mesh.AutoUpdateBoundingBox = true;
            //Configurar animacion inicial
            mesh.playAnimation("Parado", true);
@@ -132,6 +142,16 @@ namespace AlumnoEjemplos.overflowDT
         {
         //comment
             
+        }
+        public void sacarPoder(Poder pow)
+        {
+            poder.Remove(pow);
+            pow.dispose();
+
+        }
+        public void restarVida(int vida)
+        {
+            if (vida >= 0) life-=vida;
         }
         public void setEffect(Effect ef)
         {
@@ -152,6 +172,7 @@ namespace AlumnoEjemplos.overflowDT
             Poder pow = new Poder();
             pow.Init(direccion, mesh.Position + new Vector3(0,3,0), new Vector3(40, 0, 0));
             poder.Add(pow);
+            pow.Owner = this;
 
         }
         public void setColor (Color color)
@@ -190,7 +211,10 @@ namespace AlumnoEjemplos.overflowDT
            // mesh.move(realMovement);
            // mesh.BoundingBox.Position = vec3;
             //spheres.GlobalSphere.moveCenter((mesh.Position.X - spheres.GlobalSphere.Position.X,); //= new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
-            
+            sem.WaitOne();
+            objCol.Clear();
+            //objCol.Add(BoundingBoxCollider.fromBoundingBox(enemigo.mesh.BoundingBox));
+            sem.Release();
             foreach (Poder pow in poder)
             {
                 pow.update(elapsedTime);
