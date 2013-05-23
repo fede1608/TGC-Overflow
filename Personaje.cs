@@ -120,8 +120,7 @@ namespace AlumnoEjemplos.overflowDT
            mesh.AutoUpdateBoundingBox = true;
            //Configurar animacion inicial
            mesh.playAnimation("Parado", true);
-
-
+          
 
 
 
@@ -133,6 +132,11 @@ namespace AlumnoEjemplos.overflowDT
         {
         //comment
             
+        }
+        public void setEffect(Effect ef)
+        {
+            //mesh.Effect = ef;
+
         }
         public void move(Vector3 movement)
         {

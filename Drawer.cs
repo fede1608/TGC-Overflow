@@ -48,9 +48,11 @@ namespace AlumnoEjemplos.overflowDT
         /// <param name="sprite">The sprite.</param>
         public void DrawSprite(Sprite sprite)
         {
-            DxSprite.Transform = sprite.TransformationMatrix;
-            DxSprite.Draw(sprite.Bitmap.Texture, sprite.SrcRect, Vector3.Empty, Vector3.Empty, sprite.Color);
-
+            if (sprite != null)
+            {
+                DxSprite.Transform = sprite.TransformationMatrix;
+                DxSprite.Draw(sprite.Bitmap.Texture, sprite.SrcRect, Vector3.Empty, Vector3.Empty, sprite.Color);
+            }
         }
 
         /// <summary>

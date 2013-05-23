@@ -67,9 +67,16 @@ namespace AlumnoEjemplos.overflowDT
         InterpoladorVaiven interp;
         Vector3[] origLightPos;
 
+
+        Surface g_pDepthStencil;     // Depth-stencil buffer 
+        Texture g_pRenderTarget;
+        Texture g_pNormals;
+        VertexBuffer g_pVBV3D;
         //FinLuces
 
         List<Collider> objetosColisionables = new List<Collider>();
+        List<Collider> objColtmp=new List<Collider>();
+        List<Collider> objColtmp2 = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
 
         TgcText2d clock1;
@@ -197,7 +204,7 @@ namespace AlumnoEjemplos.overflowDT
             personaje1.Init();
             personaje1.setPosition(new Vector3(1900f, 2f, -3209f));
             personaje1.setRotation(Geometry.DegreeToRadian(270f));
-
+           
             personaje2 = new Personaje();
             personaje2.Init();
             personaje2.setPosition(new Vector3(1956f, 2f, -3209f));
@@ -206,12 +213,9 @@ namespace AlumnoEjemplos.overflowDT
             
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
-                                                                           (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
-                                                                            personaje2.getPosition().Z),
-                                                               10, -40);
+                                                                            (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
+                                                                            personaje2.getPosition().Z), 10, -40);
             GuiController.Instance.ThirdPersonCamera.TargetDisplacement = new Vector3(0, 12, 0);
-
-
 
             //sprites
             Bitmap barra = new Bitmap(mediaMPath  + "//barras3.png", GuiController.Instance.D3dDevice);
@@ -220,10 +224,7 @@ namespace AlumnoEjemplos.overflowDT
             newSprite.Bitmap = barra;
             newSprite.SrcRect = new Rectangle(-25, -10, (int)spriteSize.X, (int)spriteSize.Y);
             newSprite.Scaling = new Vector2(0.9f, 0.7f);
-            newSprite2 = new Sprite();
-            newSprite2.Bitmap = barra;
-            newSprite2.SrcRect = new Rectangle( 0/*(int)(GuiController.Instance.D3dDevice.Viewport.Width * 0.5f)*/, 0, 600+(int)spriteSize.X, 600+(int)spriteSize.Y);
-            newSprite2.Scaling = new Vector2(-0.8f, 0.8f);
+            
 
             //fin sprites
 
@@ -247,7 +248,7 @@ namespace AlumnoEjemplos.overflowDT
 
             //Fintexts
 
-            //Luces
+            //Shader Luces
 
 
             effect = TgcShaders.loadEffect(mediaMPath + "Shaders\\MultiDiffuseLights.fx");
@@ -279,6 +280,9 @@ namespace AlumnoEjemplos.overflowDT
 
 
 
+          
+
+
 
             //Almacenar volumenes de colision del escenario
            // objetosColisionables.Clear();
@@ -297,7 +301,7 @@ namespace AlumnoEjemplos.overflowDT
                 }
             }
             
-            objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
+            //objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
            // objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(personaje2.Spheres.GlobalSphere));
             //Crear manejador de colisiones
             collisionManager = new ElipsoidCollisionManager();
@@ -373,22 +377,25 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1.update(elapsedTime);
             personaje2.update(elapsedTime);
-            
-                 
-     
 
+
+            //objColtmp = objetosColisionables;
+            //objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
+            
 
            /////LUCES
             Effect currentShader;
             String currentTechnique;
             currentShader = this.effect;
             currentTechnique = "MultiDiffuseLightsTechnique";
+            //currentShader =  TgcShaders.loadEffect(GuiController.Instance.ExamplesDir + "Shaders\\WorkshopShaders\\Shaders\\ToonShading.fx");
+            //currentTechnique = "DefaultTechnique";
             foreach (TgcMesh mesh in escenario.Meshes)
             {
                 mesh.Effect = currentShader;
                 mesh.Technique = currentTechnique;
             }
-            //personaje1.mesh.Effect = currentShader;
+           // personaje1.mesh.Effect = currentShader;
             //personaje2.mesh.Effect = currentShader;
 
             //personaje1.mesh.Technique = currentTechnique;
@@ -428,7 +435,7 @@ namespace AlumnoEjemplos.overflowDT
                 mesh.render();
             }
 
-
+           
             //Renderizar meshes de luz
             for (int i = 0; i < lightMeshes.Length; i++)
             {
@@ -438,7 +445,8 @@ namespace AlumnoEjemplos.overflowDT
 
 
             ////////FINLUCES
-
+             
+            
 
 
 
@@ -586,9 +594,19 @@ namespace AlumnoEjemplos.overflowDT
             //personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward, personaje1.actions.jump, 0f));
             //if (personaje1.actions.moving || personaje1.actions.jumping)
             //{
-                Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objetosColisionables);
+            objColtmp.Clear();
+            objColtmp2.Clear();
+            objetosColisionables.ForEach(delegate(Collider obj)
+            {
+                objColtmp.Add(obj);
+                objColtmp2.Add(obj);
                 
-                Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objetosColisionables);
+                });
+            objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
+            objColtmp2.Add(BoundingBoxCollider.fromBoundingBox(personaje1.mesh.BoundingBox));
+
+                Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objColtmp);
+                Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objColtmp2);
                 if (realMovement != new Vector3(0f,0f,0f)) personaje1.move(realMovement);
                 if (realMovement2 != new Vector3(0f,0f,0f)) personaje2.move(realMovement2);
             //}
