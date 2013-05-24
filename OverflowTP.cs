@@ -471,19 +471,34 @@ namespace AlumnoEjemplos.overflowDT
             //izquierda
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
             {
-                personaje1.actions.moveForward = -velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
+                personaje1.actions.moveForward = -velocidadCaminar * elapsedTime;
                 personaje1.actions.moving = true;
-                personaje1.mesh.playAnimation("CaminandoRev", true);
+                if (personaje1.Direccion == 1)
+                {
+                    personaje1.mesh.playAnimation("CaminandoRev", true);
+                }
+                else
+                {
+                    personaje1.mesh.playAnimation("Caminando", true);
+                }
             }
             //derecha
             else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
             {
-                personaje1.actions.moveForward = velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
+                personaje1.actions.moveForward = velocidadCaminar * elapsedTime;
                 personaje1.actions.moving = true;
-                personaje1.mesh.playAnimation("Caminando", true);
-
+                
+                if (personaje1.Direccion == 1)
+                {
+                    personaje1.mesh.playAnimation("Caminando", true);
+                }
+                else
+                {
+                    
+                    personaje1.mesh.playAnimation("CaminandoRev", true);
+                }
             }
-                //ninguna de las dos
+            //ninguna de las dos
             else
             {
                 personaje1.actions.moveForward = 0;
@@ -527,16 +542,33 @@ namespace AlumnoEjemplos.overflowDT
             //izquierda
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.LeftArrow))
             {
-                personaje2.actions.moveForward = velocidadCaminar * elapsedTime * (float)personaje2.Direccion;
+                personaje2.actions.moveForward = -velocidadCaminar * elapsedTime;
                 personaje2.actions.moving = true;
-                personaje2.mesh.playAnimation("CaminandoRev", true);
+                
+                if (personaje2.Direccion == -1)
+                {
+                    personaje2.mesh.playAnimation("Caminando", true);
+                }
+                else
+                {
+
+                    personaje2.mesh.playAnimation("CaminandoRev", true);
+                }
             }
             //derecha
             else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.RightArrow))
             {
-                personaje2.actions.moveForward = -velocidadCaminar * elapsedTime * (float)personaje2.Direccion;
+                personaje2.actions.moveForward = velocidadCaminar * elapsedTime;
                 personaje2.actions.moving = true;
-                personaje2.mesh.playAnimation("Caminando", true);
+                if (personaje2.Direccion == -1)
+                {
+                    personaje2.mesh.playAnimation("CaminandoRev", true);
+                }
+                else
+                {
+                    personaje2.mesh.playAnimation("Caminando", true);
+                    
+                }
 
             }
             //ninguna de las dos
@@ -616,7 +648,7 @@ namespace AlumnoEjemplos.overflowDT
 
 
             //settear uservars
-            GuiController.Instance.UserVars.setValue("velocidadX", (personaje1.actions.moveForward*1/elapsedTime));
+            GuiController.Instance.UserVars.setValue("velocidadX", (personaje2.Direccion));
             GuiController.Instance.UserVars.setValue("camX", GuiController.Instance.ThirdPersonCamera.Position.X);
             GuiController.Instance.UserVars.setValue("camY", GuiController.Instance.ThirdPersonCamera.Position.Y);
             //GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.ThirdPersonCamera.Position.Z);
@@ -628,6 +660,21 @@ namespace AlumnoEjemplos.overflowDT
                                                                            (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
                                                                             personaje2.getPosition().Z),
                                                                             13, (offsetforward < -40 ? offsetforward : -40));
+
+            if ((personaje1.getPosition().X - personaje2.getPosition().X) > 0 && personaje1.Direccion != -1)
+            {
+                personaje1.Direccion = -1;
+                personaje2.Direccion = -1;
+                personaje1.setRotation(Geometry.DegreeToRadian(180f));
+                personaje2.setRotation(Geometry.DegreeToRadian(180f));
+            }
+            else if ((personaje1.getPosition().X - personaje2.getPosition().X) < 0 && personaje1.Direccion != 1)
+            {
+                personaje1.Direccion = 1;
+                personaje2.Direccion = -1;
+                personaje2.setRotation(Geometry.DegreeToRadian(180f));
+                personaje1.setRotation(Geometry.DegreeToRadian(180f));
+            }
 
         }
 
