@@ -471,14 +471,14 @@ namespace AlumnoEjemplos.overflowDT
             //izquierda
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
             {
-                personaje1.actions.moveForward = velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
+                personaje1.actions.moveForward = -velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
                 personaje1.actions.moving = true;
                 personaje1.mesh.playAnimation("CaminandoRev", true);
             }
             //derecha
             else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
             {
-                personaje1.actions.moveForward = -velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
+                personaje1.actions.moveForward = velocidadCaminar * elapsedTime * (float)personaje1.Direccion;
                 personaje1.actions.moving = true;
                 personaje1.mesh.playAnimation("Caminando", true);
 

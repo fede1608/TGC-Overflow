@@ -34,9 +34,9 @@ namespace AlumnoEjemplos.overflowDT
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();
         Personaje owner;
-        ElipsoidCollisionManager collisionManager;
+        ElipsoidCollisionManager collisionManager = new ElipsoidCollisionManager();
         Vector3 realmove;
-
+        
         public Personaje Owner
         {
             get { return owner; }
@@ -52,17 +52,18 @@ namespace AlumnoEjemplos.overflowDT
                    new string[] { fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\" + "ball-TgcKeyFrameAnim.xml", });
             mesh.Scale = new Vector3(0.1f, 0.1f, 0.1f);
             mesh.Position = pos;
-            movementVector = mov;
-            mesh.rotateY(Geometry.DegreeToRadian(mov.X  > 0 ? 0f : -180f));
+            movementVector = mov*direccion;
+            mesh.rotateY(Geometry.DegreeToRadian(direccion==1? 0f : -180f));
             globalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(mesh.BoundingBox.calculateAxisRadius().Y,mesh.BoundingBox.calculateAxisRadius().Y,mesh.BoundingBox.calculateAxisRadius().Y));
         }
         public void update(float elapsedTime)
         {
-            owner.Sem.WaitOne();
+            //owner.Sem.WaitOne();
             realmove = collisionManager.moveCharacter(globalSphere, (movementVector * elapsedTime), owner.ObjCol);
-            owner.Sem.Release();
-            mesh.move(realmove);
-            globalSphere.moveCenter(movementVector * elapsedTime);
+            
+            //owner.Sem.Release();
+            mesh.move(movementVector * elapsedTime);
+            //globalSphere.moveCenter(realmove);
             if (collisionManager.Result.collisionFound)
             {
                 owner.Enemigo.restarVida(4);
@@ -74,6 +75,7 @@ namespace AlumnoEjemplos.overflowDT
         public void render(float elapsedTime)
     {
         mesh.animateAndRender();
+        mesh.BoundingBox.render();
         globalSphere.render();
     }
         public void dispose()

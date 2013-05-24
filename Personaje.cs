@@ -171,9 +171,8 @@ namespace AlumnoEjemplos.overflowDT
         {
             Poder pow = new Poder();
             pow.Init(direccion, mesh.Position + new Vector3(0,3,0), new Vector3(40, 0, 0));
-            poder.Add(pow);
             pow.Owner = this;
-
+            poder.Add(pow);
         }
         public void setColor (Color color)
         {
@@ -197,7 +196,7 @@ namespace AlumnoEjemplos.overflowDT
         {
         //setea la rotacion del pj
          mesh.rotateY(radianes);
-         direccion = (radianes == 270) ? 1 : -1; ;
+         direccion = (radianes == Geometry.DegreeToRadian(270f)) ? 1 : -1; ;
         }
 
 
@@ -211,10 +210,10 @@ namespace AlumnoEjemplos.overflowDT
            // mesh.move(realMovement);
            // mesh.BoundingBox.Position = vec3;
             //spheres.GlobalSphere.moveCenter((mesh.Position.X - spheres.GlobalSphere.Position.X,); //= new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
-            sem.WaitOne();
+            //sem.WaitOne();
             objCol.Clear();
-            //objCol.Add(BoundingBoxCollider.fromBoundingBox(enemigo.mesh.BoundingBox));
-            sem.Release();
+            objCol.Add(BoundingBoxCollider.fromBoundingBox(enemigo.mesh.BoundingBox));
+            //sem.Release();
             foreach (Poder pow in poder)
             {
                 pow.update(elapsedTime);
