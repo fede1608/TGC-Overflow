@@ -120,7 +120,7 @@ namespace AlumnoEjemplos.overflowDT
             
            mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, fightGameManager.TexturePath + "uvw.jpg") });
            spheres.getVerticesForBox(fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml", mesh);
-           mesh.AutoUpdateBoundingBox = false;
+           
            spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(),new Vector3(2,mesh.BoundingBox.calculateBoxRadius(),2));
            //spheres.GlobalSphere = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), mesh.BoundingBox.calculateBoxRadius());
            actions.jump = 0f;
@@ -219,6 +219,19 @@ namespace AlumnoEjemplos.overflowDT
                 pow.update(elapsedTime);
                 
             }
+            poder.RemoveAll(
+                delegate(Poder pow)
+                {
+                    if (pow.globalSphere.Center.X > 2212 || pow.globalSphere.Center.X < 1777)
+                    {
+                        pow.dispose();
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+
+             );
         }
         public void render(float elapsedTime)
         {

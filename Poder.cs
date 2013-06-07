@@ -35,7 +35,7 @@ namespace AlumnoEjemplos.overflowDT
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();
         Personaje owner;
         ElipsoidCollisionManager collisionManager = new ElipsoidCollisionManager();
-        Vector3 realmove;
+        public int dir;
         
         public Personaje Owner
         {
@@ -46,6 +46,7 @@ namespace AlumnoEjemplos.overflowDT
         BoundingMultiSphere spheres = new BoundingMultiSphere();
         public void Init(int direccion, Vector3 pos, Vector3 mov)
         {
+            dir = direccion;
             mesh = keyFrameLoader.loadMeshAndAnimationsFromFile(
                    fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\" + "ball-TgcKeyFrameMesh.xml",
                    fightGameManager.MediaMPath + "SkeletalAnimations\\Robot\\",
@@ -59,15 +60,16 @@ namespace AlumnoEjemplos.overflowDT
         public void update(float elapsedTime)
         {
             //owner.Sem.WaitOne();
-            realmove = collisionManager.moveCharacter(globalSphere, (movementVector * elapsedTime), owner.ObjCol);
+            //realmove = collisionManager.moveCharacter(globalSphere, (movementVector * elapsedTime), owner.ObjCol);
             
             //owner.Sem.Release();
             mesh.move(movementVector * elapsedTime);
-            //globalSphere.moveCenter(realmove);
-            if (collisionManager.Result.collisionFound)
+            globalSphere.moveCenter(movementVector * elapsedTime);
+            if (globalSphere.Center.X*dir>owner.Enemigo.getPosition().X*dir)
             {
                 owner.Enemigo.restarVida(4);
-                owner.sacarPoder(this);
+                disappear();
+                //owner.sacarPoder(this);
             }
         }
 
@@ -82,6 +84,11 @@ namespace AlumnoEjemplos.overflowDT
         {
             mesh.dispose();
             globalSphere.dispose();
+        }
+        public void disappear()
+        {
+            mesh.move(movementVector * 10000);
+            globalSphere.moveCenter(movementVector * 10000);
         }
     }
 }
