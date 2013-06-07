@@ -25,7 +25,7 @@ namespace AlumnoEjemplos.overflowDT
 {
     class Personaje
     {
-        ElipsoidCollisionManager collisionManager;
+        //ElipsoidCollisionManager collisionManager;
         List<Collider> objCol = new List<Collider>();
         public TgcSkeletalMesh mesh;
         public Actions actions;
@@ -34,17 +34,12 @@ namespace AlumnoEjemplos.overflowDT
         private string playername = "TGC Player";
         Personaje enemigo;
         List<Poder> poder = new List<Poder>();
-        Semaphore sem = new Semaphore(1, 1);
-
-
-
         FightGameManager fightGameManager = new FightGameManager();
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();
         int direccion = 1;
         Device d3dDevice = GuiController.Instance.D3dDevice;
         BoundingMultiSphere spheres = new BoundingMultiSphere();
-        
 
         //Getters y Setters
         public BoundingMultiSphere Spheres
@@ -57,11 +52,7 @@ namespace AlumnoEjemplos.overflowDT
             get { return playername; }
             set { playername = value; }
         }
-        public Semaphore  Sem
-        {
-            get { return sem; }
-            set { sem = value; }
-        }
+        
         public Personaje Enemigo
         {
             get { return enemigo; }
@@ -210,15 +201,16 @@ namespace AlumnoEjemplos.overflowDT
            // mesh.move(realMovement);
            // mesh.BoundingBox.Position = vec3;
             //spheres.GlobalSphere.moveCenter((mesh.Position.X - spheres.GlobalSphere.Position.X,); //= new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
-            //sem.WaitOne();
+            
             objCol.Clear();
             objCol.Add(BoundingBoxCollider.fromBoundingBox(enemigo.mesh.BoundingBox));
-            //sem.Release();
+            
             foreach (Poder pow in poder)
             {
                 pow.update(elapsedTime);
                 
             }
+            //remover poderes fuera del rango del escenario
             poder.RemoveAll(
                 delegate(Poder pow)
                 {
@@ -230,9 +222,21 @@ namespace AlumnoEjemplos.overflowDT
                     else
                         return false;
                 }
+                );
+            //update multispheres
+            foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par in spheres.Bones)
+            {
+                Vector3 vr = mesh.getBoneByName(par.Key).StartPosition;
+                Matrix transf = par.Value.offset
+                              * mesh.getBoneByName(par.Key).MatFinal
+                              * Matrix.RotationYawPitchRoll(mesh.Rotation.Y, 0, 0)
+                              * Matrix.Translation(mesh.Position);
 
-             );
+                par.Value.bonesphere.setCenter(Vector3.TransformCoordinate(vr, transf));
+            }
         }
+
+
         public void render(float elapsedTime)
         {
             mesh.animateAndRender();
@@ -243,6 +247,11 @@ namespace AlumnoEjemplos.overflowDT
                     pow.render(elapsedTime);
 
                 }
+            //render multispheres
+            foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par in spheres.Bones)
+            {
+                par.Value.bonesphere.render();
+            }
             
         }
     }
