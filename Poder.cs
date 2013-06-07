@@ -65,11 +65,14 @@ namespace AlumnoEjemplos.overflowDT
             //owner.Sem.Release();
             mesh.move(movementVector * elapsedTime);
             globalSphere.moveCenter(movementVector * elapsedTime);
-            if (globalSphere.Center.X*dir>owner.Enemigo.getPosition().X*dir)
+            if ((globalSphere.Center.X * dir > owner.Enemigo.getPosition().X * dir - 2) & (globalSphere.Center.X * dir < owner.Enemigo.getPosition().X * dir + 2 ))
             {
-                owner.Enemigo.restarVida(4);
-                disappear();
-                //owner.sacarPoder(this);
+                if (globalSphere.Center.Y > owner.Enemigo.getPosition().Y)
+                {
+                    owner.Enemigo.restarVida(4);
+                    disappear();
+                    //owner.sacarPoder(this);
+                }
             }
         }
 
