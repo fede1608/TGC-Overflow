@@ -110,7 +110,7 @@ namespace AlumnoEjemplos.overflowDT
            
             
            mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, fightGameManager.TexturePath + "uvw.jpg") });
-           spheres.getVerticesForBox(fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml", mesh);
+           spheres.getVerticesForBox(fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml", mesh,0.05f);
            
            spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(),new Vector3(2,mesh.BoundingBox.calculateBoxRadius(),2));
            //spheres.GlobalSphere = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), mesh.BoundingBox.calculateBoxRadius());
@@ -227,12 +227,15 @@ namespace AlumnoEjemplos.overflowDT
             foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par in spheres.Bones)
             {
                 Vector3 vr = mesh.getBoneByName(par.Key).StartPosition;
-                Matrix transf = par.Value.offset
+                //mesh.getBoneByName(par.Key).MatFinal.Scale(new Vector3(0.05f, 0.05f, 0.05f));
+                Matrix transf =  par.Value.offset
                               * mesh.getBoneByName(par.Key).MatFinal
-                              * Matrix.RotationYawPitchRoll(mesh.Rotation.Y, 0, 0)
+                              * Matrix.RotationYawPitchRoll(mesh.Rotation.Y, 0, 0)  
                               * Matrix.Translation(mesh.Position);
-
-                par.Value.bonesphere.setCenter(Vector3.TransformCoordinate(vr, transf));
+                //transf.Scale(new Vector3(0.05f, 0.05f, 0.05f));
+                Vector3 center = Vector3.TransformCoordinate(vr, transf);
+                
+                par.Value.bonesphere.setCenter(center);
             }
         }
 

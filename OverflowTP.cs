@@ -175,7 +175,7 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.RotCamera.Enable = true;
             //Configurar centro al que se mira y distancia desde la que se mira
             //GuiController.Instance.RotCamera.setCamera(new Vector3(0, 500, 1500), 500);
-           // GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 0);
+            //GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 0);
 
             
             ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
@@ -185,6 +185,7 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.FpsCamera.Enable = true;
             //Configurar posicion y hacia donde se mira
             GuiController.Instance.FpsCamera.setCamera(new Vector3(1942, 9, -3257), new Vector3(0, 0, 0));
+          //  GuiController.Instance.FpsCamera.setCamera(new Vector3(10, 10, 10), new Vector3(0, 0, 0));
             //Configurar camara en estado inicial
             
 

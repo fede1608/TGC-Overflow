@@ -23,6 +23,8 @@ namespace AlumnoEjemplos.overflowDT
     {
         #region Variables
 
+        float scale;
+
         public struct Sphere
         {
             public TgcBoundingSphere bonesphere;
@@ -64,10 +66,11 @@ namespace AlumnoEjemplos.overflowDT
         /// </summary>
         /// <param name="filePath"> Direccion absoluta del XML del mesh</param>
         /// <param name="pj"> SkeletalMesh previamente cargado</param>
-        public void getVerticesForBox(string filePath, TgcSkeletalMesh pj)
+        public void getVerticesForBox(string filePath, TgcSkeletalMesh pj, float escala)
         {
             try
             {
+                scale = escala;
                 string xmlString = File.ReadAllText(filePath);
                 XmlDocument dom = new XmlDocument();
                 dom.LoadXml(xmlString);
@@ -97,7 +100,12 @@ namespace AlumnoEjemplos.overflowDT
                 }
 
                 pj.playAnimation("Cruz", true);
-                vertices = updateBMSvertex(pj.getVertexPositions(), order, vertices.Length);
+                Vector3[] vert = pj.getVertexPositions();
+               // for (int cont = 0; cont < vert.Length; cont++)
+               // {
+               //     vert[cont] = Vector3.Scale(vert[cont], 0.05f);
+               // }
+                vertices = updateBMSvertex(vert, order, vertices.Length);
 
                 XmlNode skeletonNode = meshNode.GetElementsByTagName("skeleton")[0];
                 TgcSkeletalBoneData[] bonesData = new TgcSkeletalBoneData[skeletonNode.ChildNodes.Count];
@@ -109,9 +117,13 @@ namespace AlumnoEjemplos.overflowDT
                 int[][] vweight = new int[bonesname.Length][];
                 Vector3[] aux = parseFAtoV3A(TgcParserUtils.parseFloatStream(weightsNode.InnerText, int.Parse(weightsNode.Attributes["count"].InnerText)));
                 List<int> grupo;
-
+                //for (int cont = 0; cont < count; cont++)
+                //{
+                //    vertices[cont] = Vector3.Scale(vertices[cont], scale);
+                //}
                 for (int i = 0; i < bonesname.Length; i++)
                 {
+                    vertices[i] = vertices[i]* scale;
                     Sphere bonny = new Sphere();
                     bonny.vertexreferidx = -1;
                     grupo = new List<int>();
@@ -125,20 +137,22 @@ namespace AlumnoEjemplos.overflowDT
                         }
                     }
                     vweight[i] = grupo.ToArray();
+                   
                     TgcBoundingBox auxbox = new TgcBoundingBox(getPointMin(vertices, vweight[i]),
                                                                getPointMax(vertices, vweight[i]));
+                    //auxbox.scaleTranslate(new Vector3(0,0,0), new Vector3(0.05f,0.05f,0.05f));
                     float radius = FastMath.Max(FastMath.Max(auxbox.calculateAxisRadius().X,
                                                              auxbox.calculateAxisRadius().Y),
                                                 auxbox.calculateAxisRadius().Z);
 
                     TgcSkeletalBone meshbone = pj.getBoneByName(bonesname[i]);
-                    bonny.bonesphere = new TgcBoundingSphere(auxbox.calculateBoxCenter(), radius);
+                    bonny.bonesphere = new TgcBoundingSphere(auxbox.calculateBoxCenter() , radius*0.05f);
 
                     Vector3 vv = pj.getBoneByName(bonesname[i]).StartPosition;
                     Vector3 vc = bonny.bonesphere.Center;
                     vc = Vector3.TransformCoordinate(vc, Matrix.Invert(meshbone.MatFinal));
                     bonny.offset = Matrix.Translation(vc - vv);
-
+                    //bonny.offset.Scale(new Vector3(0.05f,0.05f,0.05f));
                     this.bones.Add(bonesname[i], bonny);
                 }
             }
