@@ -465,12 +465,26 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
 
             ///////////////INPUT//////////////////
-            //conviene deshabilitar ambas camaras para que no haya interferencia
+            //Capturar Input teclado
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
+            {
+                personaje1.mesh.playAnimation("Pegar", false);
+                personaje1.actions.punch = true;
 
-            //Capturar Input teclado 
+                //Tecla G apretada
+
+            }
+            
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
+            {
+                personaje1.mesh.playAnimation("Patear", false);
+                //Tecla H apretada
+
+            }
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
             {
                 //Tecla F apretada
+                personaje1.mesh.playAnimation("Arrojar", false);
                 personaje1.tirarPoder();
             }
             //izquierda

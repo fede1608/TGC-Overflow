@@ -52,7 +52,8 @@ namespace AlumnoEjemplos.overflowDT
             get { return playername; }
             set { playername = value; }
         }
-        
+
+           
         public Personaje Enemigo
         {
             get { return enemigo; }
@@ -234,7 +235,11 @@ namespace AlumnoEjemplos.overflowDT
                               * Matrix.Translation(mesh.Position);
                 //transf.Scale(new Vector3(0.05f, 0.05f, 0.05f));
                 Vector3 center = Vector3.TransformCoordinate(vr, transf);
-                
+                //magic happen in your brain while pooping 
+                center = center - mesh.Position;
+                center = center * 0.05f;
+                center = center + mesh.Position;
+                //here ends magic
                 par.Value.bonesphere.setCenter(center);
             }
         }
