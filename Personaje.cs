@@ -235,9 +235,10 @@ namespace AlumnoEjemplos.overflowDT
                               * Matrix.Translation(mesh.Position);
                 //transf.Scale(new Vector3(0.05f, 0.05f, 0.05f));
                 Vector3 center = Vector3.TransformCoordinate(vr, transf);
-                //magic happen in your brain while pooping 
+                //magic happens in your brain while pooping 
                 center = center - mesh.Position;
                 center = center * 0.05f;
+                if(par.Key=="Bip01 R Hand"||par.Key=="Bip01 L Hand"||par.Key=="Bip01 R Forearm"||par.Key=="Bip01 L Forearm"||par.Key=="Bip01 R UpperArm"||par.Key=="Bip01 L UpperArm") center.X *= -1;
                 center = center + mesh.Position;
                 //here ends magic
                 par.Value.bonesphere.setCenter(center);

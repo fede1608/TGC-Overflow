@@ -479,13 +479,14 @@ namespace AlumnoEjemplos.overflowDT
             {
                 personaje1.mesh.playAnimation("Patear", false);
                 //Tecla H apretada
-
+                personaje1.actions.kick = true;
             }
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
             {
                 //Tecla F apretada
                 personaje1.mesh.playAnimation("Arrojar", false);
                 personaje1.tirarPoder();
+                personaje1.actions.power = true;
             }
             //izquierda
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
