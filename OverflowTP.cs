@@ -155,6 +155,8 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.UserVars.addVar("camZ");
             GuiController.Instance.UserVars.addVar("Movement");
             GuiController.Instance.UserVars.addVar("Position");
+            GuiController.Instance.UserVars.addVar("Vida1");
+            GuiController.Instance.UserVars.addVar("Vida2");
             //Cargar valor en UserVar
             GuiController.Instance.UserVars.setValue("velocidadX", 0);
             GuiController.Instance.UserVars.setValue("camX", 0);
@@ -162,6 +164,8 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.UserVars.setValue("camZ", 0);
             GuiController.Instance.UserVars.setValue("Movement", 0);
             GuiController.Instance.UserVars.setValue("Position", 0);
+            GuiController.Instance.UserVars.setValue("Vida1", 100);
+            GuiController.Instance.UserVars.setValue("Vida2", 100);
 
             ///////////////MODIFIERS//////////////////
 
@@ -182,7 +186,7 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.RotCamera.Enable = true;
             //Configurar centro al que se mira y distancia desde la que se mira
             //GuiController.Instance.RotCamera.setCamera(new Vector3(0, 500, 1500), 500);
-           // GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 0);
+            //GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 0);
 
             
             ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
@@ -192,6 +196,7 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.FpsCamera.Enable = true;
             //Configurar posicion y hacia donde se mira
             GuiController.Instance.FpsCamera.setCamera(new Vector3(1942, 9, -3257), new Vector3(0, 0, 0));
+          //  GuiController.Instance.FpsCamera.setCamera(new Vector3(10, 10, 10), new Vector3(0, 0, 0));
             //Configurar camara en estado inicial
             
 
@@ -852,12 +857,26 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
 
             ///////////////INPUT//////////////////
-            //conviene deshabilitar ambas camaras para que no haya interferencia
+            //Capturar Input teclado
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
+            {
+                personaje1.mesh.playAnimation("Pegar", false);
+                personaje1.actions.punch = true;
 
-            //Capturar Input teclado 
+                //Tecla G apretada
+
+            }
+            
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
+            {
+                personaje1.mesh.playAnimation("Patear", false);
+                //Tecla H apretada
+
+            }
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
             {
                 //Tecla F apretada
+                personaje1.mesh.playAnimation("Arrojar", false);
                 personaje1.tirarPoder();
 
 
@@ -875,6 +894,7 @@ namespace AlumnoEjemplos.overflowDT
                 {
                     personaje1.mesh.playAnimation("Caminando", true);
                 }
+                //personaje1.mesh.AutoUpdateBoundingBox = true;
             }
             //derecha
             else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
@@ -891,12 +911,14 @@ namespace AlumnoEjemplos.overflowDT
                     
                     personaje1.mesh.playAnimation("CaminandoRev", true);
                 }
+                //personaje1.mesh.AutoUpdateBoundingBox = true;
             }
             //ninguna de las dos
             else
             {
                 personaje1.actions.moveForward = 0;
                 personaje1.actions.moving = false;
+                //personaje1.mesh.AutoUpdateBoundingBox = false;
                 personaje1.mesh.playAnimation("Parado", true);
             }
 
@@ -1033,8 +1055,9 @@ namespace AlumnoEjemplos.overflowDT
 
                 Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objColtmp);
                 Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objColtmp2);
-                if (realMovement != new Vector3(0f,0f,0f)) personaje1.move(realMovement);
-                if (realMovement2 != new Vector3(0f,0f,0f)) personaje2.move(realMovement2);
+                 personaje1.move(realMovement);
+                //if (realMovement2 != new Vector3(0f,0f,0f)) 
+                personaje2.move(realMovement2);
             //}
             personaje1.render(elapsedTime);
             personaje2.render(elapsedTime);
@@ -1049,6 +1072,8 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.ThirdPersonCamera.Position.Z);
             GuiController.Instance.UserVars.setValue("Movement", TgcParserUtils.printVector3(realMovement));
             GuiController.Instance.UserVars.setValue("Position", TgcParserUtils.printVector3(personaje1.getPosition()));
+            GuiController.Instance.UserVars.setValue("Vida1", personaje1.life);
+            GuiController.Instance.UserVars.setValue("Vida2", personaje2.life);
 
             float offsetforward = Math.Abs(personaje2.getPosition().X - personaje1.getPosition().X) / (-2) - (10+(personaje2.getPosition().X - personaje1.getPosition().X)/10);
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,

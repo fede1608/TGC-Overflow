@@ -1,0 +1,63 @@
+<tgcScene>
+  <name>CuartoLucha</name>
+  <texturesExport enabled="True" dir="Textures" />
+  <lightmapExport enabled="False" dir="LightMaps" />
+  <sceneBoundingBox min="[-1200,0,-300]" max="[1200,1000,300]" />
+  <materials count="3">
+    <m name="Standardmaterial" type="Standardmaterial">
+      <ambient>[0,0,0,0]</ambient>
+      <diffuse>[0,0,0,0]</diffuse>
+      <specular>[0,0,0,0]</specular>
+      <opacity>1</opacity>
+      <alphaBlendEnable>False</alphaBlendEnable>
+      <bitmap uvTiling="[1,1]" uvOffset="[1,1]">floor.jpg</bitmap>
+    </m>
+  </materials>
+  <meshes count="3">
+    <mesh name="Room-1-Floor-0" layer="" type="Original" matId="0" color="[1,1,1]" visibility="1.0" lightmap="">
+      <boundingBox min="[-1200,0,-600]" max="[1200,5,600]" />
+      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
+      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
+      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
+      <matIds count="1">0 </matIds>
+      <textCoordsLightMapIdx count="0">
+      </textCoordsLightMapIdx>
+      <vertices count="12">-1200 0 -600 1199.999 0 -600 1199.999 0 600 -1200 0 600 </vertices>
+      <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
+      <texCoords count="8">8 8 0 8 0 0 8 0 </texCoords>
+      <colors count="3">255 255 255 </colors>
+      <texCoordsLightMap count="0">
+      </texCoordsLightMap>
+    </mesh>
+    <mesh name="Room-1-East-0" layer="" type="Original" matId="0" color="[1,1,1]" visibility="1.0" lightmap="">
+      <boundingBox min="[1200,0,-300]" max="[1200,1000,300]" />
+      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
+      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
+      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
+      <matIds count="1">0 </matIds>
+      <textCoordsLightMapIdx count="0">
+      </textCoordsLightMapIdx>
+      <vertices count="12">1199.999 0 -300 1199.999 0 300 1199.999 1000 300 1199.999 1000 -300 </vertices>
+      <normals count="12">-1 0 0 -1 0 0 -1 0 0 -1 0 0 </normals>
+      <texCoords count="8">8 8 0 8 0 0 8 0 </texCoords>
+      <colors count="3">255 255 255 </colors>
+      <texCoordsLightMap count="0">
+      </texCoordsLightMap>
+    </mesh>
+    <mesh name="Room-1-West-0" layer="" type="Original" matId="0" color="[1,1,1]" visibility="1.0" lightmap="">
+      <boundingBox min="[-1200,0,-300]" max="[-1200,1000,300]" />
+      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
+      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
+      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
+      <matIds count="1">0 </matIds>
+      <textCoordsLightMapIdx count="0">
+      </textCoordsLightMapIdx>
+      <vertices count="12">-1200 0 -300 -1200 0 300 -1200 1000 300 -1200 1000 -300 </vertices>
+      <normals count="12">-1 0 0 -1 0 0 -1 0 0 -1 0 0 </normals>
+      <texCoords count="8">8 8 0 8 0 0 8 0 </texCoords>
+      <colors count="3">255 255 255 </colors>
+      <texCoordsLightMap count="0">
+      </texCoordsLightMap>
+    </mesh>
+  </meshes>
+</tgcScene>
