@@ -1106,8 +1106,9 @@ namespace AlumnoEjemplos.overflowDT
         {
 
         }
-
-        ///AUXILIARES
+        #region METODOS AUXILIARES
+        ///METODOS AUXILIARES
+        
         public void loadMp3(string filePath)
         {
             if (musicFile == null || musicFile != filePath)
@@ -1142,5 +1143,6 @@ namespace AlumnoEjemplos.overflowDT
                 sound.loadSound(soundFile);
             }
         }
+        #endregion
     }
 }
