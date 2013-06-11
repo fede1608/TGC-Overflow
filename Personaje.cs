@@ -37,7 +37,6 @@ namespace AlumnoEjemplos.overflowDT
         Semaphore sem = new Semaphore(1, 1);
 
 
-
         FightGameManager fightGameManager = new FightGameManager();
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();

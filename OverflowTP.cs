@@ -14,6 +14,8 @@ using TgcViewer.Utils.Shaders;
 using TgcViewer.Utils.Interpolation;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils._2D;
+using TgcViewer.Utils.Sound;
+
 
 
 namespace AlumnoEjemplos.overflowDT
@@ -61,16 +63,25 @@ namespace AlumnoEjemplos.overflowDT
         Personaje personaje1;
         Personaje personaje2;
 
+        #region 4LUCES
         //luces
         Effect effect;
         TgcBox[] lightMeshes;
         InterpoladorVaiven interp;
         Vector3[] origLightPos;
-
-
-        
         //FinLuces
+        #endregion
 
+        #region SONIDO
+        //Sonido
+        TgcMp3Player player = GuiController.Instance.Mp3Player;
+        TgcStaticSound sound;   
+        string musicFile;
+        string soundFile=null;
+        int match=0;
+        TgcSprite banner;
+        //Fin Sonido
+        #endregion
         List<Collider> objetosColisionables = new List<Collider>();
         List<Collider> objColtmp=new List<Collider>();
         List<Collider> objColtmp2 = new List<Collider>();
@@ -247,28 +258,27 @@ namespace AlumnoEjemplos.overflowDT
 
             //Fintexts
 
+            #region 4LUCES
             //Shader Luces
-
-
             effect = TgcShaders.loadEffect(mediaMPath + "Shaders\\MultiDiffuseLights.fx");
 
 
             //Crear 4 mesh para representar las 4 para la luces. Las ubicamos en distintas posiciones del escenario, cada una con un color distinto.
             lightMeshes = new TgcBox[4];
             origLightPos = new Vector3[lightMeshes.Length];
-            Color[] c = new Color[5] { Color.Red, Color.Blue, Color.Green, Color.Yellow,Color.Violet };
+            Color[] c = new Color[6] {Color.LightYellow, Color.Red, Color.Blue, Color.Green, Color.Yellow,Color.Violet };
             for (int i = 0; i < lightMeshes.Length; i++)
             {
                 Color co = c[i % c.Length];
                 lightMeshes[i] = TgcBox.fromSize(new Vector3(5, 5, 5), co);
                 
             }
-            origLightPos[0] = new Vector3(1880f, 70f, -3169f);//-40, 20 + i * 20, 400);
-            origLightPos[1] = new Vector3(1880f, 70f, -3249f);//-40, 20 + i * 20, 400);
-            origLightPos[2] = new Vector3(1960f, 70f, -3169f);//-40, 20 + i * 20, 400);
-            origLightPos[3] = new Vector3(1960f, 70f, -3249f);
-           
-
+            //origLightPos[0] = new Vector3(1880f, 70f, -3169f);//-40, 20 + i * 20, 400);
+            //origLightPos[1] = new Vector3(1880f, 70f, -3249f);//-40, 20 + i * 20, 400);
+            //origLightPos[2] = new Vector3(1960f, 70f, -3169f);//-40, 20 + i * 20, 400);
+            //origLightPos[3] = new Vector3(1960f, 70f, -3249f);
+            origLightPos[0] = new Vector3(1910f, 70f, -3249f);//-40, 20 + i * 20, 400);
+            
             //Interpolador para mover las luces de un lado para el otro
             interp = new InterpoladorVaiven();
             interp.Min = -100f;
@@ -276,13 +286,8 @@ namespace AlumnoEjemplos.overflowDT
             interp.Speed = 50f;
             interp.Current = 0f;
             //Fin Luces
-
-
-
-          
-
-
-
+            #endregion
+            
             //Almacenar volumenes de colision del escenario
            // objetosColisionables.Clear();
             foreach (TgcMesh mesh in escenario.Meshes)
@@ -354,11 +359,398 @@ namespace AlumnoEjemplos.overflowDT
         /// </summary>
         /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
         
+
         public override void render(float elapsedTime)
         {
             time1 += elapsedTime;
             if (time1 >= 1) update(elapsedTime);
 
+            #region SONIDO Y BANNERS
+            switch (match)
+            {
+                case 0://Inicia el combate
+                    #region Initial Fight Set
+
+                    //Cargo sonido y muestro el banner correspondiente
+                    loadMp3(mediaMPath + "Music\\Final_Round.mp3");
+                    if (player.getStatus() == TgcMp3Player.States.Open)
+                    {
+                        player.play(false);
+
+                        banner = new TgcSprite();
+                        banner.Texture = TgcTexture.createTexture(mediaMPath + "\\Banners\\FinalRound.png");
+                        banner.Scaling = new Vector2(0.8f * ((float)screenSize.Width / 961f), 0.8f * ((float)screenSize.Height / 507f));
+                        banner.Position = new Vector2(screenSize.Width * 0.3f, screenSize.Height * 0.5f);
+                    }
+                    //Cuando termina el sonido anterior, 
+                    //cargo el nuevo sonido y muestro el banner correspondiente
+                    if (player.getStatus() == TgcMp3Player.States.Stopped)
+                    {
+                        loadSound(mediaMPath + "Music\\Fight.wav");
+                        sound.play(false);
+
+                        banner.dispose();
+                        banner = new TgcSprite();
+                        banner.Texture = TgcTexture.createTexture(mediaMPath + "\\Banners\\Fight.png");
+                        banner.Scaling = new Vector2(((float)screenSize.Width / 961f), ((float)screenSize.Height / 507f));
+                        banner.Position = new Vector2(screenSize.Width * 0.35f, screenSize.Height * 0.5f);
+
+                        //Reproduce Musica de combate é inicia la pelea
+                        player.closeFile();
+                        loadMp3(mediaMPath + "Music\\lucha.mp3");
+                        player.play(true);
+                       match = 1;
+                    }
+
+                    #endregion
+                    break;
+                #region TODO ESTO POR AHORA NO VA
+                /*               case 1://Combate
+                    if ((pj1.actions.moving || pj1.actions.kick || pj1.actions.power || pj1.actions.punch ||
+                         pj2.actions.moving || pj2.actions.kick || pj2.actions.power || pj2.actions.punch) && banner != null)
+                    {
+                        banner.dispose();
+                        banner = null;
+                    }
+
+                    #region KeyButtonControl
+                    //Calcular proxima posicion de personaje segun Input
+                    TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+                    //Determina direccion de la vista del personaje
+                    face = pj1.mesh.Rotation.Y > 3;
+                    pj1.actions = setActionsForNextRender(pj1.actions.jump, pj1.actions.hittimer);
+
+                    //Derecha
+                    if (d3dInput.keyDown(Key.D))
+                    {
+                        pj1.actions.moveForward = velocidadCaminar * elapsedTime * (face ? -1 : 1);
+                        pj1.actions.moving = true;
+                        if (face)
+                            pj1.poder.combo[1] = hitdelay * elapsedTime;
+                        else
+                        {
+                            setComboToZero();
+                        }
+                    }
+
+                    //Izquierda
+                    if (d3dInput.keyDown(Key.A))
+                    {
+                        pj1.actions.moveForward = velocidadCaminar * elapsedTime * (face ? 1 : -1);
+                        pj1.actions.moving = true;
+                        if (!face)
+                            pj1.poder.combo[1] = hitdelay * elapsedTime;
+                        else
+                        {
+                            setComboToZero();
+                        }
+                    }
+
+                    //Golpear o activar Poder
+                    if (d3dInput.keyDown(Key.K))
+                    {
+                        pj1.poder.combo[2] = hitdelay * elapsedTime;
+                        if (comboReady())
+                            pj1.actions.power = true;
+                        else
+                            pj1.actions.punch = true;
+                    }
+
+                    //Patada
+                    if (d3dInput.keyDown(Key.L))
+                    {
+                        pj1.actions.kick = true;
+                        setComboToZero();
+                    }
+
+                    //Inicia Combo de Poder
+                    if (d3dInput.keyDown(Key.S))
+                    {
+                        pj1.poder.combo[0] = hitdelay * elapsedTime;
+                    }
+
+                    //Saltar
+                    if (pj1.actions.jump == 0)
+                    {
+
+                        if (d3dInput.keyDown(Key.W))
+                        {
+                            setComboToZero();
+                            pj1.actions.jump = 30;
+                            pj1.actions.moving = true;
+                        }
+                    }//Esta en el salto
+                    else
+                    {
+                        setComboToZero();
+                        pj1.actions.jump -= 0.51f;
+                        if (pj1.mesh.Position.Y < 16) pj1.actions.jump = 0;
+                        pj1.actions.moving = (pj1.actions.jump != 0);
+                    }
+
+                    //IA del 2do Player
+                    movePlayer2(elapsedTime);
+                    if (pj2.actions.jump != 0)
+                    {
+                        pj2.actions.jump -= 0.51f;
+                        if (pj2.mesh.Position.Y + pj2.actions.jump < 10) pj2.actions.jump = 0;
+                        pj2.actions.moving = (pj2.actions.jump != 0);
+                    }
+                    setComboDown(elapsedTime);
+                    #endregion
+
+                    #region Animations
+                    //Si hubo desplazamiento
+                    if (pj1.actions.moving)
+                    {
+                        //Activar animacion de caminando
+                        if (face != (pj1.actions.moveForward > 0))
+                            pj1.mesh.playAnimation((face ? "Caminando" : "CaminandoRev"), true);
+                        else
+                            pj1.mesh.playAnimation((!face ? "Caminando" : "CaminandoRev"), true);
+                    }
+
+
+                    else
+                    {
+                        if (pj1.actions.punch)//Activar animacion de golpe
+                            pj1.mesh.playAnimation("Pegar", false);
+                        else
+                        {
+                            if (pj1.actions.kick)//Activar animacion de patada
+                                pj1.mesh.playAnimation("Patear", false);
+                            else
+                            {
+                                if (pj1.actions.power)
+                                {//Activar animacion de arrojar poder y activar poder
+                                    pj1.mesh.playAnimation("Arrojar", false);
+                                    if (!pj1.poder.active)
+                                    {
+                                        pj1.poder.active = true;
+                                        pj1.poder.movementVector = new Vector3(FastMath.Sin(pj1.mesh.Rotation.Y) *
+                                                                                -velocidadCaminar, 0, 0);
+                                        pj1.poder.mesh.Position = pj1.spheres.GlobalSphere.Center +
+                                                                  new Vector3(pj1.spheres.GlobalSphere.Radius * (face ? 1 : -1), 0, 0);
+                                        pj1.poder.mesh.rotateY(Geometry.DegreeToRadian(((face ? 0f : 180f))));
+                                        pj1.poder.globalSphere = new TgcBoundingSphere(pj1.poder.mesh.BoundingBox.calculateBoxCenter(),
+                                                                                       pj1.poder.mesh.BoundingBox.calculateAxisRadius().Y);
+                                        pj1.poder.mesh.playAnimation("Animation", true);
+                                    }
+                                }
+                                else //Si no se esta moviendo ni golpeando, activar animacion de Parado
+                                    pj1.mesh.playAnimation("Parado", true);
+                            }
+                        }
+                    }
+
+                    if (playerAI)
+                    {
+                        //Si hubo desplazamiento
+                        if (pj2.actions.moving)
+                        {
+                            //Activar animacion de caminando
+                            if (face != (pj2.actions.moveForward > 0))
+                                pj2.mesh.playAnimation((face ? "Caminando" : "CaminandoRev"), true);
+                            else
+                                pj2.mesh.playAnimation((!face ? "Caminando" : "CaminandoRev"), true);
+                        }
+
+                        //Si no se esta moviendo, activar animacion de Parado
+                        else
+                        {
+                            if (pj2.actions.punch)//Activar animacion de golpe
+                                pj2.mesh.playAnimation("Pegar", false);
+                            else
+                            {
+                                if (pj2.actions.kick)//Activar animacion de patada
+                                    pj2.mesh.playAnimation("Patear", false);
+                                else
+                                {
+                                    if (pj2.actions.power)
+                                    {//Activar animacion de arrojar poder y activar poder
+                                        pj2.mesh.playAnimation("Arrojar", false);
+                                        if (!pj2.poder.active)
+                                        {
+                                            pj2.poder.active = true;
+                                            pj2.poder.movementVector = new Vector3(FastMath.Sin(pj2.mesh.Rotation.Y) *
+                                                                                    -velocidadCaminar, 0, 0);
+                                            pj2.poder.mesh.Position = pj2.spheres.GlobalSphere.Center +
+                                                                      new Vector3(pj2.spheres.GlobalSphere.Radius * (face ? -1 : 1), 0, 0);
+                                            pj2.poder.mesh.rotateY(Geometry.DegreeToRadian(((face ? 180f : 0f))));
+                                            pj2.poder.globalSphere = new TgcBoundingSphere(pj2.poder.mesh.BoundingBox.calculateBoxCenter(),
+                                                                                           pj2.poder.mesh.BoundingBox.calculateAxisRadius().Y);
+                                            pj2.poder.mesh.playAnimation("Animation", true);
+                                        }
+                                    }
+                                    else//Si no se esta moviendo ni golpeando, activar animacion de Parado
+                                        pj2.mesh.playAnimation("Parado", true);
+                                }
+                            }
+                        }//Si la IA esta desactivada, activar animacion de Parado
+                    }
+                    else pj2.mesh.playAnimation("Parado", true);
+                    #endregion
+
+                    #region Movements Asign
+                    //Vector de movimiento
+                    pj1.movementVector = Vector3.Empty;
+                    if (pj1.actions.moving)
+                    {
+                        //Aplicar movimiento, desplazarse en base a la direccion actual del personaje
+                        pj1.movementVector = new Vector3(FastMath.Sin(pj1.mesh.Rotation.Y) * pj1.actions.moveForward, pj1.actions.jump, 0);
+                    }
+                    if (pj1.poder.active)
+                    {//Aplicar movimiento al poder
+                        pj1.poder.mesh.move(pj1.poder.movementVector * elapsedTime);
+                        pj1.poder.globalSphere.moveCenter(pj1.poder.movementVector * elapsedTime);
+                    }
+
+                    //Vector de movimiento
+                    pj2.movementVector = Vector3.Empty;
+                    if (pj2.actions.moving)
+                    {
+                        //Aplicar movimiento, desplazarse en base a la direccion actual del personaje
+                        pj2.movementVector = new Vector3(FastMath.Sin(pj2.mesh.Rotation.Y) * pj2.actions.moveForward * elapsedTime, pj2.actions.jump, 0);
+                    }
+                    if (pj2.poder.active)
+                    {//Aplicar movimiento al poder
+                        pj2.poder.mesh.move(pj2.poder.movementVector * elapsedTime);
+                        pj2.poder.globalSphere.moveCenter(pj2.poder.movementVector * elapsedTime);
+                    }
+                    #endregion
+
+                    #region Collisions & Hits
+                    nextMoveCalculation(elapsedTime);
+
+                    //Si el Player1 recibio un golpe, le aplico un tiempo de demora hasta que pueda recibir el siguiente golpe
+                    if (pj1.actions.hit) pj1.actions.hittimer = (pj1.actions.hittimer <= 0 ? hitdelay * elapsedTime : pj1.actions.hittimer);
+
+                    if (pj1.actions.hittimer != 0)
+                    {   //Si fue golpeado recien, disminuyo la vida de acuerdo al tipo de golpe
+                        if (Math.Round(pj1.actions.hittimer, 5) == Math.Round(hitdelay * elapsedTime, 5))
+                        {
+                            pj1.mesh.setColor(Color.Red);
+                            if (pj2.actions.punch)
+                            {
+                                pj1.life.healthpoints -= damagepunch;
+                                loadSound(mediaMPath + "Music\\punch.wav");
+                                sound.play(false);
+                            }
+                            else if (pj2.actions.kick)
+                            {
+                                pj1.life.healthpoints -= damagekick;
+                                loadSound(mediaMPath + "Music\\Kick.wav");
+                                sound.play(false);
+                            }
+                            else if (pj2.poder.powerhit)
+                            {
+                                pj1.life.healthpoints -= damagepower;
+                                loadSound(mediaMPath + "Music\\Kick.wav");
+                                sound.play(false);
+                            }
+                            pj2.poder.powerhit = false;
+                            DisbandPower2();
+                            if (pj1.life.healthpoints <= 0)
+                            {
+                                pj1.life.healthpoints = 0;
+                                match = 3;
+                            }
+                        }
+                        pj1.actions.hittimer -= 100 * elapsedTime;
+
+                        if (pj1.actions.hittimer <= 0)
+                        {   //Si expiro el tiempo
+                            pj1.mesh.setColor(Color.White);
+                            pj1.actions.hittimer = 0;
+                        }
+                    }
+
+                    //Si el Player2 recibio un golpe, le aplico un tiempo de demora hasta que pueda recibir el siguiente golpe
+                    if (pj2.actions.hit) pj2.actions.hittimer = (pj2.actions.hittimer == 0 ? hitdelay * elapsedTime : pj2.actions.hittimer);
+
+                    if (pj2.actions.hittimer != 0)
+                    {   //Si fue golpeado recien, disminuyo la vida de acuerdo al tipo de golpe
+                        if (Math.Round(pj2.actions.hittimer, 5) == Math.Round(hitdelay * elapsedTime, 5))
+                        {
+                            pj2.mesh.setColor(Color.Red);
+                            if (pj1.actions.punch)
+                            {
+                                pj2.life.healthpoints -= damagepunch;
+                                loadSound(mediaMPath + "Music\\punch.wav");
+                                sound.play(false);
+                            }
+                            else if (pj1.actions.kick)
+                            {
+                                pj2.life.healthpoints -= damagekick;
+                                loadSound(mediaMPath + "Music\\Kick.wav");
+                                sound.play(false);
+                            }
+                            else if (pj1.poder.powerhit)
+                            {
+                                pj2.life.healthpoints -= damagepower;
+                                loadSound(mediaMPath + "Music\\Kick.wav");
+                                sound.play(false);
+                            }
+                            pj1.poder.powerhit = false;
+                            DisbandPower1();
+                            if (pj2.life.healthpoints <= 0)
+                            {
+                                pj2.life.healthpoints = 0;
+                                match = 2;
+                            }
+                        }
+                        pj2.actions.hittimer -= 100 * elapsedTime;
+
+                        if (pj2.actions.hittimer <= 0)
+                        {   //Si expiro el tiempo
+                            pj2.mesh.setColor(Color.LightGreen);
+                            pj2.actions.hittimer = 0;
+                        }
+                    }
+                    #endregion
+
+                    #region Movements Aplication
+                    //Mover personaje con detección de colisiones y gravedad
+                    pj1.mesh.move(pj1.movementVector);
+                    pj2.mesh.move(pj2.movementVector);
+                    //Aplico movimiento a la esfera global de c/personaje
+                    pj1.spheres.GlobalSphere.moveCenter(pj1.movementVector);
+                    pj2.spheres.GlobalSphere.moveCenter(pj2.movementVector);
+                    #endregion
+                    break;
+
+                case 2://despues del combate - Victoria
+                    pj1.mesh.playAnimation("Win", true);
+                    pj2.mesh.playAnimation("Lose", true);
+
+                    banner = new TgcSprite();
+                    banner.Texture = TgcTexture.createTexture(mediaMPath + "\\Banners\\Win.png");
+                    banner.Scaling = new Vector2(0.8f * ((float)screenSize.Width / 961f), 0.8f * ((float)screenSize.Height / 507f));
+                    banner.Position = new Vector2(screenSize.Width * 0.3f, screenSize.Height * 0.5f);
+
+                    loadSound(mediaMPath + "Music\\YouWin.wav");
+                    sound.play(false);
+                    match = 4;
+                    break;
+                case 3://despues del combate - Derrota
+                    pj1.mesh.playAnimation("Lose", true);
+                    pj2.mesh.playAnimation("Win", true);
+
+                    banner = new TgcSprite();
+                    banner.Texture = TgcTexture.createTexture(mediaMPath + "\\Banners\\Lose.png");
+                    banner.Scaling = new Vector2(0.8f * ((float)screenSize.Width / 961f), 0.8f * ((float)screenSize.Height / 507f));
+                    banner.Position = new Vector2(screenSize.Width * 0.3f, screenSize.Height * 0.5f);
+
+                    loadSound(mediaMPath + "Music\\YouLose.wav");
+                    sound.play(false);
+                    match = 4;
+                   break;
+*/
+                #endregion
+                default: //fin del combate
+                    break;
+            }
+            #endregion
 
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -380,9 +772,9 @@ namespace AlumnoEjemplos.overflowDT
 
             //objColtmp = objetosColisionables;
             //objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
-            
 
-           /////LUCES
+            #region 4LUCES
+            /////LUCES
             Effect currentShader;
             String currentTechnique;
             currentShader = this.effect;
@@ -410,11 +802,11 @@ namespace AlumnoEjemplos.overflowDT
                 TgcBox lightMesh = lightMeshes[i];
 
                 lightMesh.Position = origLightPos[i];// +Vector3.Scale(move, i + 1);
-                
+
                 lightColors[i] = ColorValue.FromColor(lightMesh.Color);
                 pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
-                pointLightIntensity[i] = 15f;
-                pointLightAttenuation[i] = 0.20f;
+                pointLightIntensity[i] = 60f;
+                pointLightAttenuation[i] = 0.40f;
             }
 
             //Renderizar meshes
@@ -444,8 +836,8 @@ namespace AlumnoEjemplos.overflowDT
 
 
             ////////FINLUCES
-             
-            
+            #endregion
+
 
 
 
@@ -467,6 +859,8 @@ namespace AlumnoEjemplos.overflowDT
             {
                 //Tecla F apretada
                 personaje1.tirarPoder();
+
+
             }
             //izquierda
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
@@ -538,6 +932,7 @@ namespace AlumnoEjemplos.overflowDT
             {
                 //Tecla control right apretada
                 personaje2.tirarPoder();
+               
             }
             //izquierda
             if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.LeftArrow))
@@ -687,5 +1082,40 @@ namespace AlumnoEjemplos.overflowDT
 
         }
 
+        ///AUXILIARES
+        public void loadMp3(string filePath)
+        {
+            if (musicFile == null || musicFile != filePath)
+            {
+                musicFile = filePath;
+
+                //Cargar archivo
+                GuiController.Instance.Mp3Player.closeFile();
+                GuiController.Instance.Mp3Player.FileName = musicFile;
+            }
+        }
+
+        /// <summary>
+        /// Cargar un nuevo WAV si hubo una variacion
+        /// </summary>
+        /// <param name="filePath"> Dirección del WAV </param>
+        public void loadSound(string filePath)
+        {
+            if (soundFile == null || soundFile != filePath)
+            {
+                soundFile = filePath;
+
+                //Borrar sonido anterior
+                if (sound != null)
+                {
+                    sound.dispose();
+                    sound = null;
+                }
+
+                //Cargar sonido
+                sound = new TgcStaticSound();
+                sound.loadSound(soundFile);
+            }
+        }
     }
 }
