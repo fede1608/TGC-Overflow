@@ -354,9 +354,9 @@ namespace AlumnoEjemplos.overflowDT
         void mesh_AnimationEnds2(TgcSkeletalMesh mesh)
         {
             //handler pj2
-            if (personaje2.actions.punch) personaje2.actions.punch = false;
-            if (personaje2.actions.kick) personaje2.actions.kick = false;
-            if (personaje2.actions.power) personaje2.actions.power = false;
+            if (personaje2.actions.punch && !personaje1.mesh.PlayLoop) personaje2.actions.punch = false;
+            if (personaje2.actions.kick && !personaje1.mesh.PlayLoop) personaje2.actions.kick = false;
+            if (personaje2.actions.power && !personaje1.mesh.PlayLoop) personaje2.actions.power = false;
         }
 
         public void update(float elapsedTime)
