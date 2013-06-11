@@ -240,6 +240,8 @@ namespace AlumnoEjemplos.overflowDT
                 center = center - mesh.Position;
                 center = center * 0.05f;
                 if(actions.moving&&( par.Key=="Bip01 R Hand"||par.Key=="Bip01 L Hand"||par.Key=="Bip01 R Forearm"||par.Key=="Bip01 L Forearm"||par.Key=="Bip01 R UpperArm"||par.Key=="Bip01 L UpperArm")) center.Z *= -1.0f;
+                if ((actions.power || actions.punch) && (par.Key == "Bip01 L Hand")) { center.X *= 0.6f; center.Y *= 1.3f; }
+                
                 center = center + mesh.Position;
                 //here ends magic
                 par.Value.bonesphere.setCenter(center);
