@@ -14,6 +14,7 @@ using TgcViewer.Utils.Shaders;
 using TgcViewer.Utils.Interpolation;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils._2D;
+using TgcViewer.Utils.TgcSkeletalAnimation;
 
 
 namespace AlumnoEjemplos.overflowDT
@@ -211,7 +212,9 @@ namespace AlumnoEjemplos.overflowDT
             personaje2.Init();
             personaje2.setPosition(new Vector3(1956f, 2f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
-
+            //handler de evento de fin de animacion
+            personaje1.mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds);
+            personaje2.mesh.AnimationEnds +=new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds2);
             personaje1.Enemigo = personaje2;
             personaje2.Enemigo = personaje1;
             
@@ -340,6 +343,22 @@ namespace AlumnoEjemplos.overflowDT
 
         }
 
+        void mesh_AnimationEnds(TgcSkeletalMesh mesh)
+        {
+            //handler pj1
+            if(personaje1.actions.punch&&!personaje1.mesh.PlayLoop)personaje1.actions.punch = false;
+            if (personaje1.actions.kick && !personaje1.mesh.PlayLoop) personaje1.actions.kick = false;
+            if (personaje1.actions.power && !personaje1.mesh.PlayLoop) personaje1.actions.power = false;
+
+        }
+        void mesh_AnimationEnds2(TgcSkeletalMesh mesh)
+        {
+            //handler pj2
+            if (personaje2.actions.punch) personaje2.actions.punch = false;
+            if (personaje2.actions.kick) personaje2.actions.kick = false;
+            if (personaje2.actions.power) personaje2.actions.power = false;
+        }
+
         public void update(float elapsedTime)
         {
             clock -= 1;
@@ -465,10 +484,11 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
 
             ///////////////INPUT//////////////////
+            String animation= "Parado";
             //Capturar Input teclado
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
             {
-                personaje1.mesh.playAnimation("Pegar", false);
+               // personaje1.mesh.playAnimation("Pegar", false);
                 personaje1.actions.punch = true;
 
                 //Tecla G apretada
@@ -477,14 +497,14 @@ namespace AlumnoEjemplos.overflowDT
             
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
             {
-                personaje1.mesh.playAnimation("Patear", false);
+                //personaje1.mesh.playAnimation("Patear", false);
                 //Tecla H apretada
                 personaje1.actions.kick = true;
             }
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
             {
                 //Tecla F apretada
-                personaje1.mesh.playAnimation("Arrojar", false);
+               // personaje1.mesh.playAnimation("Arrojar", false);
                 personaje1.tirarPoder();
                 personaje1.actions.power = true;
             }
@@ -495,12 +515,15 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.actions.moving = true;
                 if (personaje1.Direccion == 1)
                 {
-                    personaje1.mesh.playAnimation("CaminandoRev", true);
+                    animation = "CaminandoRev";
+                    //personaje1.mesh.playAnimation("CaminandoRev", true);
                 }
                 else
                 {
-                    personaje1.mesh.playAnimation("Caminando", true);
+                    animation = "Caminando";
+                    //personaje1.mesh.playAnimation("Caminando", true);
                 }
+
                 //personaje1.mesh.AutoUpdateBoundingBox = true;
             }
             //derecha
@@ -508,16 +531,18 @@ namespace AlumnoEjemplos.overflowDT
             {
                 personaje1.actions.moveForward = velocidadCaminar * elapsedTime;
                 personaje1.actions.moving = true;
-                
+
                 if (personaje1.Direccion == 1)
                 {
-                    personaje1.mesh.playAnimation("Caminando", true);
+                    animation = "Caminando";
+                    //personaje1.mesh.playAnimation("Caminando", true);
                 }
                 else
                 {
-                    
-                    personaje1.mesh.playAnimation("CaminandoRev", true);
+                    animation = "CaminandoRev";
+                    //personaje1.mesh.playAnimation("CaminandoRev", true);
                 }
+
                 //personaje1.mesh.AutoUpdateBoundingBox = true;
             }
             //ninguna de las dos
@@ -526,7 +551,8 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.actions.moveForward = 0;
                 personaje1.actions.moving = false;
                 //personaje1.mesh.AutoUpdateBoundingBox = false;
-                personaje1.mesh.playAnimation("Parado", true);
+                
+                //personaje1.mesh.playAnimation("Parado", true);
             }
 
             //saltar
@@ -554,6 +580,28 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.actions.jumping = false;
                 //collisionManager.GravityEnabled = true;
             }
+           
+            //Animaciones big if
+            if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Arrojar", false, 40); }
+            else
+            {
+                if (personaje1.actions.punch) { if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Pegar", false, 40); }
+                else
+                {
+                    if (personaje1.actions.kick) { if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Patear", false, 40); }
+                    else
+                    {
+                        if (personaje1.actions.moving) { personaje1.mesh.playAnimation(animation, true); }
+                        else { if (!personaje1.actions.moving) { personaje1.mesh.playAnimation("Parado", true); } }
+                    }
+                }
+            }
+
+
+
+
+
+
 
             //player2
             //Capturar Input teclado 
@@ -712,6 +760,6 @@ namespace AlumnoEjemplos.overflowDT
         {
 
         }
-
+ 
     }
 }

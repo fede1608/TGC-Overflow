@@ -228,6 +228,7 @@ namespace AlumnoEjemplos.overflowDT
             foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par in spheres.Bones)
             {
                 Vector3 vr = mesh.getBoneByName(par.Key).StartPosition;
+                
                 //mesh.getBoneByName(par.Key).MatFinal.Scale(new Vector3(0.05f, 0.05f, 0.05f));
                 Matrix transf =  par.Value.offset
                               * mesh.getBoneByName(par.Key).MatFinal
@@ -238,7 +239,7 @@ namespace AlumnoEjemplos.overflowDT
                 //magic happens in your brain while pooping 
                 center = center - mesh.Position;
                 center = center * 0.05f;
-                if(par.Key=="Bip01 R Hand"||par.Key=="Bip01 L Hand"||par.Key=="Bip01 R Forearm"||par.Key=="Bip01 L Forearm"||par.Key=="Bip01 R UpperArm"||par.Key=="Bip01 L UpperArm") center.X *= -1;
+                if(actions.moving&&( par.Key=="Bip01 R Hand"||par.Key=="Bip01 L Hand"||par.Key=="Bip01 R Forearm"||par.Key=="Bip01 L Forearm"||par.Key=="Bip01 R UpperArm"||par.Key=="Bip01 L UpperArm")) center.Z *= -1.0f;
                 center = center + mesh.Position;
                 //here ends magic
                 par.Value.bonesphere.setCenter(center);
