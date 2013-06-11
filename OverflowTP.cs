@@ -226,7 +226,7 @@ namespace AlumnoEjemplos.overflowDT
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
             //handler de evento de fin de animacion
             personaje1.mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds);
-            personaje2.mesh.AnimationEnds +=new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds2);
+            personaje2.mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds2);
             personaje1.Enemigo = personaje2;
             personaje2.Enemigo = personaje1;
             
@@ -360,9 +360,9 @@ namespace AlumnoEjemplos.overflowDT
         void mesh_AnimationEnds2(TgcSkeletalMesh mesh)
         {
             //handler pj2
-            if (personaje2.actions.punch && !personaje1.mesh.PlayLoop) personaje2.actions.punch = false;
-            if (personaje2.actions.kick && !personaje1.mesh.PlayLoop) personaje2.actions.kick = false;
-            if (personaje2.actions.power && !personaje1.mesh.PlayLoop) personaje2.actions.power = false;
+            if (personaje2.actions.punch && !personaje2.mesh.PlayLoop) personaje2.actions.punch = false;
+            if (personaje2.actions.kick && !personaje2.mesh.PlayLoop) personaje2.actions.kick = false;
+            if (personaje2.actions.power && !personaje2.mesh.PlayLoop) personaje2.actions.power = false;
         }
 
         public void update(float elapsedTime)
@@ -391,7 +391,7 @@ namespace AlumnoEjemplos.overflowDT
             if (time1 >= 1) update(elapsedTime);
 
             #region SONIDO Y BANNERS
-            match = 0;//saca el sonido
+            //match = 0;//saca el sonido
             switch (match)
             {
                 case 0://Inicia el combate
@@ -463,8 +463,7 @@ namespace AlumnoEjemplos.overflowDT
             String currentTechnique;
             currentShader = this.effect;
             currentTechnique = "MultiDiffuseLightsTechnique";
-            //currentShader =  TgcShaders.loadEffect(GuiController.Instance.ExamplesDir + "Shaders\\WorkshopShaders\\Shaders\\ToonShading.fx");
-            //currentTechnique = "DefaultTechnique";
+           
             foreach (TgcMesh mesh in escenario.Meshes)
             {
                 mesh.Effect = currentShader;
@@ -657,7 +656,19 @@ namespace AlumnoEjemplos.overflowDT
 
 
             //player2
-            //Capturar Input teclado 
+            //Capturar Input teclado
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.K))
+            {
+                //Tecla control right apretada
+                personaje2.actions.punch = true;
+      
+
+            } if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.L))
+            {
+                //Tecla control right apretada
+                personaje2.actions.kick = true;
+                
+            }
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightControl))
             {
                 //Tecla control right apretada
@@ -672,12 +683,13 @@ namespace AlumnoEjemplos.overflowDT
                 
                 if (personaje2.Direccion == -1)
                 {
-                    personaje2.mesh.playAnimation("Caminando", true);
+                    
+                    animation = "Caminando";
                 }
                 else
                 {
-
-                    personaje2.mesh.playAnimation("CaminandoRev", true);
+                    animation = "CaminandoRev";
+                    
                 }
             }
             //derecha
@@ -687,11 +699,13 @@ namespace AlumnoEjemplos.overflowDT
                 personaje2.actions.moving = true;
                 if (personaje2.Direccion == -1)
                 {
-                    personaje2.mesh.playAnimation("CaminandoRev", true);
+                    
+                    animation = "CaminandoRev";
                 }
                 else
                 {
-                    personaje2.mesh.playAnimation("Caminando", true);
+                    
+                    animation = "Caminando";
                     
                 }
 
@@ -701,7 +715,7 @@ namespace AlumnoEjemplos.overflowDT
             {
                 personaje2.actions.moveForward = 0;
                 personaje2.actions.moving = false;
-                personaje2.mesh.playAnimation("Parado", true);
+                //personaje2.mesh.playAnimation("Parado", true);
             }
             
             //saltar
@@ -730,13 +744,27 @@ namespace AlumnoEjemplos.overflowDT
                 //collisionManager.GravityEnabled = true;
             }
 
-
+            if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Arrojar", false, 100); }
+            else
+            {
+                if (personaje2.actions.punch) { if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Pegar", false, 50); }
+                else
+                {
+                    if (personaje2.actions.kick) { if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Patear", false, 60); }
+                    else
+                    {
+                        if (personaje2.actions.moving) { personaje2.mesh.playAnimation(animation, true); }
+                        else { if (!personaje2.actions.moving) { personaje2.mesh.playAnimation("Parado", true); } }
+                    }
+                }
+            }
 
             //Capturar Input Mouse
-            if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
-            {
-                //Boton izq apretado
-            }
+            //if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            //{
+            //    //Boton izq apretado
+            //}
+
             skyBox.render();
             //Renderiza escenario
             foreach (TgcMesh mesh in escenario.Meshes)
@@ -777,7 +805,7 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.UserVars.setValue("velocidadX", (personaje2.Direccion));
             GuiController.Instance.UserVars.setValue("camX", GuiController.Instance.ThirdPersonCamera.Position.X);
             GuiController.Instance.UserVars.setValue("camY", GuiController.Instance.ThirdPersonCamera.Position.Y);
-            //GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.ThirdPersonCamera.Position.Z);
+            GuiController.Instance.UserVars.setValue("camZ", GuiController.Instance.ThirdPersonCamera.Position.Z);
             GuiController.Instance.UserVars.setValue("Movement", TgcParserUtils.printVector3(realMovement));
             GuiController.Instance.UserVars.setValue("Position", TgcParserUtils.printVector3(personaje1.getPosition()));
             GuiController.Instance.UserVars.setValue("Vida1", personaje1.life);
@@ -814,7 +842,7 @@ namespace AlumnoEjemplos.overflowDT
         {
 
         }
-        #region METODOS AUXILIARES
+        #region Musica
         ///METODOS AUXILIARES
         
         public void loadMp3(string filePath)
