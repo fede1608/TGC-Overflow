@@ -567,14 +567,34 @@ namespace AlumnoEjemplos.overflowDT
             {
                 TgcBox lightMesh = lightMeshes[i];
 
-                if(i==2) lightMesh.Position = personaje1.getPowerPosition();//origLightPos[i];// +Vector3.Scale(move, i + 1);
-                else if (i == 3) lightMesh.Position = personaje2.getPowerPosition();
-                else lightMesh.Position = origLightPos[i];
+                if (i == 2)
+                {
+                    //personaje1 luz
+                    lightMesh.Position = personaje1.getPowerPosition();//origLightPos[i];// +Vector3.Scale(move, i + 1);
+                    pointLightIntensity[i] = 100f;
+                    pointLightAttenuation[i] = 0.50f;
+                
+                
+                }
+                else if (i == 3)
+                {
+                    //personaje2 luz
+                    lightMesh.Position = personaje2.getPowerPosition();
+                    pointLightIntensity[i] = 100f;
+                    pointLightAttenuation[i] = 0.50f;
 
+                }
+                else
+                {
+                    //luz de ambiente
+                    lightMesh.Position = origLightPos[i];
+                    pointLightIntensity[i] = 30f;
+                    pointLightAttenuation[i] = 0.40f;
+
+                }
                 lightColors[i] = ColorValue.FromColor(lightMesh.Color);
                 pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
-                pointLightIntensity[i] = 30f;
-                pointLightAttenuation[i] = 0.40f;
+                
             }
 
 

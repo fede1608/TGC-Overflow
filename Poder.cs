@@ -92,6 +92,7 @@ namespace AlumnoEjemplos.overflowDT
         {
             mesh.dispose();
             globalSphere.dispose();
+            if (luz) owner.Luz = true;
         }
         public void disappear()
         {
@@ -105,7 +106,7 @@ namespace AlumnoEjemplos.overflowDT
             luz = true;
             numluz = indice;
             mesh.setColor(Color.Black);
-            mesh.Scale = new Vector3(0.03f, 0.1f, 0.1f);
+            mesh.Scale = new Vector3(0.05f, 0.1f, 0.1f);
         }
 
     }
