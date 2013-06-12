@@ -84,6 +84,17 @@ namespace AlumnoEjemplos.overflowDT
         TgcSprite banner;
         //Fin Sonido
         #endregion
+
+        #region HEIGHTMAP
+            //Inicialización de variables de HeightMap
+            TgcSimpleTerrain terrain;
+            string currentHeightmap;
+            string currentTexture;
+            float currentScaleXZ;
+            float currentScaleY;
+            //Fin de incicialización HM
+        #endregion
+
         List<Collider> objetosColisionables = new List<Collider>();
         List<Collider> objColtmp=new List<Collider>();
         List<Collider> objColtmp2 = new List<Collider>();
@@ -181,8 +192,6 @@ namespace AlumnoEjemplos.overflowDT
             //Crear un modifier para modificar un vértice
             GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
 
-
-
             ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
             //Es la camara que viene por default, asi que no hace falta hacerlo siempre
             //GuiController.Instance.RotCamera.Enable = true;
@@ -198,7 +207,7 @@ namespace AlumnoEjemplos.overflowDT
             //GuiController.Instance.FpsCamera.Enable = true;
             //Configurar posicion y hacia donde se mira
             GuiController.Instance.FpsCamera.setCamera(new Vector3(1942, 9, -3257), new Vector3(0, 0, 0));
-          //  GuiController.Instance.FpsCamera.setCamera(new Vector3(10, 10, 10), new Vector3(0, 0, 0));
+            //GuiController.Instance.FpsCamera.setCamera(new Vector3(10, 10, 10), new Vector3(0, 0, 0));
             //Configurar camara en estado inicial
             
 
@@ -206,9 +215,9 @@ namespace AlumnoEjemplos.overflowDT
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 0, 0);
             skyBox.Size = new Vector3(10000, 10000, 10000);
-            string skyboxPath = mediaMPath + "Ambiental\\Textures\\sky26\\";
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, skyboxPath + "roof.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, skyboxPath + "floor.jpg");
+            string skyboxPath = mediaMPath + "Ambiental\\Textures\\sky11\\";
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, skyboxPath + "top.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, skyboxPath + "top.jpg");//En esta cara pongo cualquier textura, es necesario para que ande el programa y no puede no estar asignada
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, skyboxPath + "back.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, skyboxPath + "front.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, skyboxPath + "left.jpg");
@@ -243,12 +252,9 @@ namespace AlumnoEjemplos.overflowDT
             newSprite.Bitmap = barra;
             newSprite.SrcRect = new Rectangle(-25, -10, (int)spriteSize.X, (int)spriteSize.Y);
             newSprite.Scaling = new Vector2(0.9f, 0.7f);
-            
-
             //fin sprites
 
-            //text
-
+            //texto
             clock1 = new TgcText2d();
             clock1.Text = "90";
             clock1.Color = Color.DarkBlue;
@@ -264,8 +270,34 @@ namespace AlumnoEjemplos.overflowDT
             clock2.Position = new Point(460, 30);
             clock2.Size = new Size(300, 100);
             clock2.changeFont(new System.Drawing.Font("TimesNewRoman", 25, FontStyle.Bold));
+            //Fin textos
 
-            //Fintexts
+            #region Modifiers HeightMap
+            //Modificadores para la carga del HeightMap y su customización
+
+            //Path de Heightmap default del terreno y Modifier para cambiarla
+            currentHeightmap = mediaMPath + "HeightMap\\" + "HM2JPG64_90IZQ.jpg";
+            GuiController.Instance.Modifiers.addTexture("heightmap", currentHeightmap);
+
+            //Modifiers para variar escala del mapa
+            currentScaleXZ = 23.9960f;
+            GuiController.Instance.Modifiers.addFloat("scaleXZ", 0.1f, 100f, currentScaleXZ);
+            currentScaleY = 0.7f;
+            GuiController.Instance.Modifiers.addFloat("scaleY", 0.1f, 10f, currentScaleY);
+
+            //Path de Textura default del terreno y Modifier para cambiarla
+            currentTexture = mediaMPath + "HeightMap\\Texturas\\" + "suelo_arena_lo.jpg";
+            GuiController.Instance.Modifiers.addTexture("texture", currentTexture);
+
+
+            //Cargar terreno: cargar heightmap y textura de color
+            terrain = new TgcSimpleTerrain();
+            terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -74, -110)); //X(Rojo, Y (Verde), Z(Azul)
+            terrain.loadTexture(currentTexture);
+
+            //TODO: Revisar como rotar el HM, esto puede servir: personaje2.setRotation(Geometry.DegreeToRadian(180f));
+
+            #endregion
 
             #region 4LUCES
             //Shader Luces
@@ -391,7 +423,7 @@ namespace AlumnoEjemplos.overflowDT
             if (time1 >= 1) update(elapsedTime);
 
             #region SONIDO Y BANNERS
-            match = 0;//saca el sonido
+            //match = 0;//saca el sonido
             switch (match)
             {
                 case 0://Inicia el combate
@@ -456,6 +488,44 @@ namespace AlumnoEjemplos.overflowDT
 
             //objColtmp = objetosColisionables;
             //objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
+
+            #region Render HeightMap
+            //Rutinas de renderización de HeightMap
+
+            //Ver si cambio el heightmap
+            string selectedHeightmap = (string)GuiController.Instance.Modifiers["heightmap"];
+            if (currentHeightmap != selectedHeightmap)
+            {
+                //Volver a cargar el Heightmap
+                currentHeightmap = selectedHeightmap;
+                terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -74, -110)); //X(Rojo, Y (Verde), Z(Azul)
+            }
+
+            //Ver si cambio alguno de los valores de escala
+            float selectedScaleXZ = (float)GuiController.Instance.Modifiers["scaleXZ"];
+            float selectedScaleY = (float)GuiController.Instance.Modifiers["scaleY"];
+            if (currentScaleXZ != selectedScaleXZ || currentScaleY != selectedScaleY)
+            {
+                //Volver a cargar el Heightmap
+                currentScaleXZ = selectedScaleXZ;
+                currentScaleY = selectedScaleY;
+                terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -74, -110)); //X(Rojo, Y (Verde), Z(Azul)
+            }
+
+            //Ver si cambio la textura del terreno
+            string selectedTexture = (string)GuiController.Instance.Modifiers["texture"];
+            if (currentTexture != selectedTexture)
+            {
+                //Volver a cargar el DiffuseMap
+                currentTexture = selectedTexture;
+                terrain.loadTexture(currentTexture);
+            }
+
+            //Renderizar terreno
+            terrain.render();
+
+            //Fin de Rutinas de HM
+            #endregion
 
             #region 4LUCES
             /////LUCES
