@@ -425,7 +425,7 @@ namespace AlumnoEjemplos.overflowDT
 
                         //Reproduce Musica de combate é inicia la pelea
                         player.closeFile();
-                        loadMp3(mediaMPath + "Music\\lucha.mp3");
+                        loadMp3(mediaMPath + "Music\\Reptile.mp3");
                         player.play(true);
                         match = 1;
                     }
