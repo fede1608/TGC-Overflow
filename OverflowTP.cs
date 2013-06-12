@@ -233,6 +233,7 @@ namespace AlumnoEjemplos.overflowDT
             personaje2.Init();
             personaje2.setPosition(new Vector3(1956f, 2f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
+            personaje2.Direccion = -1;
             //handler de evento de fin de animacion
             personaje1.mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds);
             personaje2.mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds2);
@@ -281,18 +282,19 @@ namespace AlumnoEjemplos.overflowDT
 
             //Modifiers para variar escala del mapa
             currentScaleXZ = 23.9960f;
-            GuiController.Instance.Modifiers.addFloat("scaleXZ", 0.1f, 100f, currentScaleXZ);
+            
+            GuiController.Instance.Modifiers.addFloat("scaleXZ", 1f, 30f, currentScaleXZ);
             currentScaleY = 0.7f;
-            GuiController.Instance.Modifiers.addFloat("scaleY", 0.1f, 10f, currentScaleY);
+            GuiController.Instance.Modifiers.addFloat("scaleY", 0.1f, 2f, currentScaleY);
 
             //Path de Textura default del terreno y Modifier para cambiarla
-            currentTexture = mediaMPath + "HeightMap\\Texturas\\" + "suelo_arena_lo.jpg";
+            currentTexture = mediaMPath + "HeightMap\\Texturas\\" + "suelo_arena_hi.jpg";
             GuiController.Instance.Modifiers.addTexture("texture", currentTexture);
 
 
             //Cargar terreno: cargar heightmap y textura de color
             terrain = new TgcSimpleTerrain();
-            terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -74, -110)); //X(Rojo, Y (Verde), Z(Azul)
+            terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -66, -110)); //X(Rojo, Y (Verde), Z(Azul)
             terrain.loadTexture(currentTexture);
 
             //TODO: Revisar como rotar el HM, esto puede servir: personaje2.setRotation(Geometry.DegreeToRadian(180f));
@@ -500,7 +502,7 @@ namespace AlumnoEjemplos.overflowDT
             {
                 //Volver a cargar el Heightmap
                 currentHeightmap = selectedHeightmap;
-                terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -74, -110)); //X(Rojo, Y (Verde), Z(Azul)
+                terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -66, -110)); //X(Rojo, Y (Verde), Z(Azul)
             }
 
             //Ver si cambio alguno de los valores de escala
@@ -511,7 +513,7 @@ namespace AlumnoEjemplos.overflowDT
                 //Volver a cargar el Heightmap
                 currentScaleXZ = selectedScaleXZ;
                 currentScaleY = selectedScaleY;
-                terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -74, -110)); //X(Rojo, Y (Verde), Z(Azul)
+                terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -66, -110)); //X(Rojo, Y (Verde), Z(Azul)
             }
 
             //Ver si cambio la textura del terreno
@@ -525,7 +527,7 @@ namespace AlumnoEjemplos.overflowDT
 
             //Renderizar terreno
             terrain.render();
-
+            
             //Fin de Rutinas de HM
             #endregion
 
@@ -541,6 +543,9 @@ namespace AlumnoEjemplos.overflowDT
                 mesh.Effect = currentShader;
                 mesh.Technique = currentTechnique;
             }
+            //terrain.Effect = currentShader;
+            //terrain.Technique = currentTechnique;
+            
            // personaje1.mesh.Effect = currentShader;
             //personaje2.mesh.Effect = currentShader;
 
@@ -560,9 +565,10 @@ namespace AlumnoEjemplos.overflowDT
 
                 lightColors[i] = ColorValue.FromColor(lightMesh.Color);
                 pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);
-                pointLightIntensity[i] = 60f;
+                pointLightIntensity[i] = 30f;
                 pointLightAttenuation[i] = 0.40f;
             }
+
 
             //Renderizar meshes
             foreach (TgcMesh mesh in escenario.Meshes)
@@ -580,8 +586,13 @@ namespace AlumnoEjemplos.overflowDT
                 //Renderizar modelo
                 mesh.render();
             }
-
-           
+            //terrain.Effect.SetValue("lightColor", lightColors);
+            //terrain.Effect.SetValue("lightPosition", pointLightPositions);
+            //terrain.Effect.SetValue("lightIntensity", pointLightIntensity);
+            //terrain.Effect.SetValue("lightAttenuation", pointLightAttenuation);
+            //terrain.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor((Color)Color.Black));
+            //terrain.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)Color.White));
+            //terrain.render();
             //Renderizar meshes de luz
             for (int i = 0; i < lightMeshes.Length; i++)
             {
@@ -675,7 +686,6 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.actions.moveForward = 0;
                 personaje1.actions.moving = false;
                 //personaje1.mesh.AutoUpdateBoundingBox = false;
-                
                 //personaje1.mesh.playAnimation("Parado", true);
             }
 
@@ -760,16 +770,13 @@ namespace AlumnoEjemplos.overflowDT
             {
                 personaje2.actions.moveForward = -velocidadCaminar * elapsedTime;
                 personaje2.actions.moving = true;
-                
                 if (personaje2.Direccion == -1)
                 {
-                    
                     animation = "Caminando";
                 }
                 else
                 {
                     animation = "CaminandoRev";
-                    
                 }
             }
             //derecha
@@ -779,12 +786,10 @@ namespace AlumnoEjemplos.overflowDT
                 personaje2.actions.moving = true;
                 if (personaje2.Direccion == -1)
                 {
-                    
                     animation = "CaminandoRev";
                 }
                 else
                 {
-                    
                     animation = "Caminando";
                     
                 }
@@ -801,7 +806,6 @@ namespace AlumnoEjemplos.overflowDT
             //saltar
             if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.UpArrow) || GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightShift)) && !personaje2.actions.jumping)
             {
-
                 personaje2.actions.jumping = true;
                 collisionManager.GravityEnabled = false;
                 gravity2 = false;
@@ -904,7 +908,7 @@ namespace AlumnoEjemplos.overflowDT
                                                                             personaje2.getPosition().Z),
                                                                             13, (offsetforward < -40 ? offsetforward : -40));
 
-            if ((personaje1.getPosition().X - personaje2.getPosition().X) > 0 && personaje1.Direccion != -1)
+            if ((personaje1.getPosition().X - personaje2.getPosition().X) >= 0 && personaje1.Direccion != -1)
             {
                 personaje1.Direccion = -1;
                 personaje2.Direccion = 1;

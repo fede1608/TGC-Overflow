@@ -188,7 +188,7 @@ namespace AlumnoEjemplos.overflowDT
         {
         //setea la rotacion del pj
          mesh.rotateY(radianes);
-         direccion = (radianes == Geometry.DegreeToRadian(270f)) ? 1 : -1; ;
+         //direccion = (radianes == Geometry.DegreeToRadian(270f)) ? 1 : -1; ;
         }
 
 
