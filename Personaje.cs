@@ -117,7 +117,7 @@ namespace AlumnoEjemplos.overflowDT
            //spheres.GlobalSphere = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), mesh.BoundingBox.calculateBoxRadius());
            actions.jump = 0f;
            actions.hittimer = 0;
-          // poder.powerhit = false;
+           actions.hit = false;
          
            mesh.AutoUpdateBoundingBox = true;
            //Configurar animacion inicial
@@ -192,7 +192,29 @@ namespace AlumnoEjemplos.overflowDT
         }
 
 
-
+        public void verificarColision(Vector3 centro, float radio, Dictionary<string, BoundingMultiSphere.Sphere> huesos)
+        {
+            if (actions.hit) return;
+            Vector3 distancia;
+            //GuiController.Instance.Logger.log("Radio=");
+            //GuiController.Instance.Logger.log(radio.ToString());
+            foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par in huesos)
+            {
+                
+                distancia = centro - par.Value.bonesphere.Center;
+                if ((distancia.Length() <= radio + par.Value.bonesphere.Radius) && (par.Key != "Bip01 Neck"))
+                {
+                    enemigo.restarVida(3);
+                    actions.hit = true;
+                    return;
+                    //if (actions.punch && !mesh.PlayLoop) actions.punch = false;
+                    //if (actions.kick && !mesh.PlayLoop) actions.kick = false;
+                    
+                }
+                //GuiController.Instance.Logger.log(par.Key);
+                //GuiController.Instance.Logger.log(par.Value.bonesphere.Radius.ToString());
+            }
+        }
         public void update(float elapsedTime)
         {
             //mesh.move(movementVector * elapsedTime);
