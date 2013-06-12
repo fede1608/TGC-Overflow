@@ -355,6 +355,7 @@ namespace AlumnoEjemplos.overflowDT
             if(personaje1.actions.punch&&!personaje1.mesh.PlayLoop)personaje1.actions.punch = false;
             if (personaje1.actions.kick && !personaje1.mesh.PlayLoop) personaje1.actions.kick = false;
             if (personaje1.actions.power && !personaje1.mesh.PlayLoop) personaje1.actions.power = false;
+            personaje1.actions.hit = false;
 
         }
         void mesh_AnimationEnds2(TgcSkeletalMesh mesh)
@@ -363,6 +364,7 @@ namespace AlumnoEjemplos.overflowDT
             if (personaje2.actions.punch && !personaje2.mesh.PlayLoop) personaje2.actions.punch = false;
             if (personaje2.actions.kick && !personaje2.mesh.PlayLoop) personaje2.actions.kick = false;
             if (personaje2.actions.power && !personaje2.mesh.PlayLoop) personaje2.actions.power = false;
+            personaje2.actions.hit = false;
         }
 
         public void update(float elapsedTime)
@@ -637,10 +639,18 @@ namespace AlumnoEjemplos.overflowDT
             if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Arrojar", false, 100); }
             else
             {
-                if (personaje1.actions.punch) { if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Pegar", false, 50); }
+                if (personaje1.actions.punch) { 
+                    
+                    if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Pegar", false, 50);
+                    personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
+                }
                 else
                 {
-                    if (personaje1.actions.kick) { if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Patear", false, 60); }
+                    if (personaje1.actions.kick) { 
+                        if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Patear", false, 60);
+                        personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
+                
+                    }
                     else
                     {
                         if (personaje1.actions.moving) { personaje1.mesh.playAnimation(animation, true); }
@@ -747,10 +757,17 @@ namespace AlumnoEjemplos.overflowDT
             if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Arrojar", false, 100); }
             else
             {
-                if (personaje2.actions.punch) { if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Pegar", false, 50); }
+                if (personaje2.actions.punch) { 
+                    if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Pegar", false, 50);
+                    personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
+                }
                 else
                 {
-                    if (personaje2.actions.kick) { if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Patear", false, 60); }
+                    if (personaje2.actions.kick) { 
+                        if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Patear", false, 60);
+                        personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
+                
+                    }
                     else
                     {
                         if (personaje2.actions.moving) { personaje2.mesh.playAnimation(animation, true); }
@@ -820,7 +837,7 @@ namespace AlumnoEjemplos.overflowDT
             if ((personaje1.getPosition().X - personaje2.getPosition().X) > 0 && personaje1.Direccion != -1)
             {
                 personaje1.Direccion = -1;
-                personaje2.Direccion = -1;
+                personaje2.Direccion = 1;
                 personaje1.setRotation(Geometry.DegreeToRadian(180f));
                 personaje2.setRotation(Geometry.DegreeToRadian(180f));
             }
