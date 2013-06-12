@@ -145,6 +145,11 @@ namespace AlumnoEjemplos.overflowDT
             get { return objetosColisionables; }
             set { objetosColisionables = value; }
         }
+        public TgcBox[] LightMeshes
+        {
+            get { return lightMeshes; }
+            set { lightMeshes = value; }
+        }
         public override void init()
         {
 
@@ -239,7 +244,8 @@ namespace AlumnoEjemplos.overflowDT
             personaje2.mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds2);
             personaje1.Enemigo = personaje2;
             personaje2.Enemigo = personaje1;
-            
+            personaje1._fightGameManager = this;
+            personaje2._fightGameManager = this;
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
                                                                             (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
@@ -561,7 +567,9 @@ namespace AlumnoEjemplos.overflowDT
             {
                 TgcBox lightMesh = lightMeshes[i];
 
-                lightMesh.Position = origLightPos[i];// +Vector3.Scale(move, i + 1);
+                if(i==2) lightMesh.Position = personaje1.getPowerPosition();//origLightPos[i];// +Vector3.Scale(move, i + 1);
+                else if (i == 3) lightMesh.Position = personaje2.getPowerPosition();
+                else lightMesh.Position = origLightPos[i];
 
                 lightColors[i] = ColorValue.FromColor(lightMesh.Color);
                 pointLightPositions[i] = TgcParserUtils.vector3ToVector4(lightMesh.Position);

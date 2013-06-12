@@ -36,6 +36,8 @@ namespace AlumnoEjemplos.overflowDT
         Personaje owner;
         ElipsoidCollisionManager collisionManager = new ElipsoidCollisionManager();
         public int dir;
+        bool luz=false;
+        int numluz=0;
         
         public Personaje Owner
         {
@@ -74,6 +76,7 @@ namespace AlumnoEjemplos.overflowDT
                     //owner.sacarPoder(this);
                 }
             }
+            if(luz)  owner._fightGameManager.LightMeshes[numluz].Position = this.mesh.Position;
         }
 
 
@@ -92,6 +95,13 @@ namespace AlumnoEjemplos.overflowDT
         {
             mesh.move(movementVector * 10000);
             globalSphere.moveCenter(movementVector * 10000);
+           
         }
+        public void setLight(int indice)
+        {
+            luz = true;
+            numluz = indice;
+        }
+
     }
 }

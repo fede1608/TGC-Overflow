@@ -40,8 +40,15 @@ namespace AlumnoEjemplos.overflowDT
         int direccion = 1;
         Device d3dDevice = GuiController.Instance.D3dDevice;
         BoundingMultiSphere spheres = new BoundingMultiSphere();
-
+        bool luz=true;
+        Poder poderLuz;
         //Getters y Setters
+        public FightGameManager _fightGameManager
+        {
+            get { return fightGameManager; }
+            set { fightGameManager = value; }
+        }
+
         public BoundingMultiSphere Spheres
         {
             get { return spheres; }
@@ -164,7 +171,13 @@ namespace AlumnoEjemplos.overflowDT
             Poder pow = new Poder();
             pow.Init(direccion, mesh.Position + new Vector3(0,3,0), new Vector3(40, 0, 0));
             pow.Owner = this;
+            if (luz) { luz = false; pow.setLight(0); poderLuz = pow; }
             poder.Add(pow);
+        }
+        public Vector3 getPowerPosition()
+        {
+            if (luz) return new Vector3(0, 0, 0);
+            return poderLuz.mesh.Position;
         }
         public void setColor (Color color)
         {
@@ -224,7 +237,7 @@ namespace AlumnoEjemplos.overflowDT
            // mesh.move(realMovement);
            // mesh.BoundingBox.Position = vec3;
             //spheres.GlobalSphere.moveCenter((mesh.Position.X - spheres.GlobalSphere.Position.X,); //= new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
-            
+           
             objCol.Clear();
             objCol.Add(BoundingBoxCollider.fromBoundingBox(enemigo.mesh.BoundingBox));
             
