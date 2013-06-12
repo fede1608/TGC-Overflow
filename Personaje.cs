@@ -59,7 +59,11 @@ namespace AlumnoEjemplos.overflowDT
             get { return playername; }
             set { playername = value; }
         }
-
+        public bool Luz
+        {
+            get { return luz; }
+            set { luz = value; }
+        }
            
         public Personaje Enemigo
         {

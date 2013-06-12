@@ -856,7 +856,8 @@ namespace AlumnoEjemplos.Manoja
                 }
             if (showGS) pj1.spheres.GlobalSphere.render();
             if (pj1.poder.active)
-            { 
+            {
+                pj1.poder.mesh.setColor(Color.LightGreen);
                 pj1.poder.mesh.animateAndRender();
                 if (showGS || showMS) pj1.poder.globalSphere.render();
             }

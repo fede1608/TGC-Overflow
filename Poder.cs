@@ -57,14 +57,16 @@ namespace AlumnoEjemplos.overflowDT
             mesh.Position = pos;
             movementVector = mov*direccion;
             mesh.rotateY(Geometry.DegreeToRadian(direccion==1? 0f : -180f));
+            
+            mesh.playAnimation("Animation", true);
             globalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(mesh.BoundingBox.calculateAxisRadius().Y,mesh.BoundingBox.calculateAxisRadius().Y,mesh.BoundingBox.calculateAxisRadius().Y));
         }
         public void update(float elapsedTime)
         {
-            //owner.Sem.WaitOne();
+            
             //realmove = collisionManager.moveCharacter(globalSphere, (movementVector * elapsedTime), owner.ObjCol);
             
-            //owner.Sem.Release();
+            
             mesh.move(movementVector * elapsedTime);
             globalSphere.moveCenter(movementVector * elapsedTime);
             if ((globalSphere.Center.X * dir > owner.Enemigo.getPosition().X * dir - 2) & (globalSphere.Center.X * dir < owner.Enemigo.getPosition().X * dir + 2 ))
@@ -76,7 +78,7 @@ namespace AlumnoEjemplos.overflowDT
                     //owner.sacarPoder(this);
                 }
             }
-            if(luz)  owner._fightGameManager.LightMeshes[numluz].Position = this.mesh.Position;
+            //if(luz)  owner._fightGameManager.LightMeshes[numluz].Position = this.mesh.Position;
         }
 
 
@@ -95,12 +97,15 @@ namespace AlumnoEjemplos.overflowDT
         {
             mesh.move(movementVector * 10000);
             globalSphere.moveCenter(movementVector * 10000);
+            if(luz) owner.Luz = true;
            
         }
         public void setLight(int indice)
         {
             luz = true;
             numluz = indice;
+            mesh.setColor(Color.Black);
+            mesh.Scale = new Vector3(0.03f, 0.1f, 0.1f);
         }
 
     }

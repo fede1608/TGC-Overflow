@@ -294,7 +294,7 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.Modifiers.addFloat("scaleY", 0.1f, 2f, currentScaleY);
 
             //Path de Textura default del terreno y Modifier para cambiarla
-            currentTexture = mediaMPath + "HeightMap\\Texturas\\" + "suelo_arena_hi.jpg";
+            currentTexture = mediaMPath + "HeightMap\\Texturas\\" + "suelo_arena_lo.jpg";
             GuiController.Instance.Modifiers.addTexture("texture", currentTexture);
 
 
@@ -319,7 +319,7 @@ namespace AlumnoEjemplos.overflowDT
             for (int i = 0; i < lightMeshes.Length; i++)
             {
                 Color co = c[i % c.Length];
-                lightMeshes[i] = TgcBox.fromSize(new Vector3(5, 5, 5), co);
+                lightMeshes[i] = TgcBox.fromSize(new Vector3(0.5f, 0.5f, 0.5f), co);
                 
             }
             //origLightPos[0] = new Vector3(1880f, 70f, -3169f);//-40, 20 + i * 20, 400);
