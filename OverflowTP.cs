@@ -220,7 +220,7 @@ namespace AlumnoEjemplos.overflowDT
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 0, 0);
             skyBox.Size = new Vector3(10000, 10000, 10000);
-            string skyboxPath = mediaMPath + "Ambiental\\Textures\\sky11\\";
+            string skyboxPath = mediaMPath + "Ambiental\\Textures\\sky6\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, skyboxPath + "top.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, skyboxPath + "top.jpg");//En esta cara pongo cualquier textura, es necesario para que ande el programa y no puede no estar asignada
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, skyboxPath + "back.jpg");
@@ -294,13 +294,13 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.Modifiers.addFloat("scaleY", 0.1f, 2f, currentScaleY);
 
             //Path de Textura default del terreno y Modifier para cambiarla
-            currentTexture = mediaMPath + "HeightMap\\Texturas\\" + "suelo_arena_lo.jpg";
+            currentTexture = mediaMPath + "HeightMap\\Texturas\\" + "suelo_arena_lo_dark.jpg";
             GuiController.Instance.Modifiers.addTexture("texture", currentTexture);
 
 
             //Cargar terreno: cargar heightmap y textura de color
             terrain = new TgcSimpleTerrain();
-            terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -66, -110)); //X(Rojo, Y (Verde), Z(Azul)
+            terrain.loadHeightmap(currentHeightmap, currentScaleXZ, currentScaleY, new Vector3(80, -69, -110)); //X(Rojo, Y (Verde), Z(Azul)
             terrain.loadTexture(currentTexture);
 
             //TODO: Revisar como rotar el HM, esto puede servir: personaje2.setRotation(Geometry.DegreeToRadian(180f));
@@ -326,7 +326,7 @@ namespace AlumnoEjemplos.overflowDT
             //origLightPos[1] = new Vector3(1880f, 70f, -3249f);//-40, 20 + i * 20, 400);
             //origLightPos[2] = new Vector3(1960f, 70f, -3169f);//-40, 20 + i * 20, 400);
             //origLightPos[3] = new Vector3(1960f, 70f, -3249f);
-            origLightPos[0] = new Vector3(1910f, 70f, -3249f);//-40, 20 + i * 20, 400);
+            origLightPos[0] = new Vector3(1910f, 150f, -3199f);//-40, 20 + i * 20, 400);
             
             //Interpolador para mover las luces de un lado para el otro
             interp = new InterpoladorVaiven();
@@ -454,8 +454,8 @@ namespace AlumnoEjemplos.overflowDT
                     //cargo el nuevo sonido y muestro el banner correspondiente
                     if (player.getStatus() == TgcMp3Player.States.Stopped)
                     {
-                        loadSound(mediaMPath + "Music\\Fight.wav");
-                        sound.play(false);
+                        //loadSound(mediaMPath + "Music\\Fight.wav");
+                        //sound.play(false);
 
                         //banner.dispose();
                         //banner = new TgcSprite();
@@ -465,7 +465,7 @@ namespace AlumnoEjemplos.overflowDT
 
                         //Reproduce Musica de combate é inicia la pelea
                         player.closeFile();
-                        loadMp3(mediaMPath + "Music\\Reptile.mp3");
+                        loadMp3(mediaMPath + "Music\\Reptile2.mp3");
                         player.play(true);
                         match = 1;
                     }
@@ -744,18 +744,18 @@ namespace AlumnoEjemplos.overflowDT
             }
            
             //Animaciones big if
-            if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Arrojar", false, 100); }
+            if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
             else
             {
-                if (personaje1.actions.punch) { 
-                    
-                    if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Pegar", false, 50);
+                if (personaje1.actions.punch) {
+
+                    if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
                     personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
                 }
                 else
                 {
-                    if (personaje1.actions.kick) { 
-                        if (personaje1.mesh.PlayLoop) personaje1.mesh.playAnimation("Patear", false, 60);
+                    if (personaje1.actions.kick) {
+                        if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
                         personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
                 
                     }
@@ -856,17 +856,17 @@ namespace AlumnoEjemplos.overflowDT
                 //collisionManager.GravityEnabled = true;
             }
 
-            if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Arrojar", false, 100); }
+            if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop) {personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
             else
             {
-                if (personaje2.actions.punch) { 
-                    if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Pegar", false, 50);
+                if (personaje2.actions.punch) {
+                    if (personaje2.mesh.PlayLoop) { personaje2.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
                     personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
                 }
                 else
                 {
                     if (personaje2.actions.kick) { 
-                        if (personaje2.mesh.PlayLoop) personaje2.mesh.playAnimation("Patear", false, 60);
+                        if (personaje2.mesh.PlayLoop){ personaje2.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
                         personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
                 
                     }
