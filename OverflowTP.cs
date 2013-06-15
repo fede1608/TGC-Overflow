@@ -431,6 +431,7 @@ namespace AlumnoEjemplos.overflowDT
                 }
                 time1 = 0;
             }
+
             s_barrita1.Scaling=new Vector2(1.32f * personaje1.life / 100,0.74f);
             s_barrita2.Scaling = new Vector2(-1.32f * personaje2.life / 100, 0.74f);
         }
@@ -933,8 +934,8 @@ namespace AlumnoEjemplos.overflowDT
            Vector3 realMovement2 =new Vector3 (personaje2.actions.moveForward,personaje2.actions.jump,0) ;
 
 
-           if (TgcCollisionUtils.testAABBAABB(personaje1.mesh.BoundingBox, bb_piso)) { realMovement.Y = 0; personaje1.setPosition(new Vector3(personaje1.mesh.Position.X,0,personaje1.mesh.Position.Z)); };
-           if (TgcCollisionUtils.testAABBAABB(personaje2.mesh.BoundingBox, bb_piso)) { realMovement2.Y = 0; personaje2.setPosition(new Vector3(personaje2.mesh.Position.X, 0, personaje2.mesh.Position.Z)); };
+           if (TgcCollisionUtils.testAABBAABB(personaje1.mesh.BoundingBox, bb_piso)) { realMovement.Y = 0; personaje1.actions.jump = 0; } //personaje1.setPosition(new Vector3(personaje1.mesh.Position.X,0,personaje1.mesh.Position.Z)); };
+           if (TgcCollisionUtils.testAABBAABB(personaje2.mesh.BoundingBox, bb_piso)) { realMovement2.Y = 0; personaje2.actions.jump = 0; } //personaje2.setPosition(new Vector3(personaje2.mesh.Position.X, 0, personaje2.mesh.Position.Z)); };
 
 
                
@@ -957,13 +958,13 @@ namespace AlumnoEjemplos.overflowDT
 
                     
                 }
-            
+
+            personaje1.Spheres.GlobalSphere.moveCenter(realMovement);
+            personaje2.Spheres.GlobalSphere.moveCenter(realMovement2);
+
             personaje1.move(realMovement);
-                //if (realMovement2 != new Vector3(0f,0f,0f)) 
-                personaje2.move(realMovement2);
-                personaje1.Spheres.GlobalSphere.moveCenter(realMovement);
-                personaje2.Spheres.GlobalSphere.moveCenter(realMovement2);
-            //}
+            personaje2.move(realMovement2);
+
             personaje1.render(elapsedTime);
             personaje2.render(elapsedTime);
             
@@ -1018,8 +1019,6 @@ namespace AlumnoEjemplos.overflowDT
                         foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par2 in personaje2.Spheres.Bones)
                             if (TgcCollisionUtils.testSphereSphere(par1.Value.bonesphere, par2.Value.bonesphere))
                             {
-                                //bonehit1 = par1.Key;
-                                //bonehit2 = par2.Key;
                                return true;
                                 
                             }

@@ -85,9 +85,14 @@ namespace AlumnoEjemplos.overflowDT
         public void render(float elapsedTime)
     {
         mesh.animateAndRender();
-        mesh.BoundingBox.render();
-        globalSphere.render();
+        
     }
+        public void renderbb(float elapsedTime)
+        {
+
+            mesh.BoundingBox.render();
+            globalSphere.render();
+        }
         public void dispose()
         {
             mesh.dispose();
@@ -106,7 +111,7 @@ namespace AlumnoEjemplos.overflowDT
             luz = true;
             numluz = indice;
             mesh.setColor(Color.Black);
-            mesh.Scale = new Vector3(0.05f, 0.1f, 0.1f);
+            mesh.Scale = new Vector3(0.2f, 0.4f, 0.4f);
         }
 
     }

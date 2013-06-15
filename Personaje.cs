@@ -156,6 +156,7 @@ namespace AlumnoEjemplos.overflowDT
         public void restarVida(int vida)
         {
             if (vida >= 0) life-=vida;
+            if (life < 0) life = 0;
         }
         public void setEffect(Effect ef)
         {
@@ -166,7 +167,8 @@ namespace AlumnoEjemplos.overflowDT
         {
             if (movement != new Vector3 (0,0,0))
                 mesh.move(movement);
-            GuiController.Instance.UserVars.setValue("camZ", mesh.BoundingBox.PMax.X);   
+            if (mesh.Position.Y < 0) { mesh.move(new Vector3(0, -mesh.Position.Y, 0)); spheres.GlobalSphere.moveCenter(new Vector3(0, -mesh.Position.Y, 0)); };
+            //GuiController.Instance.UserVars.setValue("camZ", mesh.BoundingBox.PMax.X);   
             //mesh.Position += movement;
             //mesh.createBoundingBox();
             //mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + movement , movement  + new Vector3(1, 0, 1));
@@ -292,19 +294,31 @@ namespace AlumnoEjemplos.overflowDT
         public void render(float elapsedTime)
         {
             mesh.animateAndRender();
-            spheres.GlobalSphere.render();
-            mesh.BoundingBox.render();
+            
             foreach (Poder pow in poder)
                 {
                     pow.render(elapsedTime);
 
                 }
+            
+            
+        }
+        public void renderbb(float elapsedTime)
+        {
+
+            spheres.GlobalSphere.render();
+            mesh.BoundingBox.render();
+            foreach (Poder pow in poder)
+            {
+                pow.renderbb(elapsedTime);
+
+            }
             //render multispheres
             foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par in spheres.Bones)
             {
                 par.Value.bonesphere.render();
             }
-            
+
         }
     }
 }
