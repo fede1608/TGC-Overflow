@@ -57,7 +57,7 @@ namespace AlumnoEjemplos.overflowDT
 
           //Creo el sprite drawer
             Drawer spriteDrawer = new Drawer();
-            Sprite newSprite; Sprite newSprite2;
+            Sprite newSprite; Sprite s_barrita1; Sprite s_barrita2;
 
         Personaje personaje1;
         Personaje personaje2;
@@ -254,11 +254,23 @@ namespace AlumnoEjemplos.overflowDT
 
             //sprites
             Bitmap barra = new Bitmap(mediaMPath  + "//barras3.png", GuiController.Instance.D3dDevice);
+            Bitmap barrita1 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
+            Bitmap barrita2 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
             Vector2 spriteSize = new Vector2(1100, 130);
             newSprite = new Sprite();
             newSprite.Bitmap = barra;
             newSprite.SrcRect = new Rectangle(-25, -10, (int)spriteSize.X, (int)spriteSize.Y);
             newSprite.Scaling = new Vector2(0.9f, 0.7f);
+
+            s_barrita1 = new Sprite();
+            s_barrita1.Bitmap = barrita1;
+            s_barrita1.SrcRect = new Rectangle(-60, -20, 900, 20);
+            s_barrita1.Scaling = new Vector2(1f, 1f);
+
+            s_barrita2 = new Sprite();
+            s_barrita2.Bitmap = barrita2;
+            s_barrita2.SrcRect = new Rectangle(100, 150, 600, 50);
+            s_barrita2.Scaling = new Vector2(0.9f, 0.7f);
             //fin sprites
 
             //texto
@@ -487,7 +499,8 @@ namespace AlumnoEjemplos.overflowDT
             //sprites
             spriteDrawer.BeginDrawSprite();
             spriteDrawer.DrawSprite(newSprite);
-            spriteDrawer.DrawSprite(newSprite2);
+            spriteDrawer.DrawSprite(s_barrita1);
+            //spriteDrawer.DrawSprite(s_barrita2);
             spriteDrawer.EndDrawSprite();
             //fsprites
 
