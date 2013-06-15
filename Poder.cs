@@ -71,7 +71,7 @@ namespace AlumnoEjemplos.overflowDT
             globalSphere.moveCenter(movementVector * elapsedTime);
             if ((globalSphere.Center.X * dir > owner.Enemigo.getPosition().X * dir - 2) & (globalSphere.Center.X * dir < owner.Enemigo.getPosition().X * dir + 2 ))
             {
-                if (globalSphere.Center.Y > owner.Enemigo.getPosition().Y)
+                if ((globalSphere.Center.Y > owner.Enemigo.getPosition().Y) && (globalSphere.Center.Y < (owner.Enemigo.getPosition().Y+8)))
                 {
                     owner.Enemigo.restarVida(4);
                     disappear();
