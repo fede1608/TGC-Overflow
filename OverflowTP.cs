@@ -109,10 +109,6 @@ namespace AlumnoEjemplos.overflowDT
         TgcScene escenario;
         Size screenSize = GuiController.Instance.Panel3d.Size;
         float velocidadCaminar = 30f;
-        int hitdelay = 1000;
-        static int damagepunch = 2;
-        static int damagekick = 5;
-        static int damagepower = 10;
         bool gravity = true;
         bool gravity2= true;
 
@@ -231,12 +227,12 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1 = new Personaje();
             personaje1.Init();
-            personaje1.setPosition(new Vector3(1900f, 2f, -3209f));
+            personaje1.setPosition(new Vector3(1900f, 0f, -3209f));
             personaje1.setRotation(Geometry.DegreeToRadian(270f));
             personaje1.Enemigo = personaje2;
             personaje2 = new Personaje();
             personaje2.Init();
-            personaje2.setPosition(new Vector3(1956f, 2f, -3209f));
+            personaje2.setPosition(new Vector3(1956f, 0f, -3209f));
             personaje2.setRotation(Geometry.DegreeToRadian(90f));
             personaje2.Direccion = -1;
             //handler de evento de fin de animacion
@@ -253,24 +249,27 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.ThirdPersonCamera.TargetDisplacement = new Vector3(0, 12, 0);
 
             //sprites
-            Bitmap barra = new Bitmap(mediaMPath  + "//barras3.png", GuiController.Instance.D3dDevice);
+            Bitmap barra = new Bitmap(mediaMPath  + "//barras4.png", GuiController.Instance.D3dDevice);
             Bitmap barrita1 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
-            Bitmap barrita2 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
+            //Bitmap barrita2 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
             Vector2 spriteSize = new Vector2(1100, 130);
             newSprite = new Sprite();
             newSprite.Bitmap = barra;
+           
             newSprite.SrcRect = new Rectangle(-25, -10, (int)spriteSize.X, (int)spriteSize.Y);
             newSprite.Scaling = new Vector2(0.9f, 0.7f);
 
             s_barrita1 = new Sprite();
             s_barrita1.Bitmap = barrita1;
-            s_barrita1.SrcRect = new Rectangle(-60, -20, 900, 20);
-            s_barrita1.Scaling = new Vector2(1f, 1f);
+            s_barrita1.SrcRect = new Rectangle(0,0, 255, 30);
+            s_barrita1.Scaling = new Vector2(1.32f, 0.72f);
+            s_barrita1.Position = new Vector2((screenSize.Width * 0.105f), (screenSize.Height * 0.08f));
 
             s_barrita2 = new Sprite();
-            s_barrita2.Bitmap = barrita2;
-            s_barrita2.SrcRect = new Rectangle(100, 150, 600, 50);
-            s_barrita2.Scaling = new Vector2(0.9f, 0.7f);
+            s_barrita2.Bitmap = barrita1;
+            s_barrita2.SrcRect = new Rectangle(0, 0, 255, 30);
+            s_barrita2.Scaling = new Vector2(-1.32f, 0.72f);
+            s_barrita2.Position = new Vector2(862, 41);
             //fin sprites
 
             //texto
@@ -422,15 +421,18 @@ namespace AlumnoEjemplos.overflowDT
 
         public void update(float elapsedTime)
         {
-            clock -= 1;
-            if (clock > 0)
+            if (time1 >= 1)
             {
-                clock1.Text = clock.ToString();
-                clock2.Text = clock.ToString();
+                clock -= 1;
+                if (clock > 0)
+                {
+                    clock1.Text = clock.ToString();
+                    clock2.Text = clock.ToString();
+                }
+                time1 = 0;
             }
-            time1 = 0;
-
-            
+            s_barrita1.Scaling=new Vector2(1.32f * personaje1.life / 100,0.74f);
+            s_barrita2.Scaling = new Vector2(-1.32f * personaje2.life / 100, 0.74f);
         }
         /// <summary>
         /// Método que se llama cada vez que hay que refrescar la pantalla.
@@ -443,7 +445,7 @@ namespace AlumnoEjemplos.overflowDT
         public override void render(float elapsedTime)
         {
             time1 += elapsedTime;
-            if (time1 >= 1) update(elapsedTime);
+            update(elapsedTime);
 
             #region SONIDO Y BANNERS
             //match = 0;//saca el sonido
@@ -501,7 +503,7 @@ namespace AlumnoEjemplos.overflowDT
             spriteDrawer.BeginDrawSprite();
             spriteDrawer.DrawSprite(newSprite);
             spriteDrawer.DrawSprite(s_barrita1);
-            //spriteDrawer.DrawSprite(s_barrita2);
+            spriteDrawer.DrawSprite(s_barrita2);
             spriteDrawer.EndDrawSprite();
             //fsprites
 

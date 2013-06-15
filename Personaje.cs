@@ -255,7 +255,7 @@ namespace AlumnoEjemplos.overflowDT
             poder.RemoveAll(
                 delegate(Poder pow)
                 {
-                    if (pow.globalSphere.Center.X > 2212 || pow.globalSphere.Center.X < 1777)
+                    if (pow.globalSphere.Center.X > 2100 || pow.globalSphere.Center.X < 1790)
                     {
                         pow.dispose();
                         return true;
