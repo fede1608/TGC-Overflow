@@ -897,20 +897,38 @@ namespace AlumnoEjemplos.overflowDT
             //personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward, personaje1.actions.jump, 0f));
             //if (personaje1.actions.moving || personaje1.actions.jumping)
             //{
+
             objColtmp.Clear();
             objColtmp2.Clear();
             objetosColisionables.ForEach(delegate(Collider obj)
             {
                 objColtmp.Add(obj);
                 objColtmp2.Add(obj);
-                
-                });
-            objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
-            objColtmp2.Add(BoundingBoxCollider.fromBoundingBox(personaje1.mesh.BoundingBox));
+
+            });
+            //objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
+            //objColtmp2.Add(BoundingBoxCollider.fromBoundingBox(personaje1.mesh.BoundingBox));
 
                 Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objColtmp);
                 Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objColtmp2);
-                 personaje1.move(realMovement);
+
+
+               
+            if (verificarColisionEntrePersonajes())
+                {
+                    if (realMovement.X != 0)
+                    {
+                        realMovement.X *= 0.5f;
+                        realMovement2.X = realMovement.X;
+                    }else if (realMovement2.X != 0)
+                    {
+                        realMovement2.X *= 0.5f;
+                        realMovement.X = realMovement2.X;
+                    }
+                    
+                }
+            
+            personaje1.move(realMovement);
                 //if (realMovement2 != new Vector3(0f,0f,0f)) 
                 personaje2.move(realMovement2);
             //}
@@ -951,6 +969,30 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.setRotation(Geometry.DegreeToRadian(180f));
             }
 
+        }
+
+        public bool verificarColisionEntrePersonajes()
+        {
+            //TgcBoundingSphere esfera1;
+            //esfera1 = new TgcBoundingSphere();
+            //esfera1.setValues(personaje1.Spheres.GlobalSphere.Center,personaje1.Spheres.GlobalSphere.Radius.Y)
+            if ((personaje1.Spheres.GlobalSphere.Radius.X + personaje2.Spheres.GlobalSphere.Radius.X) <= (personaje1.Spheres.GlobalSphere.Center - personaje2.Spheres.GlobalSphere.Center).Length())
+            {
+                foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par1 in personaje1.Spheres.Bones)
+                {
+                    
+                        foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par2 in personaje2.Spheres.Bones)
+                            if (TgcCollisionUtils.testSphereSphere(par1.Value.bonesphere, par2.Value.bonesphere))
+                            {
+                                //bonehit1 = par1.Key;
+                                //bonehit2 = par2.Key;
+                               return true;
+                                
+                            }
+                       
+                    
+                }
+            } return false;
         }
 
         /// <summary>
