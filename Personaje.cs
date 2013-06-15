@@ -75,6 +75,7 @@ namespace AlumnoEjemplos.overflowDT
             get { return direccion; }
             set { direccion = value; }
         }
+        
         public List<Collider> ObjCol
         {
             get { return objCol; }
@@ -129,7 +130,7 @@ namespace AlumnoEjemplos.overflowDT
            actions.jump = 0f;
            actions.hittimer = 0;
            actions.hit = false;
-         
+           spheres.Bones["Bip01 Neck"].bonesphere.setValues(spheres.Bones["Bip01 Neck"].bonesphere.Center,0.6f);
            mesh.AutoUpdateBoundingBox = true;
            //Configurar animacion inicial
            mesh.playAnimation("Parado", true);

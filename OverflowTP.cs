@@ -94,7 +94,7 @@ namespace AlumnoEjemplos.overflowDT
             float currentScaleY;
             //Fin de incicialización HM
         #endregion
-
+            TgcBoundingBox bb_piso;
         List<Collider> objetosColisionables = new List<Collider>();
         List<Collider> objColtmp=new List<Collider>();
         List<Collider> objColtmp2 = new List<Collider>();
@@ -357,12 +357,13 @@ namespace AlumnoEjemplos.overflowDT
                 if (mesh.Name == "Room-1-Floor-0")
                 {
                     objetosColisionables.Add(TriangleMeshCollider.fromMesh(mesh));
+                    bb_piso = mesh.BoundingBox;
                 }
                 //El resto de los objetos son colisiones de BoundingBox. Las colisiones a nivel de triangulo son muy costosas asi que deben utilizarse solo
                 //donde es extremadamente necesario (por ejemplo en el piso). El resto se simplifica con un BoundingBox
                 else
                 {
-                    objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
+                   // objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
                 }
             }
             
@@ -911,39 +912,55 @@ namespace AlumnoEjemplos.overflowDT
             //if (personaje1.actions.moving || personaje1.actions.jumping)
             //{
 
-            objColtmp.Clear();
-            objColtmp2.Clear();
-            objetosColisionables.ForEach(delegate(Collider obj)
-            {
-                objColtmp.Add(obj);
-                objColtmp2.Add(obj);
+            //objColtmp.Clear();
+            //objColtmp2.Clear();
+            //objetosColisionables.ForEach(delegate(Collider obj)
+            //{
+            //    objColtmp.Add(obj);
+            //    objColtmp2.Add(obj);
 
-            });
+            //});
             //objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
             //objColtmp2.Add(BoundingBoxCollider.fromBoundingBox(personaje1.mesh.BoundingBox));
 
-                Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objColtmp);
-                Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objColtmp2);
+                //Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objColtmp);
+                //Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objColtmp2);
+           
+            //proximo movimiento
+            Vector3 realMovement =new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) ;
+           Vector3 realMovement2 =new Vector3 (personaje2.actions.moveForward,personaje2.actions.jump,0) ;
+
+
+           if (TgcCollisionUtils.testAABBAABB(personaje1.mesh.BoundingBox, bb_piso)) { realMovement.Y = 0; personaje1.setPosition(new Vector3(personaje1.mesh.Position.X,0,personaje1.mesh.Position.Z)); };
+           if (TgcCollisionUtils.testAABBAABB(personaje2.mesh.BoundingBox, bb_piso)) { realMovement2.Y = 0; personaje2.setPosition(new Vector3(personaje2.mesh.Position.X, 0, personaje2.mesh.Position.Z)); };
 
 
                
             if (verificarColisionEntrePersonajes())
                 {
-                    if (realMovement.X != 0)
-                    {
-                        realMovement.X *= 0.5f;
-                        realMovement2.X = realMovement.X;
-                    }else if (realMovement2.X != 0)
-                    {
-                        realMovement2.X *= 0.5f;
-                        realMovement.X = realMovement2.X;
-                    }
+                    //if (realMovement.X != 0)
+                    //{
+                        realMovement.X -= personaje1.movementVector.X*elapsedTime*personaje1.Direccion;
+                        realMovement2.X -= personaje2.movementVector.X* elapsedTime*personaje2.Direccion;
+                        //personaje1.Spheres.GlobalSphere.moveCenter(new Vector3(-realMovement.X, 0, 0));
+                        //personaje2.Spheres.GlobalSphere.moveCenter(new Vector3(realMovement.X, 0, 0));
+                        
+                    //}else if (realMovement2.X != 0)
+                    //{
+                    //    realMovement2.X *= 0.5f;
+                    //    realMovement.X = realMovement2.X;
+                    //    personaje1.Spheres.GlobalSphere.moveCenter(new Vector3(realMovement2.X, 0, 0));
+                    //    personaje2.Spheres.GlobalSphere.moveCenter(new Vector3(-realMovement2.X, 0, 0));
+                    //}
+
                     
                 }
             
             personaje1.move(realMovement);
                 //if (realMovement2 != new Vector3(0f,0f,0f)) 
                 personaje2.move(realMovement2);
+                personaje1.Spheres.GlobalSphere.moveCenter(realMovement);
+                personaje2.Spheres.GlobalSphere.moveCenter(realMovement2);
             //}
             personaje1.render(elapsedTime);
             personaje2.render(elapsedTime);
@@ -989,7 +1006,9 @@ namespace AlumnoEjemplos.overflowDT
             //TgcBoundingSphere esfera1;
             //esfera1 = new TgcBoundingSphere();
             //esfera1.setValues(personaje1.Spheres.GlobalSphere.Center,personaje1.Spheres.GlobalSphere.Radius.Y)
-            if ((personaje1.Spheres.GlobalSphere.Radius.X + personaje2.Spheres.GlobalSphere.Radius.X) <= (personaje1.Spheres.GlobalSphere.Center - personaje2.Spheres.GlobalSphere.Center).Length())
+            
+            //if ((personaje1.Spheres.GlobalSphere.Radius.X + personaje2.Spheres.GlobalSphere.Radius.X) > (personaje1.Spheres.GlobalSphere.Center - personaje2.Spheres.GlobalSphere.Center).Length())
+                if (TgcCollisionUtils.testAABBAABB(personaje1.mesh.BoundingBox, personaje2.mesh.BoundingBox))
             {
                 foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par1 in personaje1.Spheres.Bones)
                 {
