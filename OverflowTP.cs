@@ -193,6 +193,7 @@ namespace AlumnoEjemplos.overflowDT
             //Crear un modifier para modificar un vértice
             GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
 
+            GuiController.Instance.Modifiers.addBoolean("IA/Pj2", "True para IA, False para Jugador 2", false);
             ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
             //Es la camara que viene por default, asi que no hace falta hacerlo siempre
             //GuiController.Instance.RotCamera.Enable = true;
@@ -263,7 +264,7 @@ namespace AlumnoEjemplos.overflowDT
             s_barrita1.Bitmap = barrita1;
             s_barrita1.SrcRect = new Rectangle(0,0, 255, 30);
             s_barrita1.Scaling = new Vector2(1.32f, 0.72f);
-            s_barrita1.Position = new Vector2((screenSize.Width * 0.105f), (screenSize.Height * 0.08f));
+            s_barrita1.Position = new Vector2((screenSize.Width * 0.105f), 41);
 
             s_barrita2 = new Sprite();
             s_barrita2.Bitmap = barrita1;
