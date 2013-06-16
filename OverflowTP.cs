@@ -193,7 +193,8 @@ namespace AlumnoEjemplos.overflowDT
             //Crear un modifier para modificar un vértice
             GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
 
-            GuiController.Instance.Modifiers.addBoolean("IA/Pj2", "True para IA, False para Jugador 2", false);
+            GuiController.Instance.Modifiers.addBoolean("IA/Pj2", "True para IA, False para Jugador 2",false);
+             GuiController.Instance.Modifiers.addBoolean("estado", "Estado de la IA true ataque false defensa",true);
             ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
             //Es la camara que viene por default, asi que no hace falta hacerlo siempre
             //GuiController.Instance.RotCamera.Enable = true;
@@ -651,7 +652,8 @@ namespace AlumnoEjemplos.overflowDT
             #endregion
 
 
-
+            
+            
 
             //Obtener valor de UserVar (hay que castear)
             //int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
@@ -788,74 +790,121 @@ namespace AlumnoEjemplos.overflowDT
 
 
 
-
+            bool IA = (bool)GuiController.Instance.Modifiers["IA/Pj2"];
 
 
             //player2
             //Capturar Input teclado
-            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.K))
-            {
-                //Tecla control right apretada
-                personaje2.actions.punch = true;
-      
 
-            } if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.L))
+            //inicio pj2 manual
+            if (!IA)
             {
-                //Tecla control right apretada
-                personaje2.actions.kick = true;
+
+                if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.K))
+                {
+                    //Tecla control right apretada
+                    personaje2.actions.punch = true;
+
+
+                } if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.L))
+                {
+                    //Tecla control right apretada
+                    personaje2.actions.kick = true;
+
+                }
+                if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightControl))
+                {
+                    //Tecla control right apretada
+                    personaje2.tirarPoder();
+
+                }
+                //izquierda
+                if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.LeftArrow))
+                {
+                    personaje2.actions.moveForward = -velocidadCaminar * elapsedTime;
+                    personaje2.actions.moving = true;
+                    if (personaje2.Direccion == -1)
+                    {
+                        animation = "Caminando";
+                    }
+                    else
+                    {
+                        animation = "CaminandoRev";
+                    }
+                }
+                //derecha
+                else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.RightArrow))
+                {
+                    personaje2.actions.moveForward = velocidadCaminar * elapsedTime;
+                    personaje2.actions.moving = true;
+                    if (personaje2.Direccion == -1)
+                    {
+                        animation = "CaminandoRev";
+                    }
+                    else
+                    {
+                        animation = "Caminando";
+
+                    }
+
+                }
+                //ninguna de las dos
+                else
+                {
+                    personaje2.actions.moveForward = 0;
+                    personaje2.actions.moving = false;
+                    //personaje2.mesh.playAnimation("Parado", true);
+                }
+
+                //saltar
+                if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.UpArrow) || GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightShift)) && !personaje2.actions.jumping)
+                {
+                    personaje2.actions.jumping = true;
+                    //collisionManager.GravityEnabled = false;
+                    gravity2 = false;
+                }
+            } //fin PJ2 manual
+            else
+                //Inicio IA
+            {
+                Random random = new Random();
+                int rndval1 = random.Next(0, 100);
+                bool estado = (bool)GuiController.Instance.Modifiers["estado"];
+                float distancia = FastMath.Abs(personaje1.getPosition().X - personaje2.getPosition().X);
+                
+                // Se define si el estado de pelea es Ataque o Defensa, si es ataque el personaje intentara acercarse al pj1 a su vez de intentar golpearlo
+                // Si esta en defensa intentara alejarse, esquivar los poderes y a su vez tirarle poder 
+                // El estado se definira por la cantidad de vida que le queda empezando en estado de ataque y cuando le quede menos de 25% de vida pasara a defensa, a la vez que cuando pase a menos de 5% 
+                // haya una posibilidad de pasar a ataque para jugarsela.
+                if (estado)
+                {
+                    //Ataque
+                    //izquierda
+                    if (distancia > 8 )//& rndval1>25)
+                    { 
+                        personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
+                        personaje2.actions.moving = true;
+                        animation = "Caminando";
+
+                    }
+                    else
+                    {
+                        personaje2.actions.moveForward = 0;
+                        personaje2.actions.moving = false;
+                        if (rndval1 < 50) personaje2.actions.punch = true;
+                        if (rndval1 >= 50&rndval1<75) personaje2.actions.kick = true;
+                        if (rndval1 >= 95) { personaje2.actions.power = true; personaje2.tirarPoder(); }
+                    }
+
+                }else
+                    {
+                        //Defensa
+
+                    }
                 
             }
-            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightControl))
-            {
-                //Tecla control right apretada
-                personaje2.tirarPoder();
-               
-            }
-            //izquierda
-            if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.LeftArrow))
-            {
-                personaje2.actions.moveForward = -velocidadCaminar * elapsedTime;
-                personaje2.actions.moving = true;
-                if (personaje2.Direccion == -1)
-                {
-                    animation = "Caminando";
-                }
-                else
-                {
-                    animation = "CaminandoRev";
-                }
-            }
-            //derecha
-            else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.RightArrow))
-            {
-                personaje2.actions.moveForward = velocidadCaminar * elapsedTime;
-                personaje2.actions.moving = true;
-                if (personaje2.Direccion == -1)
-                {
-                    animation = "CaminandoRev";
-                }
-                else
-                {
-                    animation = "Caminando";
-                    
-                }
 
-            }
-            //ninguna de las dos
-            else
-            {
-                personaje2.actions.moveForward = 0;
-                personaje2.actions.moving = false;
-                //personaje2.mesh.playAnimation("Parado", true);
-            }
-            
-            //saltar
-            if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.UpArrow) || GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightShift)) && !personaje2.actions.jumping)
-            {
-                personaje2.actions.jumping = true;
-                collisionManager.GravityEnabled = false;
-                gravity2 = false;
-            }
+
 
             if (personaje2.actions.jumping && personaje2.getPosition().Y < 5)
             {
