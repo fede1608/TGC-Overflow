@@ -1062,8 +1062,8 @@ namespace AlumnoEjemplos.overflowDT
                     
                 }
 
-            personaje1.Spheres.GlobalSphere.moveCenter(realMovement);
-            personaje2.Spheres.GlobalSphere.moveCenter(realMovement2);
+            //personaje1.Spheres.GlobalSphere.moveCenter(realMovement);
+            //personaje2.Spheres.GlobalSphere.moveCenter(realMovement2);
 
             personaje1.move(realMovement);
             personaje2.move(realMovement2);

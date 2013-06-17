@@ -165,9 +165,31 @@ namespace AlumnoEjemplos.overflowDT
         }
         public void move(Vector3 movement)
         {
-            if (movement != new Vector3 (0,0,0))
+            //if (movement != new Vector3 (0,0,0))
                 mesh.move(movement);
-            if (mesh.Position.Y < 0) { mesh.move(new Vector3(0, -mesh.Position.Y, 0)); spheres.GlobalSphere.moveCenter(new Vector3(0, -mesh.Position.Y, 0)); };
+                spheres.GlobalSphere.moveCenter(movement);
+            //controlar colisión con el Suelo
+            if (mesh.Position.Y < 0) 
+            { 
+                mesh.move(new Vector3(0, -mesh.Position.Y, 0)); 
+                spheres.GlobalSphere.moveCenter(new Vector3(0, -mesh.Position.Y, 0)); 
+            }
+            //Controlar que No se se pase de los limites laterales 
+            if (mesh.Position.X > 1993) 
+            { 
+                mesh.move(new Vector3(1993 - mesh.Position.X, 0, 0)); 
+                spheres.GlobalSphere.moveCenter(new Vector3(1993 - mesh.Position.X, 0, 0));
+                enemigo.mesh.move(new Vector3(1993 - mesh.Position.X, 0, 0));
+                enemigo.Spheres.GlobalSphere.moveCenter(new Vector3(1993 - mesh.Position.X, 0, 0)); 
+            }
+            if (mesh.Position.X < 1880)
+            {
+                mesh.move(new Vector3(1880-mesh.Position.X, 0, 0));
+                spheres.GlobalSphere.moveCenter(new Vector3(1880-mesh.Position.X, 0, 0));
+                enemigo.mesh.move(new Vector3(1880-mesh.Position.X, 0, 0));
+                enemigo.Spheres.GlobalSphere.moveCenter(new Vector3(1880-mesh.Position.X, 0, 0));
+            }
+            
             //GuiController.Instance.UserVars.setValue("camZ", mesh.BoundingBox.PMax.X);   
             //mesh.Position += movement;
             //mesh.createBoundingBox();
