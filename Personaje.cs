@@ -33,7 +33,7 @@ namespace AlumnoEjemplos.overflowDT
         public int life=100;
         private string playername = "TGC Player";
         Personaje enemigo;
-        List<Poder> poder = new List<Poder>();
+        public List<Poder> poder = new List<Poder>();
         FightGameManager fightGameManager = new FightGameManager();
         TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
         TgcKeyFrameLoader keyFrameLoader = new TgcKeyFrameLoader();

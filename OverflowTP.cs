@@ -195,7 +195,7 @@ namespace AlumnoEjemplos.overflowDT
 
             //Crear un modifier para modificar un vértice
             GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
-
+            GuiController.Instance.Modifiers.addBoolean("boundingbox", "Ver las Bounding Box y las B. Spheres", false);
             GuiController.Instance.Modifiers.addBoolean("IA/Pj2", "True para IA, False para Jugador 2",false);
              GuiController.Instance.Modifiers.addBoolean("estado", "Estado de la IA true ataque false defensa",true);
             ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
@@ -912,13 +912,19 @@ namespace AlumnoEjemplos.overflowDT
                             if (rndval1 < 50) personaje2.actions.punch = true;
                             if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
                             if (rndval1 >= 99) { personaje2.actions.power = true; personaje2.tirarPoder(); }
+                            if (rndval1 >= 75 & rndval1 < 95)
+                            {
+                                personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
+                                personaje2.actions.moving = true;
+                                animation2 = "Caminando";
+                            }
                         }
 
                     }
                     else
                     {
                         //Defensa
-                        if (distancia < 35)//& rndval1>25)
+                        if (distancia < 35)
                         {
                             if (rndval1 >= 70)
                             {
@@ -932,11 +938,15 @@ namespace AlumnoEjemplos.overflowDT
                                 personaje2.actions.moving = true;
                                 animation2 = "CaminandoRev";
                             }
+                            if (rndval1 < 70 & distancia<6) personaje2.actions.punch = true;
+                            //if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
+                            if (rndval1 >= 90 & distancia>6 & distancia<16) { personaje2.actions.power = true; personaje2.tirarPoder(); }
 
                         }
                         else
                         {
-                            int posibSalto = 30;
+                            int posibSalto = 20;
+                            if (personaje1.poder.Count >= 1) posibSalto = 55;
                             //si esta suficientemente lejos 
                             personaje2.actions.moveForward = 0;
                             personaje2.actions.moving = false;
@@ -950,8 +960,8 @@ namespace AlumnoEjemplos.overflowDT
                     }
 
                     //fuera de estado
-                    if (personaje2.life < 25) estado = false;
-                    if (distancia > 120) estado = true;
+                    if (personaje2.life < 25 & rndval1<50) estado = false;
+                    if (distancia > 100) estado = true;
                     
                 }
                 
@@ -1070,8 +1080,13 @@ namespace AlumnoEjemplos.overflowDT
 
             personaje1.render(elapsedTime);
             personaje2.render(elapsedTime);
-            
 
+            if ((bool)GuiController.Instance.Modifiers["boundingbox"])
+            {
+                personaje1.renderbb(elapsedTime);
+                personaje2.renderbb(elapsedTime);
+
+            }
 
 
             //settear uservars
