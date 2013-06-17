@@ -31,6 +31,7 @@ namespace AlumnoEjemplos.overflowDT
         public Actions actions;
         public Vector3 movementVector=new Vector3 (30,0,0);
         public int life=100;
+        public int energia = 100;
         private string playername = "TGC Player";
         Personaje enemigo;
         public List<Poder> poder = new List<Poder>();
@@ -158,7 +159,7 @@ namespace AlumnoEjemplos.overflowDT
         }
         public void restarVida(int vida)
         {
-            move(new Vector3(-direccion,0,0));
+            move(new Vector3(-direccion*1.5f,0,0));
             golpeado=true;
             if (vida >= 0) life-=vida;
             if (life < 0) life = 0;
@@ -200,14 +201,23 @@ namespace AlumnoEjemplos.overflowDT
             //mesh.createBoundingBox();
             //mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + movement , movement  + new Vector3(1, 0, 1));
         }
-        public void tirarPoder()
+        public bool tirarPoder()
         {
-            Poder pow = new Poder();
-            pow.Init(direccion, mesh.Position + new Vector3(0,3,0), new Vector3(40, 0, 0));
-            pow.Owner = this;
-            if (luz) { luz = false; pow.setLight(0); poderLuz = pow; }
-            poder.Add(pow);
+            if (energia >= 10)
+            {
+                Poder pow = new Poder();
+                pow.Init(direccion, mesh.Position + new Vector3(0, 3, 0), new Vector3(40, 0, 0));
+                pow.Owner = this;
+                if (luz & energia >= 50) { luz = false; pow.setLight(0); poderLuz = pow; energia -= 50; }
+                else energia -= 10;
+                poder.Add(pow);
+                //actions.power = false;
+                return true;
+            }
+
+            return false;
         }
+
         public Vector3 getPowerPosition()
         {
             if (luz) return new Vector3(0, 0, 0);

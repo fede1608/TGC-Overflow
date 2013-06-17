@@ -57,7 +57,7 @@ namespace AlumnoEjemplos.overflowDT
 
           //Creo el sprite drawer
             Drawer spriteDrawer = new Drawer();
-            Sprite newSprite; Sprite s_barrita1; Sprite s_barrita2;
+            Sprite newSprite; Sprite s_barrita1; Sprite s_barrita2, s_barritaP2,s_barritaP1;
 
         Personaje personaje1;
         Personaje personaje2;
@@ -257,7 +257,7 @@ namespace AlumnoEjemplos.overflowDT
             //sprites
             Bitmap barra = new Bitmap(mediaMPath  + "//barras4.png", GuiController.Instance.D3dDevice);
             Bitmap barrita1 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
-            //Bitmap barrita2 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
+            Bitmap poder1 = new Bitmap(mediaMPath + "//poder.png", GuiController.Instance.D3dDevice);
             Vector2 spriteSize = new Vector2(1100, 130);
             newSprite = new Sprite();
             newSprite.Bitmap = barra;
@@ -276,6 +276,18 @@ namespace AlumnoEjemplos.overflowDT
             s_barrita2.SrcRect = new Rectangle(0, 0, 255, 30);
             s_barrita2.Scaling = new Vector2(-1.32f, 0.72f);
             s_barrita2.Position = new Vector2(862, 41);
+
+            s_barritaP1 = new Sprite();
+            s_barritaP1.Bitmap = poder1;
+            s_barritaP1.SrcRect = new Rectangle(0, 0, 510, 30);
+            s_barritaP1.Scaling = new Vector2(0.2f, 0.32f);
+            s_barritaP1.Position = new Vector2((screenSize.Width * 0.15f), 70);
+
+            s_barritaP2 = new Sprite();
+            s_barritaP2.Bitmap = poder1;
+            s_barritaP2.SrcRect = new Rectangle(0, 0, 510, 30);
+            s_barritaP2.Scaling = new Vector2(-0.2f, 0.32f);
+            s_barritaP2.Position = new Vector2(820, 70);
             //fin sprites
 
             //texto
@@ -435,11 +447,21 @@ namespace AlumnoEjemplos.overflowDT
                     clock1.Text = clock.ToString();
                     clock2.Text = clock.ToString();
                 }
+                if (personaje1.energia <= 97) { personaje1.energia += 3; }
+                else { personaje1.energia = 100; }
+
+                if (personaje2.energia <= 97) { personaje2.energia += 3; }
+                else { personaje2.energia = 100; }
+                
+                
                 time1 = 0;
             }
 
             s_barrita1.Scaling=new Vector2(1.32f * personaje1.life / 100,0.74f);
             s_barrita2.Scaling = new Vector2(-1.32f * personaje2.life / 100, 0.74f);
+
+            s_barritaP1.Scaling = new Vector2(0.2f * personaje1.energia / 100, 0.32f);
+            s_barritaP2.Scaling = new Vector2(-0.2f * personaje2.energia / 100, 0.32f);
         }
         /// <summary>
         /// Método que se llama cada vez que hay que refrescar la pantalla.
@@ -511,6 +533,8 @@ namespace AlumnoEjemplos.overflowDT
             spriteDrawer.DrawSprite(newSprite);
             spriteDrawer.DrawSprite(s_barrita1);
             spriteDrawer.DrawSprite(s_barrita2);
+            spriteDrawer.DrawSprite(s_barritaP1);
+            spriteDrawer.DrawSprite(s_barritaP2);
             spriteDrawer.EndDrawSprite();
             //fsprites
 
@@ -671,6 +695,7 @@ namespace AlumnoEjemplos.overflowDT
 
             ///////////////INPUT//////////////////
             String animation= "Parado";
+            bool tiropoder = false;
             //Capturar Input teclado
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
             {
@@ -690,8 +715,8 @@ namespace AlumnoEjemplos.overflowDT
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
             {
                 //Tecla F apretada
-               // personaje1.mesh.playAnimation("Arrojar", false);
-                personaje1.tirarPoder();
+               
+                if (personaje1.energia >= 10)
                 personaje1.actions.power = true;
 
             }
@@ -768,7 +793,7 @@ namespace AlumnoEjemplos.overflowDT
             }
            
             //Animaciones big if
-            if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
+            if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop & personaje1.energia >= 10) { personaje1.tirarPoder(); personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
             else
             {
                 if (personaje1.actions.punch) {
@@ -820,7 +845,9 @@ namespace AlumnoEjemplos.overflowDT
                 if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightControl))
                 {
                     //Tecla control right apretada
-                    personaje2.tirarPoder();
+                    if (personaje2.energia >= 10)
+                    personaje2.actions.power = true;
+                    //tiropoder = personaje2.tirarPoder();
 
                 }
                 //izquierda
@@ -899,6 +926,8 @@ namespace AlumnoEjemplos.overflowDT
                                 animation2 = "Caminando";
                             }
                             if (rndval1 > 80) { personaje2.actions.jumping = true; gravity2 = false; }
+                            if (rndval1 >= 99 & personaje2.energia >= 10) { personaje2.actions.power = true; }
+                            
                             if (rndval1 >= 70)
                             {
                                 personaje2.actions.moveForward = -personaje2.Direccion * velocidadCaminar * elapsedTime;
@@ -913,7 +942,7 @@ namespace AlumnoEjemplos.overflowDT
                             personaje2.actions.moving = false;
                             if (rndval1 < 50) personaje2.actions.punch = true;
                             if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
-                            if (rndval1 >= 99) { personaje2.actions.power = true; personaje2.tirarPoder(); }
+                            if (rndval1 >= 99 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
                             if (rndval1 >= 75 & rndval1 < 95)
                             {
                                 personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
@@ -942,7 +971,7 @@ namespace AlumnoEjemplos.overflowDT
                             }
                             if (rndval1 < 70 & distancia<6) personaje2.actions.punch = true;
                             //if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
-                            if (rndval1 >= 90 & distancia>6 & distancia<16) { personaje2.actions.power = true; personaje2.tirarPoder(); }
+                            if (rndval1 >= 90 & distancia > 6 & distancia < 16 & personaje2.energia>=10) { personaje2.actions.power = true; }//tiropoder=personaje2.tirarPoder(); }
 
                         }
                         else
@@ -954,7 +983,7 @@ namespace AlumnoEjemplos.overflowDT
                             personaje2.actions.moving = false;
                             if (rndval1 < 1) personaje2.actions.punch = true;
                             if (rndval1 >= 74 & rndval1 < 75) personaje2.actions.kick = true;
-                            if (rndval1 >= 75) { personaje2.actions.power = true; personaje2.tirarPoder(); }
+                            if (rndval1 >= 75 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
                             if (rndval1 < posibSalto) { personaje2.actions.jumping = true; gravity2 = false; }
 
                         }
@@ -988,7 +1017,7 @@ namespace AlumnoEjemplos.overflowDT
                 //collisionManager.GravityEnabled = true;
             }
 
-            if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop) {personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
+            if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop & personaje2.energia >= 10) { personaje2.tirarPoder(); personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
             else
             {
                 if (personaje2.actions.punch) {

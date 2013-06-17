@@ -74,6 +74,7 @@ namespace AlumnoEjemplos.overflowDT
                 if ((globalSphere.Center.Y > owner.Enemigo.getPosition().Y) && (globalSphere.Center.Y < (owner.Enemigo.getPosition().Y+8)))
                 {
                     owner.Enemigo.restarVida(4);
+                    if (luz) owner.Enemigo.restarVida(6);
                     disappear();
                     //owner.sacarPoder(this);
                 }
