@@ -99,6 +99,7 @@ namespace AlumnoEjemplos.overflowDT
             public float hittimer;
             public float jump;
             public float moveForward;
+            public bool win;
         }
 
         
@@ -134,6 +135,7 @@ namespace AlumnoEjemplos.overflowDT
            actions.jump = 0f;
            actions.hittimer = 0;
            actions.hit = false;
+           actions.win = false;
            spheres.Bones["Bip01 Neck"].bonesphere.setValues(spheres.Bones["Bip01 Neck"].bonesphere.Center,0.6f);
            mesh.AutoUpdateBoundingBox = true;
            //Configurar animacion inicial

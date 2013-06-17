@@ -80,7 +80,7 @@ namespace AlumnoEjemplos.overflowDT
         TgcStaticSound sound;   
         string musicFile;
         string soundFile=null;
-        int match=0;
+        int estadoPelea = 0;
         TgcSprite banner;
         //Fin Sonido
         #endregion
@@ -99,6 +99,7 @@ namespace AlumnoEjemplos.overflowDT
         List<Collider> objColtmp=new List<Collider>();
         List<Collider> objColtmp2 = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
+        //PSExplosion ps;
 
         TgcText2d clock1;
         TgcText2d clock2;
@@ -196,7 +197,7 @@ namespace AlumnoEjemplos.overflowDT
             //Crear un modifier para modificar un vértice
             GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
             GuiController.Instance.Modifiers.addBoolean("boundingbox", "Ver las Bounding Box y las B. Spheres", false);
-            GuiController.Instance.Modifiers.addBoolean("IA/Pj2", "True para IA, False para Jugador 2",false);
+            GuiController.Instance.Modifiers.addBoolean("IA/Pj2", "True para IA, False para Jugador 2",true);
              GuiController.Instance.Modifiers.addBoolean("estado", "Estado de la IA true ataque false defensa",true);
             ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
             //Es la camara que viene por default, asi que no hace falta hacerlo siempre
@@ -248,6 +249,8 @@ namespace AlumnoEjemplos.overflowDT
             personaje2.Enemigo = personaje1;
             personaje1._fightGameManager = this;
             personaje2._fightGameManager = this;
+            personaje1.setColor(Color.Blue);
+            personaje2.setColor(Color.Red);
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
                                                                             (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
@@ -344,7 +347,7 @@ namespace AlumnoEjemplos.overflowDT
             //Crear 4 mesh para representar las 4 para la luces. Las ubicamos en distintas posiciones del escenario, cada una con un color distinto.
             lightMeshes = new TgcBox[4];
             origLightPos = new Vector3[lightMeshes.Length];
-            Color[] c = new Color[6] {Color.LightYellow, Color.Red, Color.Blue, Color.Green, Color.Yellow,Color.Violet };
+            Color[] c = new Color[6] {Color.LightYellow, Color.Green, Color.Blue, Color.Red, Color.Yellow,Color.Violet };
             for (int i = 0; i < lightMeshes.Length; i++)
             {
                 Color co = c[i % c.Length];
@@ -355,7 +358,7 @@ namespace AlumnoEjemplos.overflowDT
             //origLightPos[1] = new Vector3(1880f, 70f, -3249f);//-40, 20 + i * 20, 400);
             //origLightPos[2] = new Vector3(1960f, 70f, -3169f);//-40, 20 + i * 20, 400);
             //origLightPos[3] = new Vector3(1960f, 70f, -3249f);
-            origLightPos[0] = new Vector3(1910f, 150f, -3199f);//-40, 20 + i * 20, 400);
+            origLightPos[0] = new Vector3(1910f, 140f, -3220f);//-40, 20 + i * 20, 400);
             
             //Interpolador para mover las luces de un lado para el otro
             interp = new InterpoladorVaiven();
@@ -416,7 +419,7 @@ namespace AlumnoEjemplos.overflowDT
                 string element = lista[i];
             }
 
-
+            //ps = new PSExplosion(new Vector(personaje1.mesh.Position.X, personaje1.mesh.Position.Y, personaje1.mesh.Position.Z), Color.Red);
         }
 
         void mesh_AnimationEnds(TgcSkeletalMesh mesh)
@@ -439,8 +442,10 @@ namespace AlumnoEjemplos.overflowDT
 
         public void update(float elapsedTime)
         {
+            
             if (time1 >= 1)
             {
+                //ps.Update();
                 clock -= 1;
                 if (clock > 0)
                 {
@@ -462,6 +467,12 @@ namespace AlumnoEjemplos.overflowDT
 
             s_barritaP1.Scaling = new Vector2(0.2f * personaje1.energia / 100, 0.32f);
             s_barritaP2.Scaling = new Vector2(-0.2f * personaje2.energia / 100, 0.32f);
+
+            if (personaje1.life <= 0 | personaje2.life <= 0)
+            {
+                if (estadoPelea == 1 & personaje2.life > 0) {personaje1.actions.win = true;}
+                else if (estadoPelea == 1 & personaje1.life > 0) { personaje2.actions.win = true; }
+                estadoPelea = 2; }
         }
         /// <summary>
         /// Método que se llama cada vez que hay que refrescar la pantalla.
@@ -478,7 +489,7 @@ namespace AlumnoEjemplos.overflowDT
 
             #region SONIDO Y BANNERS
             //match = 0;//saca el sonido
-            switch (match)
+            switch (estadoPelea)
             {
                 case 0://Inicia el combate
                     
@@ -511,7 +522,7 @@ namespace AlumnoEjemplos.overflowDT
                         player.closeFile();
                         loadMp3(mediaMPath + "Music\\Reptile2.mp3");
                         player.play(true);
-                        match = 1;
+                        estadoPelea = 1;
                     }
 
                     
@@ -528,7 +539,7 @@ namespace AlumnoEjemplos.overflowDT
             clock1.render();
             clock2.render();
 
-            //sprites
+            #region sprites
             spriteDrawer.BeginDrawSprite();
             spriteDrawer.DrawSprite(newSprite);
             spriteDrawer.DrawSprite(s_barrita1);
@@ -536,15 +547,12 @@ namespace AlumnoEjemplos.overflowDT
             spriteDrawer.DrawSprite(s_barritaP1);
             spriteDrawer.DrawSprite(s_barritaP2);
             spriteDrawer.EndDrawSprite();
-            //fsprites
+            #endregion sprites
 
 
             personaje1.update(elapsedTime);
             personaje2.update(elapsedTime);
 
-
-            //objColtmp = objetosColisionables;
-            //objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
 
             #region Render HeightMap
             //Rutinas de renderización de HeightMap
@@ -635,8 +643,8 @@ namespace AlumnoEjemplos.overflowDT
                 {
                     //luz de ambiente
                     lightMesh.Position = origLightPos[i];
-                    pointLightIntensity[i] = 30f;
-                    pointLightAttenuation[i] = 0.40f;
+                    pointLightIntensity[i] = 50f;
+                    pointLightAttenuation[i] = 0.30f;
 
                 }
                 lightColors[i] = ColorValue.FromColor(lightMesh.Color);
@@ -692,266 +700,283 @@ namespace AlumnoEjemplos.overflowDT
             string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
             Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
             //GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
-            
-            #region Input Manual PJ2
-            ///////////////INPUT//////////////////
-            String animation= "Parado";
-            
-            //Capturar Input teclado
-            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
-            {
-               // personaje1.mesh.playAnimation("Pegar", false);
-                personaje1.actions.punch = true;
 
-                //Tecla G apretada
+            if (estadoPelea == 1)
+            {
+                #region Pelea Activa
+                //1:estado de pelea
+                #region Input Manual PJ1
+                ///////////////INPUT//////////////////
+                String animation = "Parado";
 
-            }
-            
-            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.H))
-            {
-                //personaje1.mesh.playAnimation("Patear", false);
-                //Tecla H apretada
-                personaje1.actions.kick = true;
-            }
-            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
-            {
-                //Tecla F apretada
-               
-                if (personaje1.energia >= 10)
-                personaje1.actions.power = true;
-
-            }
-            //izquierda
-            if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
-            {
-                personaje1.actions.moveForward = -velocidadCaminar * elapsedTime;
-                personaje1.actions.moving = true;
-                if (personaje1.Direccion == 1)
+                //Capturar Input teclado
+                if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
                 {
-                    animation = "CaminandoRev";
-                    //personaje1.mesh.playAnimation("CaminandoRev", true);
-                }
-                else
-                {
-                    animation = "Caminando";
-                    //personaje1.mesh.playAnimation("Caminando", true);
+                    // personaje1.mesh.playAnimation("Pegar", false);
+                    personaje1.actions.punch = true;
+
+                    //Tecla G apretada
+
                 }
 
-                //personaje1.mesh.AutoUpdateBoundingBox = true;
-            }
-            //derecha
-            else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
-            {
-                personaje1.actions.moveForward = velocidadCaminar * elapsedTime;
-                personaje1.actions.moving = true;
-
-                if (personaje1.Direccion == 1)
+                if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.H))
                 {
-                    animation = "Caminando";
-                    //personaje1.mesh.playAnimation("Caminando", true);
+                    //personaje1.mesh.playAnimation("Patear", false);
+                    //Tecla H apretada
+                    personaje1.actions.kick = true;
                 }
-                else
+                if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
                 {
-                    animation = "CaminandoRev";
-                    //personaje1.mesh.playAnimation("CaminandoRev", true);
-                }
+                    //Tecla F apretada
 
-                //personaje1.mesh.AutoUpdateBoundingBox = true;
-            }
-            //ninguna de las dos
-            else
-            {
-                personaje1.actions.moveForward = 0;
-                personaje1.actions.moving = false;
-                //personaje1.mesh.AutoUpdateBoundingBox = false;
-                //personaje1.mesh.playAnimation("Parado", true);
-            }
-
-            //saltar
-            if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.W)|| GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.Space))&& !personaje1.actions.jumping)
-            {
-                
-                personaje1.actions.jumping = true;
-                collisionManager.GravityEnabled = false;
-                gravity = false;
-            }
-            #endregion
-
-
-            #region Jump manager pj1
-            if (personaje1.actions.jumping && personaje1.getPosition().Y < 5)
-            {
-                personaje1.actions.jump += 5 * elapsedTime ;
-            }
-            else if (!gravity)
-            {
-                personaje1.actions.jump -= 5 * elapsedTime;
-                gravity = personaje1.getPosition().Y <= 2;
-                personaje1.actions.jumping = false;
-            }
-            else
-            {
-                personaje1.actions.jump = 0;
-                personaje1.actions.jumping = false;
-                //collisionManager.GravityEnabled = true;
-            }
-            #endregion
-
-            //Animaciones big if
-            #region Big if de las animaciones pj1
-            if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop & personaje1.energia >= 10) { personaje1.tirarPoder(); personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
-            else
-            {
-                if (personaje1.actions.punch) {
-
-                    if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
-                    personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
-                }
-                else
-                {
-                    if (personaje1.actions.kick) {
-                        if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
-                        personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
-                
-                    }
-                    else
-                    {
-                        if (personaje1.actions.moving) { personaje1.mesh.playAnimation(animation, true); }
-                        else { if (!personaje1.actions.moving) { personaje1.mesh.playAnimation("Parado", true); } }
-                    }
-                }
-            }
-            #endregion
-
-
-
-            bool IA = (bool)GuiController.Instance.Modifiers["IA/Pj2"];
-
-
-            //player2
-            //Capturar Input teclado
-
-            //inicio pj2 manual
-
-            if (!IA)
-            {
-                #region Input Manual PJ2
-                if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.K))
-                {
-                    //Tecla control right apretada
-                    personaje2.actions.punch = true;
-
-
-                } if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.L))
-                {
-                    //Tecla control right apretada
-                    personaje2.actions.kick = true;
-
-                }
-                if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightControl))
-                {
-                    //Tecla control right apretada
-                    if (personaje2.energia >= 10)
-                        personaje2.actions.power = true;
-                    //tiropoder = personaje2.tirarPoder();
+                    if (personaje1.energia >= 10)
+                        personaje1.actions.power = true;
 
                 }
                 //izquierda
-                if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.LeftArrow))
+                if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
                 {
-                    personaje2.actions.moveForward = -velocidadCaminar * elapsedTime;
-                    personaje2.actions.moving = true;
-                    if (personaje2.Direccion == -1)
+                    personaje1.actions.moveForward = -velocidadCaminar * elapsedTime;
+                    personaje1.actions.moving = true;
+                    if (personaje1.Direccion == 1)
                     {
-                        animation2 = "Caminando";
+                        animation = "CaminandoRev";
+                        //personaje1.mesh.playAnimation("CaminandoRev", true);
                     }
                     else
                     {
-                        animation2 = "CaminandoRev";
+                        animation = "Caminando";
+                        //personaje1.mesh.playAnimation("Caminando", true);
                     }
+
+                    //personaje1.mesh.AutoUpdateBoundingBox = true;
                 }
                 //derecha
-                else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.RightArrow))
+                else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
                 {
-                    personaje2.actions.moveForward = velocidadCaminar * elapsedTime;
-                    personaje2.actions.moving = true;
-                    if (personaje2.Direccion == -1)
+                    personaje1.actions.moveForward = velocidadCaminar * elapsedTime;
+                    personaje1.actions.moving = true;
+
+                    if (personaje1.Direccion == 1)
                     {
-                        animation2 = "CaminandoRev";
+                        animation = "Caminando";
+                        //personaje1.mesh.playAnimation("Caminando", true);
                     }
                     else
                     {
-                        animation2 = "Caminando";
-
+                        animation = "CaminandoRev";
+                        //personaje1.mesh.playAnimation("CaminandoRev", true);
                     }
 
+                    //personaje1.mesh.AutoUpdateBoundingBox = true;
                 }
                 //ninguna de las dos
                 else
                 {
-                    personaje2.actions.moveForward = 0;
-                    personaje2.actions.moving = false;
-                    //personaje2.mesh.playAnimation("Parado", true);
+                    personaje1.actions.moveForward = 0;
+                    personaje1.actions.moving = false;
+                    //personaje1.mesh.AutoUpdateBoundingBox = false;
+                    //personaje1.mesh.playAnimation("Parado", true);
                 }
 
                 //saltar
-                if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.UpArrow) || GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightShift)) && !personaje2.actions.jumping)
+                if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.W) || GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.Space)) && !personaje1.actions.jumping)
                 {
-                    personaje2.actions.jumping = true;
-                    //collisionManager.GravityEnabled = false;
-                    gravity2 = false;
+
+                    personaje1.actions.jumping = true;
+                    collisionManager.GravityEnabled = false;
+                    gravity = false;
                 }
                 #endregion
-            } //fin PJ2 manual
-            else
-            //Inicio IA
-            {
-                IApj2(elapsedTime);
-            }
 
 
-            #region Jump manager pj2
-            if (personaje2.actions.jumping && personaje2.getPosition().Y < 5)
-            {
-                personaje2.actions.jump += 5 * elapsedTime;
-            }
-            else if (!gravity2)
-            {
-                personaje2.actions.jump -= 5 * elapsedTime;
-                gravity2 = personaje2.getPosition().Y <= 2;
-                personaje2.actions.jumping = false;
-            }
-            else
-            {
-                personaje2.actions.jump = 0;
-                personaje2.actions.jumping = false;
-                //collisionManager.GravityEnabled = true;
-            }
-            #endregion
-
-            #region Big if de las animaciones pj2
-            if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop & personaje2.energia >= 10) { personaje2.tirarPoder(); personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
-            else
-            {
-                if (personaje2.actions.punch) {
-                    if (personaje2.mesh.PlayLoop) { personaje2.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
-                    personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
+                #region Jump manager pj1
+                if (personaje1.actions.jumping && personaje1.getPosition().Y < 5)
+                {
+                    personaje1.actions.jump += 5 * elapsedTime;
+                }
+                else if (!gravity)
+                {
+                    personaje1.actions.jump -= 5 * elapsedTime;
+                    gravity = personaje1.getPosition().Y <= 2;
+                    personaje1.actions.jumping = false;
                 }
                 else
                 {
-                    if (personaje2.actions.kick) { 
-                        if (personaje2.mesh.PlayLoop){ personaje2.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
-                        personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
-                
+                    personaje1.actions.jump = 0;
+                    personaje1.actions.jumping = false;
+                    //collisionManager.GravityEnabled = true;
+                }
+                #endregion
+
+                //Animaciones big if
+                #region Big if de las animaciones pj1
+                if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop & personaje1.energia >= 10) { personaje1.tirarPoder(); personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
+                else
+                {
+                    if (personaje1.actions.punch)
+                    {
+
+                        if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
+                        personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
                     }
                     else
                     {
-                        if (personaje2.actions.moving) { personaje2.mesh.playAnimation(animation2, true); }
-                        else { if (!personaje2.actions.moving) { personaje2.mesh.playAnimation("Parado", true); } }
+                        if (personaje1.actions.kick)
+                        {
+                            if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
+                            personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
+
+                        }
+                        else
+                        {
+                            if (personaje1.actions.moving) { personaje1.mesh.playAnimation(animation, true); }
+                            else { if (!personaje1.actions.moving) { personaje1.mesh.playAnimation("Parado", true); } }
+                        }
                     }
                 }
+                #endregion
+
+
+
+                bool IA = (bool)GuiController.Instance.Modifiers["IA/Pj2"];
+
+
+                //player2
+                //Capturar Input teclado
+
+                //inicio pj2 manual
+
+                if (!IA)
+                {
+                    #region Input Manual PJ2
+                    if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.K))
+                    {
+                        //Tecla control right apretada
+                        personaje2.actions.punch = true;
+
+
+                    } if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.L))
+                    {
+                        //Tecla control right apretada
+                        personaje2.actions.kick = true;
+
+                    }
+                    if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightControl))
+                    {
+                        //Tecla control right apretada
+                        if (personaje2.energia >= 10)
+                            personaje2.actions.power = true;
+                        //tiropoder = personaje2.tirarPoder();
+
+                    }
+                    //izquierda
+                    if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.LeftArrow))
+                    {
+                        personaje2.actions.moveForward = -velocidadCaminar * elapsedTime;
+                        personaje2.actions.moving = true;
+                        if (personaje2.Direccion == -1)
+                        {
+                            animation2 = "Caminando";
+                        }
+                        else
+                        {
+                            animation2 = "CaminandoRev";
+                        }
+                    }
+                    //derecha
+                    else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.RightArrow))
+                    {
+                        personaje2.actions.moveForward = velocidadCaminar * elapsedTime;
+                        personaje2.actions.moving = true;
+                        if (personaje2.Direccion == -1)
+                        {
+                            animation2 = "CaminandoRev";
+                        }
+                        else
+                        {
+                            animation2 = "Caminando";
+
+                        }
+
+                    }
+                    //ninguna de las dos
+                    else
+                    {
+                        personaje2.actions.moveForward = 0;
+                        personaje2.actions.moving = false;
+                        //personaje2.mesh.playAnimation("Parado", true);
+                    }
+
+                    //saltar
+                    if ((GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.UpArrow) || GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.RightShift)) && !personaje2.actions.jumping)
+                    {
+                        personaje2.actions.jumping = true;
+                        //collisionManager.GravityEnabled = false;
+                        gravity2 = false;
+                    }
+                    #endregion
+                } //fin PJ2 manual
+                else
+                //Inicio IA
+                {
+                    IApj2(elapsedTime);
+                }
+
+
+                #region Jump manager pj2
+                if (personaje2.actions.jumping && personaje2.getPosition().Y < 5)
+                {
+                    personaje2.actions.jump += 5 * elapsedTime;
+                }
+                else if (!gravity2)
+                {
+                    personaje2.actions.jump -= 5 * elapsedTime;
+                    gravity2 = personaje2.getPosition().Y <= 2;
+                    personaje2.actions.jumping = false;
+                }
+                else
+                {
+                    personaje2.actions.jump = 0;
+                    personaje2.actions.jumping = false;
+                    //collisionManager.GravityEnabled = true;
+                }
+                #endregion
+
+                #region Big if de las animaciones pj2
+                if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop & personaje2.energia >= 10) { personaje2.tirarPoder(); personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
+                else
+                {
+                    if (personaje2.actions.punch)
+                    {
+                        if (personaje2.mesh.PlayLoop) { personaje2.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
+                        personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
+                    }
+                    else
+                    {
+                        if (personaje2.actions.kick)
+                        {
+                            if (personaje2.mesh.PlayLoop) { personaje2.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
+                            personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
+
+                        }
+                        else
+                        {
+                            if (personaje2.actions.moving) { personaje2.mesh.playAnimation(animation2, true); }
+                            else { if (!personaje2.actions.moving) { personaje2.mesh.playAnimation("Parado", true); } }
+                        }
+                    }
+                }
+                #endregion
+                #endregion
+            }//fin estado de pelea 1
+            else if (estadoPelea == 2)
+            {
+                if (personaje1.actions.win) { personaje1.mesh.playAnimation("Win", true, 30); personaje2.mesh.playAnimation("Lose", true, 10); personaje2.setColor(Color.Gray); }
+                if (personaje2.actions.win) { personaje2.mesh.playAnimation("Win", true, 30); personaje1.mesh.playAnimation("Lose", true, 10); personaje1.setColor(Color.Gray); }
+                personaje1.actions.moveForward = personaje1.actions.jump = personaje2.actions.moveForward = personaje2.actions.jump = 0;
             }
-            #endregion
+
             //Capturar Input Mouse
             //if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
             //{
