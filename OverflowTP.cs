@@ -255,7 +255,7 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.ThirdPersonCamera.TargetDisplacement = new Vector3(0, 12, 0);
 
             //sprites
-            Bitmap barra = new Bitmap(mediaMPath  + "//barras4.png", GuiController.Instance.D3dDevice);
+            Bitmap barra = new Bitmap(mediaMPath  + "//barras5.png", GuiController.Instance.D3dDevice);
             Bitmap barrita1 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
             Bitmap poder1 = new Bitmap(mediaMPath + "//poder.png", GuiController.Instance.D3dDevice);
             Vector2 spriteSize = new Vector2(1100, 130);
