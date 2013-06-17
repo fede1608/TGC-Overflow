@@ -889,14 +889,16 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         //Ataque
                         //moverse al personaje
-                        if (distancia > 6)//& rndval1>25)
+                        if (distancia > 6)
                         {
+                            if (rndval1 < 30) { personaje2.actions.jumping = true; gravity2 = false; }
                             if (rndval1 < 70)
                             {
                                 personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
                                 personaje2.actions.moving = true;
                                 animation2 = "Caminando";
                             }
+                            if (rndval1 > 80) { personaje2.actions.jumping = true; gravity2 = false; }
                             if (rndval1 >= 70)
                             {
                                 personaje2.actions.moveForward = -personaje2.Direccion * velocidadCaminar * elapsedTime;

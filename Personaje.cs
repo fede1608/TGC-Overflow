@@ -42,6 +42,9 @@ namespace AlumnoEjemplos.overflowDT
         BoundingMultiSphere spheres = new BoundingMultiSphere();
         bool luz=true;
         Poder poderLuz;
+        bool golpeado = false;
+        float timer = 0;
+        int cont = 0;
         //Getters y Setters
         public FightGameManager _fightGameManager
         {
@@ -155,6 +158,8 @@ namespace AlumnoEjemplos.overflowDT
         }
         public void restarVida(int vida)
         {
+            move(new Vector3(-direccion,0,0));
+            golpeado=true;
             if (vida >= 0) life-=vida;
             if (life < 0) life = 0;
         }
@@ -259,6 +264,27 @@ namespace AlumnoEjemplos.overflowDT
         }
         public void update(float elapsedTime)
         {
+            
+            if (golpeado)
+            {
+                timer += elapsedTime;
+                if (timer > 0.200f)
+                {
+                    cont++;
+                    if (Math.IEEERemainder((double)cont, 2) == 0)
+                    {
+                        setColor(Color.Red);
+                    }else 
+                        setColor(Color.White);
+
+                }
+                if (cont > 16)
+                {
+                    cont = 0;
+                    golpeado = false;
+                    setColor(Color.White);
+                }
+            }
             //mesh.move(movementVector * elapsedTime);
             //globalSphere.moveCenter(movementVector * elapsedTime);
 
