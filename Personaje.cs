@@ -249,7 +249,7 @@ namespace AlumnoEjemplos.overflowDT
             {
                 
                 distancia = centro - par.Value.bonesphere.Center;
-                if ((distancia.Length() <= radio + par.Value.bonesphere.Radius) && (par.Key != "Bip01 Neck"))
+                if ((distancia.Length() <= radio + par.Value.bonesphere.Radius+0.3) && (par.Key != "Bip01 Neck"))
                 {
                     enemigo.restarVida(3);
                     actions.hit = true;
