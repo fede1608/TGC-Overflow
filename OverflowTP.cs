@@ -692,10 +692,11 @@ namespace AlumnoEjemplos.overflowDT
             string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
             Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
             //GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
-
+            
+            #region Input Manual PJ2
             ///////////////INPUT//////////////////
             String animation= "Parado";
-            bool tiropoder = false;
+            
             //Capturar Input teclado
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.G))
             {
@@ -774,7 +775,10 @@ namespace AlumnoEjemplos.overflowDT
                 collisionManager.GravityEnabled = false;
                 gravity = false;
             }
+            #endregion
 
+
+            #region Jump manager pj1
             if (personaje1.actions.jumping && personaje1.getPosition().Y < 5)
             {
                 personaje1.actions.jump += 5 * elapsedTime ;
@@ -791,8 +795,10 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.actions.jumping = false;
                 //collisionManager.GravityEnabled = true;
             }
-           
+            #endregion
+
             //Animaciones big if
+            #region Big if de las animaciones pj1
             if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop & personaje1.energia >= 10) { personaje1.tirarPoder(); personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
             else
             {
@@ -815,7 +821,7 @@ namespace AlumnoEjemplos.overflowDT
                     }
                 }
             }
-
+            #endregion
 
 
 
@@ -826,10 +832,10 @@ namespace AlumnoEjemplos.overflowDT
             //Capturar Input teclado
 
             //inicio pj2 manual
-            
+
             if (!IA)
             {
-
+                #region Input Manual PJ2
                 if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.K))
                 {
                     //Tecla control right apretada
@@ -846,7 +852,7 @@ namespace AlumnoEjemplos.overflowDT
                 {
                     //Tecla control right apretada
                     if (personaje2.energia >= 10)
-                    personaje2.actions.power = true;
+                        personaje2.actions.power = true;
                     //tiropoder = personaje2.tirarPoder();
 
                 }
@@ -895,111 +901,16 @@ namespace AlumnoEjemplos.overflowDT
                     //collisionManager.GravityEnabled = false;
                     gravity2 = false;
                 }
+                #endregion
             } //fin PJ2 manual
             else
-                //Inicio IA
+            //Inicio IA
             {
-                time2 += elapsedTime;
-                Random random = new Random();
-                int rndval1 = random.Next(0, 100);
-                //estado = (bool)GuiController.Instance.Modifiers["estado"];
-                float distancia = FastMath.Abs(personaje1.getPosition().X - personaje2.getPosition().X);
-                
-                // Se define si el estado de pelea es Ataque o Defensa, si es ataque el personaje intentara acercarse al pj1 a su vez de intentar golpearlo
-                // Si esta en defensa intentara alejarse, esquivar los poderes y a su vez tirarle poder 
-                // El estado se definira por la cantidad de vida que le queda empezando en estado de ataque y cuando le quede menos de 25% de vida pasara a defensa, a la vez que cuando pase a menos de 5% 
-                // haya una posibilidad de pasar a ataque para jugarsela.
-                if (time2 > 0.200f)
-                {
-                    time2 = 0;
-                    if (estado)
-                    {
-                        //Ataque
-                        //moverse al personaje
-                        if (distancia > 6)
-                        {
-                            if (rndval1 < 30) { personaje2.actions.jumping = true; gravity2 = false; }
-                            if (rndval1 < 70)
-                            {
-                                personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
-                                personaje2.actions.moving = true;
-                                animation2 = "Caminando";
-                            }
-                            if (rndval1 > 80) { personaje2.actions.jumping = true; gravity2 = false; }
-                            if (rndval1 >= 99 & personaje2.energia >= 10) { personaje2.actions.power = true; }
-                            
-                            if (rndval1 >= 70)
-                            {
-                                personaje2.actions.moveForward = -personaje2.Direccion * velocidadCaminar * elapsedTime;
-                                personaje2.actions.moving = true;
-                                animation2 = "CaminandoRev";
-                            }
-
-                        }
-                        else
-                        {
-                            personaje2.actions.moveForward = 0;
-                            personaje2.actions.moving = false;
-                            if (rndval1 < 50) personaje2.actions.punch = true;
-                            if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
-                            if (rndval1 >= 99 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
-                            if (rndval1 >= 75 & rndval1 < 95)
-                            {
-                                personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
-                                personaje2.actions.moving = true;
-                                animation2 = "Caminando";
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        //Defensa
-                        if (distancia < 35)
-                        {
-                            if (rndval1 >= 70)
-                            {
-                                personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
-                                personaje2.actions.moving = true;
-                                animation2 = "Caminando";
-                            }
-                            if (rndval1 < 70)
-                            {
-                                personaje2.actions.moveForward = -personaje2.Direccion * velocidadCaminar * elapsedTime;
-                                personaje2.actions.moving = true;
-                                animation2 = "CaminandoRev";
-                            }
-                            if (rndval1 < 70 & distancia<6) personaje2.actions.punch = true;
-                            //if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
-                            if (rndval1 >= 90 & distancia > 6 & distancia < 16 & personaje2.energia>=10) { personaje2.actions.power = true; }//tiropoder=personaje2.tirarPoder(); }
-
-                        }
-                        else
-                        {
-                            int posibSalto = 20;
-                            if (personaje1.poder.Count >= 1) posibSalto = 55;
-                            //si esta suficientemente lejos 
-                            personaje2.actions.moveForward = 0;
-                            personaje2.actions.moving = false;
-                            if (rndval1 < 1) personaje2.actions.punch = true;
-                            if (rndval1 >= 74 & rndval1 < 75) personaje2.actions.kick = true;
-                            if (rndval1 >= 75 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
-                            if (rndval1 < posibSalto) { personaje2.actions.jumping = true; gravity2 = false; }
-
-                        }
-                        
-                    }
-
-                    //fuera de estado
-                    if (personaje2.life < 25 & rndval1<50) estado = false;
-                    if (distancia > 100) estado = true;
-                    
-                }
-                
+                IApj2(elapsedTime);
             }
 
 
-
+            #region Jump manager pj2
             if (personaje2.actions.jumping && personaje2.getPosition().Y < 5)
             {
                 personaje2.actions.jump += 5 * elapsedTime;
@@ -1016,7 +927,9 @@ namespace AlumnoEjemplos.overflowDT
                 personaje2.actions.jumping = false;
                 //collisionManager.GravityEnabled = true;
             }
+            #endregion
 
+            #region Big if de las animaciones pj2
             if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop & personaje2.energia >= 10) { personaje2.tirarPoder(); personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
             else
             {
@@ -1038,7 +951,7 @@ namespace AlumnoEjemplos.overflowDT
                     }
                 }
             }
-
+            #endregion
             //Capturar Input Mouse
             //if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
             //{
@@ -1050,28 +963,14 @@ namespace AlumnoEjemplos.overflowDT
             foreach (TgcMesh mesh in escenario.Meshes)
             {
                 mesh.render();
-                if (false)
+                if ((bool)GuiController.Instance.Modifiers["boundingbox"])
                 {
                     mesh.BoundingBox.render();
                 }
             }
-            //personaje1.setPosition(personaje1.getPosition() + new Vector3(personaje1.actions.moveForward, personaje1.actions.jump, 0f));
-            //if (personaje1.actions.moving || personaje1.actions.jumping)
-            //{
-
-            //objColtmp.Clear();
-            //objColtmp2.Clear();
-            //objetosColisionables.ForEach(delegate(Collider obj)
-            //{
-            //    objColtmp.Add(obj);
-            //    objColtmp2.Add(obj);
-
-            //});
-            //objColtmp.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
-            //objColtmp2.Add(BoundingBoxCollider.fromBoundingBox(personaje1.mesh.BoundingBox));
-
-                //Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objColtmp);
-                //Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objColtmp2);
+            
+            //Vector3 realMovement = collisionManager.moveCharacter(personaje1.Spheres.GlobalSphere, new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) , objColtmp);
+            //Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objColtmp2);
            
             //proximo movimiento
             Vector3 realMovement =new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) ;
@@ -1085,27 +984,11 @@ namespace AlumnoEjemplos.overflowDT
                
             if (verificarColisionEntrePersonajes())
                 {
-                    //if (realMovement.X != 0)
-                    //{
                         realMovement.X -= personaje1.movementVector.X*elapsedTime*personaje1.Direccion;
                         realMovement2.X -= personaje2.movementVector.X* elapsedTime*personaje2.Direccion;
-                        //personaje1.Spheres.GlobalSphere.moveCenter(new Vector3(-realMovement.X, 0, 0));
-                        //personaje2.Spheres.GlobalSphere.moveCenter(new Vector3(realMovement.X, 0, 0));
-                        
-                    //}else if (realMovement2.X != 0)
-                    //{
-                    //    realMovement2.X *= 0.5f;
-                    //    realMovement.X = realMovement2.X;
-                    //    personaje1.Spheres.GlobalSphere.moveCenter(new Vector3(realMovement2.X, 0, 0));
-                    //    personaje2.Spheres.GlobalSphere.moveCenter(new Vector3(-realMovement2.X, 0, 0));
-                    //}
-
-                    
                 }
 
-            //personaje1.Spheres.GlobalSphere.moveCenter(realMovement);
-            //personaje2.Spheres.GlobalSphere.moveCenter(realMovement2);
-
+            
             personaje1.move(realMovement);
             personaje2.move(realMovement2);
 
@@ -1155,9 +1038,7 @@ namespace AlumnoEjemplos.overflowDT
 
         public bool verificarColisionEntrePersonajes()
         {
-            //TgcBoundingSphere esfera1;
-            //esfera1 = new TgcBoundingSphere();
-            //esfera1.setValues(personaje1.Spheres.GlobalSphere.Center,personaje1.Spheres.GlobalSphere.Radius.Y)
+            
             
             //if ((personaje1.Spheres.GlobalSphere.Radius.X + personaje2.Spheres.GlobalSphere.Radius.X) > (personaje1.Spheres.GlobalSphere.Center - personaje2.Spheres.GlobalSphere.Center).Length())
                 if (TgcCollisionUtils.testAABBAABB(personaje1.mesh.BoundingBox, personaje2.mesh.BoundingBox))
@@ -1223,5 +1104,104 @@ namespace AlumnoEjemplos.overflowDT
             }
         }
         #endregion
+        public void IApj2(float elapsedTime)
+        {
+            time2 += elapsedTime;
+            Random random = new Random();
+            int rndval1 = random.Next(0, 100);
+            //estado = (bool)GuiController.Instance.Modifiers["estado"];
+            float distancia = FastMath.Abs(personaje1.getPosition().X - personaje2.getPosition().X);
+
+            // Se define si el estado de pelea es Ataque o Defensa, si es ataque el personaje intentara acercarse al pj1 a su vez de intentar golpearlo
+            // Si esta en defensa intentara alejarse, esquivar los poderes y a su vez tirarle poder 
+            // El estado se definira por la cantidad de vida que le queda empezando en estado de ataque y cuando le quede menos de 25% de vida pasara a defensa, a la vez que cuando pase a menos de 5% 
+            // haya una posibilidad de pasar a ataque para jugarsela.
+            if (time2 > 0.200f)
+            {
+                time2 = 0;
+                if (estado)
+                {
+                    //Ataque
+                    //moverse al personaje
+                    if (distancia > 6)
+                    {
+                        if (rndval1 < 30) { personaje2.actions.jumping = true; gravity2 = false; }
+                        if (rndval1 < 70)
+                        {
+                            personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moving = true;
+                            animation2 = "Caminando";
+                        }
+                        if (rndval1 > 80) { personaje2.actions.jumping = true; gravity2 = false; }
+                        if (rndval1 >= 99 & personaje2.energia >= 10) { personaje2.actions.power = true; }
+
+                        if (rndval1 >= 70)
+                        {
+                            personaje2.actions.moveForward = -personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moving = true;
+                            animation2 = "CaminandoRev";
+                        }
+
+                    }
+                    else
+                    {
+                        personaje2.actions.moveForward = 0;
+                        personaje2.actions.moving = false;
+                        if (rndval1 < 50) personaje2.actions.punch = true;
+                        if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
+                        if (rndval1 >= 99 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
+                        if (rndval1 >= 75 & rndval1 < 95)
+                        {
+                            personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moving = true;
+                            animation2 = "Caminando";
+                        }
+                    }
+
+                }
+                else
+                {
+                    //Defensa
+                    if (distancia < 35)
+                    {
+                        if (rndval1 >= 70)
+                        {
+                            personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moving = true;
+                            animation2 = "Caminando";
+                        }
+                        if (rndval1 < 70)
+                        {
+                            personaje2.actions.moveForward = -personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moving = true;
+                            animation2 = "CaminandoRev";
+                        }
+                        if (rndval1 < 70 & distancia < 6) personaje2.actions.punch = true;
+                        //if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
+                        if (rndval1 >= 90 & distancia > 6 & distancia < 16 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder=personaje2.tirarPoder(); }
+
+                    }
+                    else
+                    {
+                        int posibSalto = 20;
+                        if (personaje1.poder.Count >= 1) posibSalto = 55;
+                        //si esta suficientemente lejos 
+                        personaje2.actions.moveForward = 0;
+                        personaje2.actions.moving = false;
+                        if (rndval1 < 1) personaje2.actions.punch = true;
+                        if (rndval1 >= 74 & rndval1 < 75) personaje2.actions.kick = true;
+                        if (rndval1 >= 75 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
+                        if (rndval1 < posibSalto) { personaje2.actions.jumping = true; gravity2 = false; }
+
+                    }
+
+                }
+
+                //fuera de estado
+                if (personaje2.life < 25 & rndval1 < 50) estado = false;
+                if (distancia > 100) estado = true;
+
+            }
+        }
     }
 }
