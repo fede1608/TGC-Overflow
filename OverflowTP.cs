@@ -1023,12 +1023,11 @@ namespace AlumnoEjemplos.overflowDT
 
             skyBox.render();
             //Renderiza escenario
-            foreach (TgcMesh mesh in escenario.Meshes)
+            if ((bool)GuiController.Instance.Modifiers["boundingbox"])
             {
-                mesh.render();
-                if ((bool)GuiController.Instance.Modifiers["boundingbox"])
+                foreach (TgcMesh mesh in escenario.Meshes)
                 {
-                    mesh.BoundingBox.render();
+                       mesh.BoundingBox.render();
                 }
             }
             
@@ -1188,15 +1187,15 @@ namespace AlumnoEjemplos.overflowDT
                     //moverse al personaje
                     if (distancia > 6)
                     {
-                        if (rndval1 < 30) { personaje2.actions.jumping = true; gravity2 = false; }
+                        //if (rndval1 < 30) { personaje2.actions.jumping = true; gravity2 = false; }
                         if (rndval1 < 70)
                         {
                             personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
                             personaje2.actions.moving = true;
                             animation2 = "Caminando";
                         }
-                        if (rndval1 > 80) { personaje2.actions.jumping = true; gravity2 = false; }
-                        if (rndval1 >= 99 & personaje2.energia >= 10) { personaje2.actions.power = true; }
+                        if (rndval1 > ((personaje1.poder.Count >= 1)?60:80)) { personaje2.actions.jumping = true; gravity2 = false; }
+                        if (rndval1 >= 93 & personaje2.energia >= 10) { personaje2.actions.power = true; }
 
                         if (rndval1 >= 70)
                         {
@@ -1210,9 +1209,9 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         personaje2.actions.moveForward = 0;
                         personaje2.actions.moving = false;
-                        if (rndval1 < 50) personaje2.actions.punch = true;
-                        if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
-                        if (rndval1 >= 99 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
+                        if (rndval1 < 50 | (rndval1 >= 85 & rndval1<90)) personaje2.actions.punch = true;
+                        if (rndval1 >= 50 & rndval1 < 85) personaje2.actions.kick = true;
+                        if (rndval1 >= 90 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
                         if (rndval1 >= 75 & rndval1 < 95)
                         {
                             personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
@@ -1239,7 +1238,7 @@ namespace AlumnoEjemplos.overflowDT
                             personaje2.actions.moving = true;
                             animation2 = "CaminandoRev";
                         }
-                        if (rndval1 < 70 & distancia < 6) personaje2.actions.punch = true;
+                        if (rndval1 < 90 & distancia < 6) personaje2.actions.punch = true;
                         //if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
                         if (rndval1 >= 90 & distancia > 6 & distancia < 16 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder=personaje2.tirarPoder(); }
 
@@ -1247,12 +1246,12 @@ namespace AlumnoEjemplos.overflowDT
                     else
                     {
                         int posibSalto = 20;
-                        if (personaje1.poder.Count >= 1) posibSalto = 55;
+                        if (personaje1.poder.Count >= 1) posibSalto = 65;
                         //si esta suficientemente lejos 
                         personaje2.actions.moveForward = 0;
                         personaje2.actions.moving = false;
                         if (rndval1 < 1) personaje2.actions.punch = true;
-                        if (rndval1 >= 74 & rndval1 < 75) personaje2.actions.kick = true;
+                        if (rndval1 >= 74 & rndval1 <= 75) personaje2.actions.kick = true;
                         if (rndval1 >= 75 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
                         if (rndval1 < posibSalto) { personaje2.actions.jumping = true; gravity2 = false; }
 
