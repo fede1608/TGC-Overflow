@@ -127,7 +127,7 @@ namespace AlumnoEjemplos.overflowDT
         bool gravity2= true;
         string animation2 = "Parado";
         bool estado=true;
-
+        Random random = new Random();
         #region Getters & Setters
         private string mediaMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\";
         public string MediaMPath
@@ -260,6 +260,7 @@ namespace AlumnoEjemplos.overflowDT
             //handler de evento de fin de animacion
             personaje1.mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds);
             personaje2.mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds2);
+
             personaje1.Enemigo = personaje2;
             personaje2.Enemigo = personaje1;
             personaje1._fightGameManager = this;
@@ -463,7 +464,7 @@ namespace AlumnoEjemplos.overflowDT
             if (time1 >= 1)
             {
                 //ps.Update();
-                clock -= 1;
+                if(estadoPelea==1)  clock -= 1;
                 if (clock > 0)
                 {
                     clock1.Text = clock.ToString();
@@ -774,7 +775,7 @@ namespace AlumnoEjemplos.overflowDT
                 //izquierda
                 if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
                 {
-                    personaje1.actions.moveForward = -velocidadCaminar * elapsedTime;
+                    personaje1.actions.moveForward = -personaje1.movementVector.X * elapsedTime;
                     personaje1.actions.moving = true;
                     if (personaje1.Direccion == 1)
                     {
@@ -792,7 +793,7 @@ namespace AlumnoEjemplos.overflowDT
                 //derecha
                 else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
                 {
-                    personaje1.actions.moveForward = velocidadCaminar * elapsedTime;
+                    personaje1.actions.moveForward = personaje1.movementVector.X * elapsedTime;
                     personaje1.actions.moving = true;
 
                     if (personaje1.Direccion == 1)
@@ -836,7 +837,7 @@ namespace AlumnoEjemplos.overflowDT
                 else if (!gravity)
                 {
                     personaje1.actions.jump -= 5 * elapsedTime;
-                    gravity = personaje1.getPosition().Y <= 2;
+                    gravity = personaje1.getPosition().Y <= 0;
                     personaje1.actions.jumping = false;
                 }
                 else
@@ -911,7 +912,7 @@ namespace AlumnoEjemplos.overflowDT
                     //izquierda
                     if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.LeftArrow))
                     {
-                        personaje2.actions.moveForward = -velocidadCaminar * elapsedTime;
+                        personaje2.actions.moveForward = -personaje2.movementVector.X * elapsedTime;
                         personaje2.actions.moving = true;
                         if (personaje2.Direccion == -1)
                         {
@@ -925,7 +926,7 @@ namespace AlumnoEjemplos.overflowDT
                     //derecha
                     else if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.RightArrow))
                     {
-                        personaje2.actions.moveForward = velocidadCaminar * elapsedTime;
+                        personaje2.actions.moveForward = personaje2.movementVector.X * elapsedTime;
                         personaje2.actions.moving = true;
                         if (personaje2.Direccion == -1)
                         {
@@ -970,7 +971,7 @@ namespace AlumnoEjemplos.overflowDT
                 else if (!gravity2)
                 {
                     personaje2.actions.jump -= 5 * elapsedTime;
-                    gravity2 = personaje2.getPosition().Y <= 2;
+                    gravity2 = personaje2.getPosition().Y <= 0;
                     personaje2.actions.jumping = false;
                 }
                 else
@@ -1100,10 +1101,12 @@ namespace AlumnoEjemplos.overflowDT
 
         public bool verificarColisionEntrePersonajes()
         {
-            
-            
+
+            float dif = personaje1.mesh.Position.X - personaje2.mesh.Position.X;
+            dif = Math.Abs(dif);
             //if ((personaje1.Spheres.GlobalSphere.Radius.X + personaje2.Spheres.GlobalSphere.Radius.X) > (personaje1.Spheres.GlobalSphere.Center - personaje2.Spheres.GlobalSphere.Center).Length())
-                if (TgcCollisionUtils.testAABBAABB(personaje1.mesh.BoundingBox, personaje2.mesh.BoundingBox))
+            //if (TgcCollisionUtils.testAABBAABB(personaje1.mesh.BoundingBox, personaje2.mesh.BoundingBox))
+                if (dif < 4)
             {
                 foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par1 in personaje1.Spheres.Bones)
                 {
@@ -1169,7 +1172,7 @@ namespace AlumnoEjemplos.overflowDT
         public void IApj2(float elapsedTime)
         {
             time2 += elapsedTime;
-            Random random = new Random();
+            
             int rndval1 = random.Next(0, 100);
             //estado = (bool)GuiController.Instance.Modifiers["estado"];
             float distancia = FastMath.Abs(personaje1.getPosition().X - personaje2.getPosition().X);
@@ -1188,18 +1191,18 @@ namespace AlumnoEjemplos.overflowDT
                     if (distancia > 6)
                     {
                         //if (rndval1 < 30) { personaje2.actions.jumping = true; gravity2 = false; }
-                        if (rndval1 < 70)
-                        {
-                            personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
-                            personaje2.actions.moving = true;
-                            animation2 = "Caminando";
-                        }
+                        
                         if (rndval1 > ((personaje1.poder.Count >= 1)?60:80)) { personaje2.actions.jumping = true; gravity2 = false; }
                         if (rndval1 >= 93 & personaje2.energia >= 10) { personaje2.actions.power = true; }
-
-                        if (rndval1 >= 70)
+                        
+                        if (rndval1 < 70)
                         {
-                            personaje2.actions.moveForward = -personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moveForward = personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
+                            personaje2.actions.moving = true;
+                            animation2 = "Caminando";
+                        }else if (rndval1 >= 70)
+                        {
+                            personaje2.actions.moveForward = -personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
                             personaje2.actions.moving = true;
                             animation2 = "CaminandoRev";
                         }
@@ -1214,7 +1217,7 @@ namespace AlumnoEjemplos.overflowDT
                         if (rndval1 >= 90 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
                         if (rndval1 >= 75 & rndval1 < 95)
                         {
-                            personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moveForward = personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
                             personaje2.actions.moving = true;
                             animation2 = "Caminando";
                         }
@@ -1228,13 +1231,13 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         if (rndval1 >= 70)
                         {
-                            personaje2.actions.moveForward = personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moveForward = personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
                             personaje2.actions.moving = true;
                             animation2 = "Caminando";
                         }
                         if (rndval1 < 70)
                         {
-                            personaje2.actions.moveForward = -personaje2.Direccion * velocidadCaminar * elapsedTime;
+                            personaje2.actions.moveForward = -personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
                             personaje2.actions.moving = true;
                             animation2 = "CaminandoRev";
                         }

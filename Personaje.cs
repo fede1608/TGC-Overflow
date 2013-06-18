@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.overflowDT
         List<Collider> objCol = new List<Collider>();
         public TgcSkeletalMesh mesh;
         public Actions actions;
-        public Vector3 movementVector=new Vector3 (30,0,0);
+        public Vector3 movementVector=new Vector3 (24,0,0);
         public int life=100;
         public int energia = 100;
         private string playername = "TGC Player";
