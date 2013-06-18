@@ -59,6 +59,16 @@ namespace AlumnoEjemplos.overflowDT
             Drawer spriteDrawer = new Drawer();
             Sprite newSprite; Sprite s_barrita1; Sprite s_barrita2, s_barritaP2,s_barritaP1;
 
+        //particle System
+            public Renderer m_renderer;
+            public ParticleSystem particulas_fuego, particulas_estrellas, particulas_estrellas2;
+            public List<ParticleSystem> particulas_humo;
+            private float tiempoEfectoParticulas = 99f;
+            private float tiempoEfectoParticulas2 = 99f;
+            TgcSkeletalMesh particle_mesh;
+            TgcSkeletalMesh particle_mesh2;
+        //end PS
+
         Personaje personaje1;
         Personaje personaje2;
 
@@ -84,6 +94,8 @@ namespace AlumnoEjemplos.overflowDT
         TgcSprite banner;
         //Fin Sonido
         #endregion
+
+        
 
         #region HEIGHTMAP
             //Inicialización de variables de HeightMap
@@ -116,6 +128,7 @@ namespace AlumnoEjemplos.overflowDT
         string animation2 = "Parado";
         bool estado=true;
 
+        #region Getters & Setters
         private string mediaMPath = GuiController.Instance.AlumnoEjemplosMediaDir + "OverflowDT\\";
         public string MediaMPath
         {
@@ -150,6 +163,8 @@ namespace AlumnoEjemplos.overflowDT
             get { return lightMeshes; }
             set { lightMeshes = value; }
         }
+
+#endregion
         public override void init()
         {
 
@@ -249,8 +264,10 @@ namespace AlumnoEjemplos.overflowDT
             personaje2.Enemigo = personaje1;
             personaje1._fightGameManager = this;
             personaje2._fightGameManager = this;
-            personaje1.setColor(Color.Blue);
-            personaje2.setColor(Color.Red);
+            personaje1.colorPj=(Color.White);
+            personaje1.setColor(Color.White);
+            personaje2.colorPj=(Color.Salmon);
+            personaje2.setColor(Color.Salmon);
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
                                                                             (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
@@ -418,7 +435,7 @@ namespace AlumnoEjemplos.overflowDT
             {
                 string element = lista[i];
             }
-
+            inicializarSistemaDeParticulas();
             //ps = new PSExplosion(new Vector(personaje1.mesh.Position.X, personaje1.mesh.Position.Y, personaje1.mesh.Position.Z), Color.Red);
         }
 
@@ -470,9 +487,30 @@ namespace AlumnoEjemplos.overflowDT
 
             if (personaje1.life <= 0 | personaje2.life <= 0)
             {
-                if (estadoPelea == 1 & personaje2.life > 0) {personaje1.actions.win = true;}
-                else if (estadoPelea == 1 & personaje1.life > 0) { personaje2.actions.win = true; }
+                if (estadoPelea == 1 & personaje2.life > 0) {personaje2.actions.win = true;}
+                else if (estadoPelea == 1 & personaje1.life > 0) { personaje1.actions.win = true; }
                 estadoPelea = 2; }
+
+            if (tiempoEfectoParticulas < 0.3f)
+            {
+                particulas_estrellas.m_fScale = 0.05f;
+                particulas_estrellas.m_iDispersion = 250;
+                particulas_estrellas.m_iFromColor = Color.Red;
+                particulas_estrellas.m_iToColor = Color.Red;
+                particulas_estrellas.m_v3Pos = particle_mesh.Position + new Vector3(0,3,0);
+                particulas_estrellas.Frame(1500 * elapsedTime);
+                tiempoEfectoParticulas += elapsedTime;
+            }
+            if (tiempoEfectoParticulas2 < 0.3f)
+            {
+                particulas_estrellas2.m_fScale = 0.05f;
+                particulas_estrellas2.m_iDispersion = 250;
+                particulas_estrellas2.m_iFromColor = Color.Red;
+                particulas_estrellas2.m_iToColor = Color.Red;
+                particulas_estrellas2.m_v3Pos = particle_mesh2.Position + new Vector3(0, 3, 0);
+                particulas_estrellas2.Frame(1500 * elapsedTime);
+                tiempoEfectoParticulas2 += elapsedTime;
+            }
         }
         /// <summary>
         /// Método que se llama cada vez que hay que refrescar la pantalla.
@@ -714,11 +752,11 @@ namespace AlumnoEjemplos.overflowDT
                 {
                     // personaje1.mesh.playAnimation("Pegar", false);
                     personaje1.actions.punch = true;
-
+                    
                     //Tecla G apretada
 
                 }
-
+                
                 if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.H))
                 {
                     //personaje1.mesh.playAnimation("Patear", false);
@@ -818,14 +856,14 @@ namespace AlumnoEjemplos.overflowDT
                     {
 
                         if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
-                        personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
+                        if (personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones)) { particulas_estrellas.m_v3Pos = personaje1.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh = personaje1.Enemigo.mesh; tiempoEfectoParticulas = 0; }
                     }
                     else
                     {
                         if (personaje1.actions.kick)
                         {
                             if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
-                            personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones);
+                            if (personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones)) { tiempoEfectoParticulas = 0; particulas_estrellas.m_v3Pos = personaje1.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh = personaje1.Enemigo.mesh; }
 
                         }
                         else
@@ -950,14 +988,14 @@ namespace AlumnoEjemplos.overflowDT
                     if (personaje2.actions.punch)
                     {
                         if (personaje2.mesh.PlayLoop) { personaje2.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
-                        personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
+                        if (personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones)) { particulas_estrellas2.m_v3Pos = personaje2.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh2 = personaje2.Enemigo.mesh; tiempoEfectoParticulas2 = 0; };
                     }
                     else
                     {
                         if (personaje2.actions.kick)
                         {
                             if (personaje2.mesh.PlayLoop) { personaje2.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
-                            personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones);
+                            if(personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones)){ particulas_estrellas2.m_v3Pos = personaje2.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh2 = personaje2.Enemigo.mesh; tiempoEfectoParticulas2 = 0; };
 
                         }
                         else
@@ -1228,5 +1266,58 @@ namespace AlumnoEjemplos.overflowDT
 
             }
         }
+
+        private void inicializarSistemaDeParticulas()
+        {
+
+            m_renderer = new Renderer();
+            particulas_fuego = new ParticleSystem();
+            particulas_estrellas = new ParticleSystem();
+            particulas_estrellas2 = new ParticleSystem();
+            particulas_humo = new List<ParticleSystem>();
+
+
+            particulas_fuego.Load(mediaMPath + "\\Particulas\\particle.tga", 3000, m_renderer, personaje1.mesh.Position.X, personaje1.mesh.Position.Y, personaje1.mesh.Position.Z);
+            particulas_estrellas.Load(mediaMPath + "\\Particulas\\fire.tga", 100, m_renderer, -5175, 195, -10583);
+            particulas_estrellas2.Load(mediaMPath + "\\Particulas\\fire.tga", 100, m_renderer, -5175, 195, -10583);
+            for (int i = 0; i < 10; i++)
+            {
+                particulas_humo.Add(new ParticleSystem());
+
+                particulas_humo[i].Load(mediaMPath + "\\Particulas\\smoke.tga", 3000, m_renderer, -4730 - 120 * i, 200, -11600);
+
+                particulas_humo[i].m_fCreationParticleFreq = 2f;
+                particulas_humo[i].m_iFromColor = Color.Gray;
+                particulas_humo[i].m_iToColor = Color.Gray;
+                particulas_humo[i].m_fScale = 0.5f;
+                particulas_humo[i].m_Gravity = new Vector3(0f, 0f, -0.9f);
+                particulas_humo[i].m_fParticleLiveTime = 1100f;
+                particulas_humo[i].m_bUseGravity = true;
+                particulas_humo[i].m_iDispersion = 2500 + 25 * i;
+
+            }
+
+
+            particulas_estrellas.m_fCreationParticleFreq = 0.25f;
+            particulas_estrellas.m_iFromColor = Color.Yellow;
+            particulas_estrellas.m_iToColor = Color.YellowGreen;
+            particulas_estrellas.m_fScale = 0.15f;
+            particulas_estrellas.m_Gravity = new Vector3(0.4f, -2f, 0);
+            particulas_estrellas.m_fParticleLiveTime = 250f;
+            particulas_estrellas.m_bUseGravity = true;
+            particulas_estrellas.m_iDispersion = 1000;
+
+            particulas_estrellas2.m_fCreationParticleFreq = 0.25f;
+            particulas_estrellas2.m_iFromColor = Color.Yellow;
+            particulas_estrellas2.m_iToColor = Color.YellowGreen;
+            particulas_estrellas2.m_fScale = 0.15f;
+            particulas_estrellas2.m_Gravity = new Vector3(0.4f, -2f, 0);
+            particulas_estrellas2.m_fParticleLiveTime = 250f;
+            particulas_estrellas2.m_bUseGravity = true;
+            particulas_estrellas2.m_iDispersion = 1000;
+
+
+        }
     }
+
 }

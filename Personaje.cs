@@ -46,6 +46,7 @@ namespace AlumnoEjemplos.overflowDT
         bool golpeado = false;
         float timer = 0;
         int cont = 0;
+        public Color colorPj = Color.White;
         //Getters y Setters
         public FightGameManager _fightGameManager
         {
@@ -100,6 +101,7 @@ namespace AlumnoEjemplos.overflowDT
             public float jump;
             public float moveForward;
             public bool win;
+            public Vector3 ptoGolpe;
         }
 
         
@@ -136,6 +138,7 @@ namespace AlumnoEjemplos.overflowDT
            actions.hittimer = 0;
            actions.hit = false;
            actions.win = false;
+           actions.ptoGolpe = mesh.Position;
            spheres.Bones["Bip01 Neck"].bonesphere.setValues(spheres.Bones["Bip01 Neck"].bonesphere.Center,0.6f);
            mesh.AutoUpdateBoundingBox = true;
            //Configurar animacion inicial
@@ -251,9 +254,9 @@ namespace AlumnoEjemplos.overflowDT
         }
 
 
-        public void verificarColision(Vector3 centro, float radio, Dictionary<string, BoundingMultiSphere.Sphere> huesos)
+        public bool verificarColision(Vector3 centro, float radio, Dictionary<string, BoundingMultiSphere.Sphere> huesos)
         {
-            if (actions.hit) return;
+            if (actions.hit) return false;
             Vector3 distancia;
             //GuiController.Instance.Logger.log("Radio=");
             //GuiController.Instance.Logger.log(radio.ToString());
@@ -265,7 +268,9 @@ namespace AlumnoEjemplos.overflowDT
                 {
                     enemigo.restarVida(3);
                     actions.hit = true;
-                    return;
+                    actions.ptoGolpe = Vector3.Normalize(distancia) * par.Value.bonesphere.Radius;
+                    Enemigo.actions.ptoGolpe = actions.ptoGolpe;
+                    return true;
                     //if (actions.punch && !mesh.PlayLoop) actions.punch = false;
                     //if (actions.kick && !mesh.PlayLoop) actions.kick = false;
                     
@@ -273,6 +278,7 @@ namespace AlumnoEjemplos.overflowDT
                 //GuiController.Instance.Logger.log(par.Key);
                 //GuiController.Instance.Logger.log(par.Value.bonesphere.Radius.ToString());
             }
+            return false;
         }
         public void update(float elapsedTime)
         {
@@ -287,14 +293,14 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         setColor(Color.Red);
                     }else 
-                        setColor(Color.White);
+                        setColor(colorPj);
 
                 }
                 if (cont > 16)
                 {
                     cont = 0;
                     golpeado = false;
-                    setColor(Color.White);
+                    setColor(colorPj);
                 }
             }
             //mesh.move(movementVector * elapsedTime);
