@@ -1169,8 +1169,8 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.UserVars.setValue("Vida1", personaje1.life);
             GuiController.Instance.UserVars.setValue("Vida2", personaje2.life);
 
-            float offsetforward = Math.Abs(personaje2.getPosition().X - personaje1.getPosition().X) / (-2) - (10+(personaje2.getPosition().X - personaje1.getPosition().X)/10);
-            GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
+            float offsetforward = Math.Abs(personaje2.getPosition().X - personaje1.getPosition().X) / (-2) - (10+Math.Abs((personaje2.getPosition().X - personaje1.getPosition().X))/10);
+            GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X)/ 2,
                                                                            (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
                                                                             personaje2.getPosition().Z),
                                                                             11, (offsetforward < -30 ? offsetforward : -30));
