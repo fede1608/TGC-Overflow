@@ -163,7 +163,11 @@ namespace AlumnoEjemplos.overflowDT
             get { return lightMeshes; }
             set { lightMeshes = value; }
         }
-
+        public TgcStaticSound Sound
+        {
+            get { return sound; }
+            set { sound = value; }
+        }
 #endregion
         public override void init()
         {
@@ -487,8 +491,8 @@ namespace AlumnoEjemplos.overflowDT
 
             if ((personaje1.life <= 0 | personaje2.life <= 0) & estadoPelea==1)
             {
-                if (estadoPelea == 1 & personaje2.life > 0) {personaje2.actions.win = true;}
-                else if (estadoPelea == 1 & personaje1.life > 0) { personaje1.actions.win = true; }
+                if (estadoPelea == 1 & personaje2.life > 0) { personaje2.actions.win = true; personaje2.wins++; }
+                else if (estadoPelea == 1 & personaje1.life > 0) { personaje1.actions.win = true; personaje1.wins++; }
                 estadoPelea = 2; 
                 player.closeFile();
             }
@@ -869,7 +873,8 @@ namespace AlumnoEjemplos.overflowDT
 
                 //Animaciones big if
                 #region Big if de las animaciones pj1
-                if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop & personaje1.energia >= 10) { personaje1.tirarPoder(); personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
+                personaje1.controlarFreeze();
+                if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop & personaje1.energia >= 10) { personaje1.tirarPoder(); personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaMPath + "Music\\poder.wav"); sound.play(false); } }
                 else
                 {
                     if (personaje1.actions.punch)
@@ -1002,7 +1007,8 @@ namespace AlumnoEjemplos.overflowDT
                 #endregion
 
                 #region Big if de las animaciones pj2
-                if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop & personaje2.energia >= 10) { personaje2.tirarPoder(); personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaPath + "Sound\\ráfaga helada.wav"); sound.play(false); } }
+                personaje2.controlarFreeze();
+                if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop & personaje2.energia >= 10) { personaje2.tirarPoder(); personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaMPath + "Music\\poder.wav"); sound.play(false); } }
                 else
                 {
                     if (personaje2.actions.punch)
@@ -1055,6 +1061,9 @@ namespace AlumnoEjemplos.overflowDT
             //Vector3 realMovement2 = collisionManager.moveCharacter(personaje2.Spheres.GlobalSphere, new Vector3(personaje2.actions.moveForward, personaje2.actions.jump, 0), objColtmp2);
            
             //proximo movimiento
+            
+           
+
             Vector3 realMovement =new Vector3 (personaje1.actions.moveForward,personaje1.actions.jump,0) ;
            Vector3 realMovement2 =new Vector3 (personaje2.actions.moveForward,personaje2.actions.jump,0) ;
 
@@ -1119,9 +1128,10 @@ namespace AlumnoEjemplos.overflowDT
         }
 
         public void reiniciarPelea()
-        {
+        {   if (personaje1.wins == 2 | personaje2.wins == 2) Round = 3;
             if (Round < 2)
             {   Round++;
+            
                 estadoPelea = 0;
                 personaje1.reiniciarStats(new Vector3(1900f, 0f, -3209f), Color.White);
                 personaje2.reiniciarStats(new Vector3(1956f, 0f, -3209f), Color.Salmon);

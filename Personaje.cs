@@ -43,8 +43,10 @@ namespace AlumnoEjemplos.overflowDT
         BoundingMultiSphere spheres = new BoundingMultiSphere();
         bool luz=true;
         Poder poderLuz;
+        public int wins = 0;
         bool golpeado = false;
         float timer = 0;
+        float timer2 = 0;
         int cont = 0;
         public Color colorPj = Color.White;
         //Getters y Setters
@@ -102,6 +104,7 @@ namespace AlumnoEjemplos.overflowDT
             public float moveForward;
             public bool win;
             public Vector3 ptoGolpe;
+            public bool frozen;
         }
 
         
@@ -138,6 +141,7 @@ namespace AlumnoEjemplos.overflowDT
            actions.hittimer = 0;
            actions.hit = false;
            actions.win = false;
+           actions.frozen = false;
            actions.ptoGolpe = mesh.Position;
            spheres.Bones["Bip01 Neck"].bonesphere.setValues(spheres.Bones["Bip01 Neck"].bonesphere.Center,0.6f);
            mesh.AutoUpdateBoundingBox = true;
@@ -282,7 +286,14 @@ namespace AlumnoEjemplos.overflowDT
         }
         public void update(float elapsedTime)
         {
-            
+            if (actions.frozen)
+            {
+                setColor(Color.LightSkyBlue);
+                mesh.playAnimation("Parado", true);
+                timer2 += elapsedTime;
+                
+                if (timer2 > 2.5f) { actions.frozen = false; timer2 = 0; setColor(colorPj); }
+            }
             if (golpeado)
             {
                 timer += elapsedTime;
@@ -400,6 +411,17 @@ namespace AlumnoEjemplos.overflowDT
             actions.win = false;
             mesh.AutoUpdateBoundingBox = true;
             mesh.playAnimation("Parado", true);
+        }
+
+        internal void controlarFreeze()
+        {
+            if(actions.frozen){
+                actions.moveForward = 0;
+                actions.power = false;
+                actions.kick = false;
+                actions.punch = false;
+                actions.jumping = false;
+            }
         }
     }
 }

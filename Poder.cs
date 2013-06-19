@@ -74,7 +74,7 @@ namespace AlumnoEjemplos.overflowDT
                 if ((globalSphere.Center.Y > owner.Enemigo.getPosition().Y) && (globalSphere.Center.Y < (owner.Enemigo.getPosition().Y+8)))
                 {
                     owner.Enemigo.restarVida(2);
-                    if (luz) owner.Enemigo.restarVida(3);
+                    if (luz) { owner.Enemigo.restarVida(3); owner.Enemigo.actions.frozen = true; owner._fightGameManager.loadSound(owner._fightGameManager.MediaMPath + "Music\\Toasty!.wav"); owner._fightGameManager.Sound.play(false); }
                     disappear();
                     //owner.sacarPoder(this);
                 }
