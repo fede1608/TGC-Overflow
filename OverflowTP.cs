@@ -537,7 +537,7 @@ namespace AlumnoEjemplos.overflowDT
                     //Cargo sonido y muestro el banner correspondiente
                     switch (Round)
                     {
-                        case 0: loadMp3(mediaMPath + "Music\\risa.mp3"); break;
+                        case 0: loadMp3(mediaMPath + "Music\\Round-1.mp3"); break;
                         case 1: loadMp3(mediaMPath + "Music\\Round2.mp3"); break;
                         case 2: loadMp3(mediaMPath + "Music\\Final_Round.mp3"); break;
                         case 3: loadMp3(mediaMPath + "Music\\Final_Round.mp3"); break;
