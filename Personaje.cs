@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.overflowDT
         List<Collider> objCol = new List<Collider>();
         public TgcSkeletalMesh mesh;
         public Actions actions;
-        public Vector3 movementVector=new Vector3 (20,0,0);
+        public Vector3 movementVector=new Vector3 (24,0,0);
         public int life=100;
         public int energia = 100;
         private string playername = "TGC Player";
@@ -193,12 +193,12 @@ namespace AlumnoEjemplos.overflowDT
                 spheres.GlobalSphere.moveCenter(new Vector3(0, -mesh.Position.Y, 0)); 
             }
             //Controlar que No se se pase de los limites laterales 
-            if (mesh.Position.X > 1993) 
+            if (mesh.Position.X > 1990) 
             { 
-                mesh.move(new Vector3(1993 - mesh.Position.X, 0, 0)); 
-                spheres.GlobalSphere.moveCenter(new Vector3(1993 - mesh.Position.X, 0, 0));
-                enemigo.mesh.move(new Vector3(1993 - mesh.Position.X, 0, 0));
-                enemigo.Spheres.GlobalSphere.moveCenter(new Vector3(1993 - mesh.Position.X, 0, 0)); 
+                mesh.move(new Vector3(1990 - mesh.Position.X, 0, 0)); 
+                spheres.GlobalSphere.moveCenter(new Vector3(1990 - mesh.Position.X, 0, 0));
+                enemigo.mesh.move(new Vector3(1990 - mesh.Position.X, 0, 0));
+                enemigo.Spheres.GlobalSphere.moveCenter(new Vector3(1990 - mesh.Position.X, 0, 0)); 
             }
             if (mesh.Position.X < 1880)
             {

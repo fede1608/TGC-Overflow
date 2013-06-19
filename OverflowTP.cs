@@ -57,7 +57,7 @@ namespace AlumnoEjemplos.overflowDT
 
           //Creo el sprite drawer
             Drawer spriteDrawer = new Drawer();
-            Sprite newSprite; Sprite s_barrita1; Sprite s_barrita2, s_barritaP2,s_barritaP1;
+            Sprite newSprite; Sprite s_barrita1; Sprite s_barrita2, s_barritaP2,s_barritaP1,skull1a,skull1b,skull2a,skull2b;
 
         //particle System
             public Renderer m_renderer;
@@ -279,10 +279,13 @@ namespace AlumnoEjemplos.overflowDT
                                                                             personaje2.getPosition().Z), 10, -40);
             GuiController.Instance.ThirdPersonCamera.TargetDisplacement = new Vector3(0, 12, 0);
 
+            #region Sprites init
             //sprites
             Bitmap barra = new Bitmap(mediaMPath  + "//barras5.png", GuiController.Instance.D3dDevice);
             Bitmap barrita1 = new Bitmap(mediaMPath + "//barrita.png", GuiController.Instance.D3dDevice);
             Bitmap poder1 = new Bitmap(mediaMPath + "//poder.png", GuiController.Instance.D3dDevice);
+            Bitmap skull1 = new Bitmap(mediaMPath + "//skull2.png", GuiController.Instance.D3dDevice);
+
             Vector2 spriteSize = new Vector2(1100, 130);
             newSprite = new Sprite();
             newSprite.Bitmap = barra;
@@ -313,8 +316,32 @@ namespace AlumnoEjemplos.overflowDT
             s_barritaP2.SrcRect = new Rectangle(0, 0, 510, 30);
             s_barritaP2.Scaling = new Vector2(-0.2f, 0.32f);
             s_barritaP2.Position = new Vector2(820, 70);
-            //fin sprites
 
+            skull1a = new Sprite();
+            skull1a.Bitmap = skull1;
+            skull1a.SrcRect = new Rectangle(0, 0, 780, 1000);
+            skull1a.Scaling = new Vector2(0.04f, 0.03f);
+            skull1a.Position = new Vector2(320, 80);
+
+            skull1b = new Sprite();
+            skull1b.Bitmap = skull1;
+            skull1b.SrcRect = new Rectangle(0, 0, 780, 1000);
+            skull1b.Scaling = new Vector2(0.04f, 0.03f);
+            skull1b.Position = new Vector2(360, 80);
+
+            skull2a = new Sprite();
+            skull2a.Bitmap = skull1;
+            skull2a.SrcRect = new Rectangle(0, 0, 780, 1000);
+            skull2a.Scaling = new Vector2(-0.04f, 0.03f);
+            skull2a.Position = new Vector2(640, 80);
+
+            skull2b = new Sprite();
+            skull2b.Bitmap = skull1;
+            skull2b.SrcRect = new Rectangle(0, 0, 780, 1000);
+            skull2b.Scaling = new Vector2(-0.04f, 0.03f);
+            skull2b.Position = new Vector2(600, 80);
+            //fin sprites
+            #endregion
             //texto
             clock1 = new TgcText2d();
             clock1.Text = "90";
@@ -392,7 +419,7 @@ namespace AlumnoEjemplos.overflowDT
             #endregion
             
             //Almacenar volumenes de colision del escenario
-           // objetosColisionables.Clear();
+           
             foreach (TgcMesh mesh in escenario.Meshes)
             {
                 //Los objetos del layer "TriangleCollision" son colisiones a nivel de triangulo
@@ -608,6 +635,14 @@ namespace AlumnoEjemplos.overflowDT
             spriteDrawer.DrawSprite(s_barrita2);
             spriteDrawer.DrawSprite(s_barritaP1);
             spriteDrawer.DrawSprite(s_barritaP2);
+            if(personaje1.wins>=1)
+            spriteDrawer.DrawSprite(skull1a);
+            if (personaje1.wins >= 2)
+            spriteDrawer.DrawSprite(skull1b);
+            if (personaje2.wins >= 1)
+            spriteDrawer.DrawSprite(skull2a);
+            if (personaje2.wins >= 2)
+            spriteDrawer.DrawSprite(skull2b);
             spriteDrawer.EndDrawSprite();
             #endregion sprites
 
@@ -1102,8 +1137,8 @@ namespace AlumnoEjemplos.overflowDT
            if (TgcCollisionUtils.testAABBAABB(personaje2.mesh.BoundingBox, bb_piso)) { realMovement2.Y = 0; personaje2.actions.jump = 0; } //personaje2.setPosition(new Vector3(personaje2.mesh.Position.X, 0, personaje2.mesh.Position.Z)); };
 
 
-               
-            if (verificarColisionEntrePersonajes())
+
+           if (verificarColisionEntrePersonajes(realMovement, realMovement2))
                 {
                         realMovement.X -= personaje1.movementVector.X*elapsedTime*personaje1.Direccion;
                         realMovement2.X -= personaje2.movementVector.X* elapsedTime*personaje2.Direccion;
@@ -1138,7 +1173,7 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
                                                                            (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
                                                                             personaje2.getPosition().Z),
-                                                                            13, (offsetforward < -40 ? offsetforward : -40));
+                                                                            11, (offsetforward < -30 ? offsetforward : -30));
 
             if ((personaje1.getPosition().X - personaje2.getPosition().X) >= 0 && personaje1.Direccion != -1)
             {
@@ -1158,7 +1193,20 @@ namespace AlumnoEjemplos.overflowDT
         }
 
         public void reiniciarPelea()
-        {   if (personaje1.wins == 2 | personaje2.wins == 2) Round = 3;
+        {   if ((personaje1.wins == 2 | personaje2.wins == 2 ) & Round<=2) 
+            {
+            Round = 3;
+                if (personaje1.actions.win)
+                {
+                    loadSound(mediaMPath + "Music\\YouWin.wav");
+                    sound.play(false);
+                }
+                else
+                {
+                    loadSound(mediaMPath + "Music\\YouLose.wav");
+                    sound.play(false);
+                }
+            }
             if (Round < 2)
             {   Round++;
             
@@ -1166,12 +1214,14 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.reiniciarStats(new Vector3(1900f, 0f, -3209f), Color.White);
                 personaje2.reiniciarStats(new Vector3(1956f, 0f, -3209f), Color.Salmon);
                 clock = 90;
+                estado = true;
             }
         }
 
-        public bool verificarColisionEntrePersonajes()
+        public bool verificarColisionEntrePersonajes(Vector3 realMovement, Vector3 realMovement2)
         {
-
+            personaje1.move(realMovement);
+            personaje2.move(realMovement2);
             float dif = personaje1.mesh.Position.X - personaje2.mesh.Position.X;
             dif = Math.Abs(dif);
             //if ((personaje1.Spheres.GlobalSphere.Radius.X + personaje2.Spheres.GlobalSphere.Radius.X) > (personaje1.Spheres.GlobalSphere.Center - personaje2.Spheres.GlobalSphere.Center).Length())
@@ -1184,13 +1234,18 @@ namespace AlumnoEjemplos.overflowDT
                         foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par2 in personaje2.Spheres.Bones)
                             if (TgcCollisionUtils.testSphereSphere(par1.Value.bonesphere, par2.Value.bonesphere))
                             {
+                                personaje1.move(-realMovement);
+                                personaje2.move(-realMovement2);
+                                personaje1.actions.moveForward = 0;
+                                personaje2.actions.moveForward = 0;
                                return true;
                                 
                             }
                        
                     
                 }
-            } return false;
+            } personaje1.move(-realMovement);
+                personaje2.move(-realMovement2); return false;
         }
 
         /// <summary>
@@ -1263,7 +1318,7 @@ namespace AlumnoEjemplos.overflowDT
                         //if (rndval1 < 30) { personaje2.actions.jumping = true; gravity2 = false; }
                         
                         if (rndval1 > ((personaje1.poder.Count >= 1)?60:90)) { personaje2.actions.jumping = true; gravity2 = false; }
-                        if (rndval1 >= 93 & personaje2.energia >= 10) { personaje2.actions.power = true; personaje2.actions.toasty = (personaje2.energia >= 50 & rndval1 > 45); }
+                        if (rndval1 >= 90 & personaje2.energia >= 10) { personaje2.actions.power = true; personaje2.actions.toasty = (personaje2.energia >= 50 & rndval1 > 55); }
                         
                         if (rndval1 < 70)
                         {
