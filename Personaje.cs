@@ -386,5 +386,20 @@ namespace AlumnoEjemplos.overflowDT
             }
 
         }
+
+        public void reiniciarStats(Vector3 pos,Color col)
+        {
+            life = 100;
+            energia = 100;
+            setPosition(pos);
+            setColor(col);
+            colorPj = col;
+            actions.jump = 0f;
+            actions.hittimer = 0;
+            actions.hit = false;
+            actions.win = false;
+            mesh.AutoUpdateBoundingBox = true;
+            mesh.playAnimation("Parado", true);
+        }
     }
 }

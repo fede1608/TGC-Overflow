@@ -46,7 +46,7 @@ namespace AlumnoEjemplos.overflowDT
         /// </summary>
         public override string getDescription()
         {
-            return "Juego de Pelea con efecto de Luces";
+            return "Juego de Pelea con efecto de luces y Partículas e/ 2 Players o vs IA. Mov: 1° WASD 2° Flechas  Golpes y Poderes: 1°F G H  2°J K Ctrl";
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace AlumnoEjemplos.overflowDT
         TgcSkyBox skyBox;
         TgcScene escenario;
         Size screenSize = GuiController.Instance.Panel3d.Size;
-        float velocidadCaminar = 30f;
+        int Round = 0;
         bool gravity = true;
         bool gravity2= true;
         string animation2 = "Parado";
@@ -460,11 +460,10 @@ namespace AlumnoEjemplos.overflowDT
 
         public void update(float elapsedTime)
         {
-            
-            if (time1 >= 1)
+
+            if (time1 >= 1 & (estadoPelea == 1))
             {
-                //ps.Update();
-                if(estadoPelea==1)  clock -= 1;
+                clock -= 1;
                 if (clock > 0)
                 {
                     clock1.Text = clock.ToString();
@@ -486,11 +485,13 @@ namespace AlumnoEjemplos.overflowDT
             s_barritaP1.Scaling = new Vector2(0.2f * personaje1.energia / 100, 0.32f);
             s_barritaP2.Scaling = new Vector2(-0.2f * personaje2.energia / 100, 0.32f);
 
-            if (personaje1.life <= 0 | personaje2.life <= 0)
+            if ((personaje1.life <= 0 | personaje2.life <= 0) & estadoPelea==1)
             {
                 if (estadoPelea == 1 & personaje2.life > 0) {personaje2.actions.win = true;}
                 else if (estadoPelea == 1 & personaje1.life > 0) { personaje1.actions.win = true; }
-                estadoPelea = 2; }
+                estadoPelea = 2; 
+                player.closeFile();
+            }
 
             if (tiempoEfectoParticulas < 0.3f)
             {
@@ -534,7 +535,14 @@ namespace AlumnoEjemplos.overflowDT
                     
 
                     //Cargo sonido y muestro el banner correspondiente
-                    loadMp3(mediaMPath + "Music\\Final_Round.mp3");
+                    switch (Round)
+                    {
+                        case 0: loadMp3(mediaMPath + "Music\\risa.mp3"); break;
+                        case 1: loadMp3(mediaMPath + "Music\\Round2.mp3"); break;
+                        case 2: loadMp3(mediaMPath + "Music\\Final_Round.mp3"); break;
+                        case 3: loadMp3(mediaMPath + "Music\\Final_Round.mp3"); break;
+                    }
+
                     if (player.getStatus() == TgcMp3Player.States.Open)
                     {
                         player.play(false);
@@ -566,8 +574,19 @@ namespace AlumnoEjemplos.overflowDT
 
                     
                     break;
-               
-                default: //fin del combate
+                case 1:
+                    break;
+                case 2: //fin del combate
+                    
+                    loadMp3(mediaMPath + "Music\\WellDone.mp3");
+                    player.play(false);
+                    estadoPelea = 3;
+                    time1 = 0;
+                    break;
+                default:
+                    time1 += elapsedTime;
+                    if (time1 > 8) reiniciarPelea();
+                    //player.play(false);
                     break;
             }
             #endregion
@@ -1009,7 +1028,7 @@ namespace AlumnoEjemplos.overflowDT
                 #endregion
                 #endregion
             }//fin estado de pelea 1
-            else if (estadoPelea == 2)
+            else if (estadoPelea == 3)
             {
                 if (personaje1.actions.win) { personaje1.mesh.playAnimation("Win", true, 30); personaje2.mesh.playAnimation("Lose", true, 10); personaje2.setColor(Color.Gray); }
                 if (personaje2.actions.win) { personaje2.mesh.playAnimation("Win", true, 30); personaje1.mesh.playAnimation("Lose", true, 10); personaje1.setColor(Color.Gray); }
@@ -1097,6 +1116,17 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.setRotation(Geometry.DegreeToRadian(180f));
             }
 
+        }
+
+        public void reiniciarPelea()
+        {
+            if (Round < 2)
+            {   Round++;
+                estadoPelea = 0;
+                personaje1.reiniciarStats(new Vector3(1900f, 0f, -3209f), Color.White);
+                personaje2.reiniciarStats(new Vector3(1956f, 0f, -3209f), Color.Salmon);
+                clock = 90;
+            }
         }
 
         public bool verificarColisionEntrePersonajes()
