@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.overflowDT
         List<Collider> objCol = new List<Collider>();
         public TgcSkeletalMesh mesh;
         public Actions actions;
-        public Vector3 movementVector=new Vector3 (24,0,0);
+        public Vector3 movementVector=new Vector3 (20,0,0);
         public int life=100;
         public int energia = 100;
         private string playername = "TGC Player";
@@ -105,6 +105,7 @@ namespace AlumnoEjemplos.overflowDT
             public bool win;
             public Vector3 ptoGolpe;
             public bool frozen;
+            public bool toasty;
         }
 
         
@@ -142,6 +143,7 @@ namespace AlumnoEjemplos.overflowDT
            actions.hit = false;
            actions.win = false;
            actions.frozen = false;
+           actions.toasty = false;
            actions.ptoGolpe = mesh.Position;
            spheres.Bones["Bip01 Neck"].bonesphere.setValues(spheres.Bones["Bip01 Neck"].bonesphere.Center,0.6f);
            mesh.AutoUpdateBoundingBox = true;
@@ -168,7 +170,8 @@ namespace AlumnoEjemplos.overflowDT
         }
         public void restarVida(int vida)
         {
-            move(new Vector3(-direccion*1.5f,0,0));
+            if (Math.Abs(mesh.Position.X - enemigo.mesh.Position.X) > 2.5f)
+                move(new Vector3(-direccion * 1.5f, 0, 0));
             golpeado=true;
             if (vida >= 0) life-=vida;
             if (life < 0) life = 0;
@@ -210,14 +213,14 @@ namespace AlumnoEjemplos.overflowDT
             //mesh.createBoundingBox();
             //mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + movement , movement  + new Vector3(1, 0, 1));
         }
-        public bool tirarPoder()
+        public bool tirarPoder(bool toasty)
         {
             if (energia >= 10)
             {
                 Poder pow = new Poder();
                 pow.Init(direccion, mesh.Position + new Vector3(0, 3, 0), new Vector3(40, 0, 0));
                 pow.Owner = this;
-                if (luz & energia >= 50) { luz = false; pow.setLight(0); poderLuz = pow; energia -= 50; }
+                if (luz & energia >= 50 & toasty) { luz = false; pow.setLight(0); poderLuz = pow; energia -= 50; }
                 else energia -= 10;
                 poder.Add(pow);
                 //actions.power = false;
@@ -322,8 +325,8 @@ namespace AlumnoEjemplos.overflowDT
            // mesh.BoundingBox.Position = vec3;
             //spheres.GlobalSphere.moveCenter((mesh.Position.X - spheres.GlobalSphere.Position.X,); //= new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
            
-            objCol.Clear();
-            objCol.Add(BoundingBoxCollider.fromBoundingBox(enemigo.mesh.BoundingBox));
+            //objCol.Clear();
+            //objCol.Add(BoundingBoxCollider.fromBoundingBox(enemigo.mesh.BoundingBox));
             
             foreach (Poder pow in poder)
             {

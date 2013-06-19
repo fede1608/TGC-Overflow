@@ -46,7 +46,7 @@ namespace AlumnoEjemplos.overflowDT
         /// </summary>
         public override string getDescription()
         {
-            return "Juego de Pelea con efecto de luces y Partículas e/ 2 Players o vs IA. Mov: 1° WASD 2° Flechas  Golpes y Poderes: 1°F G H  2°J K Ctrl";
+            return "Juego de Pelea con efecto de luces y Partículas e/ 2 Players o vs IA.\n Mov: 1° WASD 2° Flechas  Golpes y Poderes: 1° F-G-H-T  2° J-K-I-Ctrl ";
         }
 
         /// <summary>
@@ -792,8 +792,21 @@ namespace AlumnoEjemplos.overflowDT
                     //Tecla F apretada
 
                     if (personaje1.energia >= 10)
+                    {
                         personaje1.actions.power = true;
+                        personaje1.actions.toasty = false;
+                    }
 
+                }
+                if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.T))
+                {
+                    //Tecla T apretada
+
+                    if (personaje1.energia >= 50)
+                    {
+                        personaje1.actions.power = true;
+                        personaje1.actions.toasty = true;
+                    }
                 }
                 //izquierda
                 if (GuiController.Instance.D3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
@@ -874,7 +887,7 @@ namespace AlumnoEjemplos.overflowDT
                 //Animaciones big if
                 #region Big if de las animaciones pj1
                 personaje1.controlarFreeze();
-                if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop & personaje1.energia >= 10) { personaje1.tirarPoder(); personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaMPath + "Music\\poder.wav"); sound.play(false); } }
+                if (personaje1.actions.power) { if (personaje1.mesh.PlayLoop & personaje1.energia >= 10) { personaje1.tirarPoder(personaje1.actions.toasty); personaje1.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaMPath + "Music\\poder.wav"); sound.play(false); } }
                 else
                 {
                     if (personaje1.actions.punch)
@@ -929,7 +942,21 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         //Tecla control right apretada
                         if (personaje2.energia >= 10)
+                        {
                             personaje2.actions.power = true;
+                            personaje2.actions.toasty = false;
+                        }
+                        //tiropoder = personaje2.tirarPoder();
+
+                    }
+                    if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.I))
+                    {
+                        //Tecla control right apretada
+                        if (personaje2.energia >= 50)
+                        {
+                            personaje2.actions.power = true;
+                            personaje2.actions.toasty = true;
+                        }
                         //tiropoder = personaje2.tirarPoder();
 
                     }
@@ -1008,7 +1035,7 @@ namespace AlumnoEjemplos.overflowDT
 
                 #region Big if de las animaciones pj2
                 personaje2.controlarFreeze();
-                if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop & personaje2.energia >= 10) { personaje2.tirarPoder(); personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaMPath + "Music\\poder.wav"); sound.play(false); } }
+                if (personaje2.actions.power) { if (personaje2.mesh.PlayLoop & personaje2.energia >= 10) { personaje2.tirarPoder(personaje2.actions.toasty); personaje2.mesh.playAnimation("Arrojar", false, 100); loadSound(mediaMPath + "Music\\poder.wav"); sound.play(false); } }
                 else
                 {
                     if (personaje2.actions.punch)
@@ -1020,7 +1047,10 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         if (personaje2.actions.kick)
                         {
-                            if (personaje2.mesh.PlayLoop) { personaje2.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
+                            if (personaje2.mesh.PlayLoop)
+                            {
+                                personaje2.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); if (Math.Abs(personaje2.mesh.Position.X - personaje2.Enemigo.mesh.Position.X) < 2.5f) personaje2.move(new Vector3(-personaje2.Direccion * 0.5f, 0, 0));
+                            }
                             if(personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones)){ particulas_estrellas2.m_v3Pos = personaje2.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh2 = personaje2.Enemigo.mesh; tiempoEfectoParticulas2 = 0; };
 
                         }
@@ -1146,7 +1176,7 @@ namespace AlumnoEjemplos.overflowDT
             dif = Math.Abs(dif);
             //if ((personaje1.Spheres.GlobalSphere.Radius.X + personaje2.Spheres.GlobalSphere.Radius.X) > (personaje1.Spheres.GlobalSphere.Center - personaje2.Spheres.GlobalSphere.Center).Length())
             //if (TgcCollisionUtils.testAABBAABB(personaje1.mesh.BoundingBox, personaje2.mesh.BoundingBox))
-                if (dif < 4)
+                if (dif < 6)
             {
                 foreach (KeyValuePair<string, BoundingMultiSphere.Sphere> par1 in personaje1.Spheres.Bones)
                 {
@@ -1232,8 +1262,8 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         //if (rndval1 < 30) { personaje2.actions.jumping = true; gravity2 = false; }
                         
-                        if (rndval1 > ((personaje1.poder.Count >= 1)?60:80)) { personaje2.actions.jumping = true; gravity2 = false; }
-                        if (rndval1 >= 93 & personaje2.energia >= 10) { personaje2.actions.power = true; }
+                        if (rndval1 > ((personaje1.poder.Count >= 1)?60:90)) { personaje2.actions.jumping = true; gravity2 = false; }
+                        if (rndval1 >= 93 & personaje2.energia >= 10) { personaje2.actions.power = true; personaje2.actions.toasty = (personaje2.energia >= 50 & rndval1 > 45); }
                         
                         if (rndval1 < 70)
                         {
@@ -1254,7 +1284,11 @@ namespace AlumnoEjemplos.overflowDT
                         personaje2.actions.moving = false;
                         if (rndval1 < 50 | (rndval1 >= 85 & rndval1<90)) personaje2.actions.punch = true;
                         if (rndval1 >= 50 & rndval1 < 85) personaje2.actions.kick = true;
-                        if (rndval1 >= 90 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
+                        if (rndval1 >= 90 & personaje2.energia >= 10)
+                        {
+                            personaje2.actions.power = true; personaje2.actions.toasty = (personaje2.energia >= 50 & rndval1>45);
+                            personaje2.actions.moveForward = -personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
+                        }
                         if (rndval1 >= 75 & rndval1 < 95)
                         {
                             personaje2.actions.moveForward = personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
@@ -1283,7 +1317,7 @@ namespace AlumnoEjemplos.overflowDT
                         }
                         if (rndval1 < 90 & distancia < 6) personaje2.actions.punch = true;
                         //if (rndval1 >= 50 & rndval1 < 75) personaje2.actions.kick = true;
-                        if (rndval1 >= 90 & distancia > 6 & distancia < 16 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder=personaje2.tirarPoder(); }
+                        if (rndval1 >= 90 & distancia > 6 & distancia < 16 & personaje2.energia >= 10) { personaje2.actions.power = true; personaje2.actions.toasty = (personaje2.energia >= 50 & rndval1>45); }//tiropoder=personaje2.tirarPoder(); }
 
                     }
                     else
@@ -1295,7 +1329,7 @@ namespace AlumnoEjemplos.overflowDT
                         personaje2.actions.moving = false;
                         if (rndval1 < 1) personaje2.actions.punch = true;
                         if (rndval1 >= 74 & rndval1 <= 75) personaje2.actions.kick = true;
-                        if (rndval1 >= 75 & personaje2.energia >= 10) { personaje2.actions.power = true; }//tiropoder = personaje2.tirarPoder(); }
+                        if (rndval1 >= 75 & personaje2.energia >= 10) { personaje2.actions.power = true; personaje2.actions.toasty = (personaje2.energia >= 50 & rndval1>45); }//tiropoder = personaje2.tirarPoder(); }
                         if (rndval1 < posibSalto) { personaje2.actions.jumping = true; gravity2 = false; }
 
                     }
