@@ -57,7 +57,7 @@ namespace AlumnoEjemplos.overflowDT
 
           //Creo el sprite drawer
             Drawer spriteDrawer = new Drawer();
-            Sprite newSprite; Sprite s_barrita1; Sprite s_barrita2, s_barritaP2,s_barritaP1,skull1a,skull1b,skull2a,skull2b;
+            Sprite newSprite; Sprite s_barrita1; Sprite s_barrita2, s_barritaP2,s_barritaP1,skull1a,skull1b,skull2a,skull2b,banner;
 
         //particle System
             public Renderer m_renderer;
@@ -91,7 +91,7 @@ namespace AlumnoEjemplos.overflowDT
         string musicFile;
         string soundFile=null;
         int estadoPelea = 0;
-        TgcSprite banner;
+       
         //Fin Sonido
         #endregion
 
@@ -320,7 +320,7 @@ namespace AlumnoEjemplos.overflowDT
             s_barritaP2.SrcRect = new Rectangle(0, 0, 510, 30);
             s_barritaP2.Scaling = new Vector2(-0.2f, 0.32f);
             s_barritaP2.Position = new Vector2(820, 70);
-
+            
             skull1a = new Sprite();
             skull1a.Bitmap = skull1;
             skull1a.SrcRect = new Rectangle(0, 0, 780, 1000);
@@ -582,10 +582,36 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         player.play(false);
 
-                        //banner = new TgcSprite();
-                        //banner.Texture = TgcTexture.createTexture(mediaMPath + "\\Banners\\FinalRound.png");
-                        //banner.Scaling = new Vector2(0.8f * ((float)screenSize.Width / 961f), 0.8f * ((float)screenSize.Height / 507f));
-                        //banner.Position = new Vector2(screenSize.Width * 0.3f, screenSize.Height * 0.5f);
+                        banner = new Sprite();
+
+
+                        Bitmap banner1;
+                        
+                        
+                        switch (Round)
+                        {
+                            case 0:  
+                                banner1= new Bitmap(mediaMPath + "Banners\\round1.png", GuiController.Instance.D3dDevice);
+                                banner.Scaling = new Vector2(0.6f , 0.6f );
+                                banner.Position = new Vector2(screenSize.Width * 0.34f, screenSize.Height * 0.5f);
+                                break;
+                            case 1:  
+                                banner1 = new Bitmap(mediaMPath + "Banners\\round2.png", GuiController.Instance.D3dDevice);
+                                banner.Scaling = new Vector2(0.6f , 0.6f );
+                                banner.Position = new Vector2(screenSize.Width * 0.33f, screenSize.Height * 0.5f);
+                                break;
+                            case 2:  
+                                banner1 = new Bitmap(mediaMPath + "Banners\\final_round.png", GuiController.Instance.D3dDevice); 
+                                banner.Scaling = new Vector2(0.6f , 0.6f );
+                                banner.Position = new Vector2(screenSize.Width * 0.18f, screenSize.Height * 0.5f);
+                                break;
+                            default: 
+                                banner1 = new Bitmap(mediaMPath + "Banners\\final_round.png", GuiController.Instance.D3dDevice); 
+                                break;
+                        }
+                        
+                        banner.Bitmap = banner1;
+                        
                     }
                     //Cuando termina el sonido anterior, 
                     //cargo el nuevo sonido y muestro el banner correspondiente
@@ -593,8 +619,7 @@ namespace AlumnoEjemplos.overflowDT
                     {
                         //loadSound(mediaMPath + "Music\\Fight.wav");
                         //sound.play(false);
-
-                        //banner.dispose();
+                        banner = null;
                         //banner = new TgcSprite();
                         //banner.Texture = TgcTexture.createTexture(mediaMPath + "\\Banners\\Fight.png");
                         //banner.Scaling = new Vector2(((float)screenSize.Width / 961f), ((float)screenSize.Height / 507f));
@@ -624,6 +649,9 @@ namespace AlumnoEjemplos.overflowDT
                     //player.play(false);
                     break;
             }
+
+            //if (banner != null)
+            //banner.render();
             #endregion
 
             //Device de DirectX para renderizar
@@ -632,23 +660,7 @@ namespace AlumnoEjemplos.overflowDT
             clock1.render();
             clock2.render();
 
-            #region sprites
-            spriteDrawer.BeginDrawSprite();
-            spriteDrawer.DrawSprite(newSprite);
-            spriteDrawer.DrawSprite(s_barrita1);
-            spriteDrawer.DrawSprite(s_barrita2);
-            spriteDrawer.DrawSprite(s_barritaP1);
-            spriteDrawer.DrawSprite(s_barritaP2);
-            if(personaje1.wins>=1)
-            spriteDrawer.DrawSprite(skull1a);
-            if (personaje1.wins >= 2)
-            spriteDrawer.DrawSprite(skull1b);
-            if (personaje2.wins >= 1)
-            spriteDrawer.DrawSprite(skull2a);
-            if (personaje2.wins >= 2)
-            spriteDrawer.DrawSprite(skull2b);
-            spriteDrawer.EndDrawSprite();
-            #endregion sprites
+            
 
 
             personaje1.update(elapsedTime);
@@ -1193,23 +1205,57 @@ namespace AlumnoEjemplos.overflowDT
                 personaje2.setRotation(Geometry.DegreeToRadian(180f));
                 personaje1.setRotation(Geometry.DegreeToRadian(180f));
             }
+            #region sprites
+            spriteDrawer.BeginDrawSprite();
+            spriteDrawer.DrawSprite(newSprite);
+            spriteDrawer.DrawSprite(s_barrita1);
+            spriteDrawer.DrawSprite(s_barrita2);
+            spriteDrawer.DrawSprite(s_barritaP1);
+            spriteDrawer.DrawSprite(s_barritaP2);
+            if (banner != null) spriteDrawer.DrawSprite(banner);
+            if (personaje1.wins >= 1)
+                spriteDrawer.DrawSprite(skull1a);
+            if (personaje1.wins >= 2)
+                spriteDrawer.DrawSprite(skull1b);
+            if (personaje2.wins >= 1)
+                spriteDrawer.DrawSprite(skull2a);
+            if (personaje2.wins >= 2)
+                spriteDrawer.DrawSprite(skull2b);
+            spriteDrawer.EndDrawSprite();
+            #endregion sprites
 
         }
 
         public void reiniciarPelea()
         {   if ((personaje1.wins == 2 | personaje2.wins == 2 ) & Round<=2) 
             {
-            Round = 3;
+                Round = 3; 
+                banner = new Sprite();
+                Bitmap banner1; 
                 if (personaje1.actions.win)
                 {
                     loadSound(mediaMPath + "Music\\YouWin.wav");
                     sound.play(false);
+                    banner1 = new Bitmap(mediaMPath + "Banners\\player1wins.png", GuiController.Instance.D3dDevice);
+                    banner.Scaling = new Vector2(0.6f, 0.6f);
+                    banner.Position = new Vector2(screenSize.Width * 0.18f, screenSize.Height * 0.5f);
+                   
                 }
                 else
                 {
                     loadSound(mediaMPath + "Music\\YouLose.wav");
                     sound.play(false);
+                    
+                    if ((bool)GuiController.Instance.Modifiers["IA/Pj2"])
+                    {
+                       banner1= new Bitmap(mediaMPath + "Banners\\player1loses.png", GuiController.Instance.D3dDevice);
+                    }
+                    else banner1 = new Bitmap(mediaMPath + "Banners\\player2wins.png", GuiController.Instance.D3dDevice);
+
+                    banner.Scaling = new Vector2(0.6f, 0.6f);
+                    banner.Position = new Vector2(screenSize.Width * 0.18f, screenSize.Height * 0.5f);
                 }
+                banner.Bitmap = banner1;
             }
             if (Round < 2)
             {   Round++;
