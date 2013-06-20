@@ -219,6 +219,8 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.Modifiers.addBoolean("IA/Pj2", "True para IA, False para Jugador 2",true);
             GuiController.Instance.Modifiers.addBoolean("meshes", "Ver meshes del escenario", true);
             GuiController.Instance.Modifiers.addBoolean("heightmap2", "Ver heightmap", true);
+            GuiController.Instance.Modifiers.addInt("patada", 0, 10, 3);
+            GuiController.Instance.Modifiers.addInt("golpe", 0, 10, 2);
              //GuiController.Instance.Modifiers.addBoolean("estado", "Estado de la IA true ataque false defensa",true);
             ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
             //Es la camara que viene por default, asi que no hace falta hacerlo siempre
@@ -945,14 +947,14 @@ namespace AlumnoEjemplos.overflowDT
                     {
 
                         if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
-                        if (personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones,2)) { particulas_estrellas.m_v3Pos = personaje1.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh = personaje1.Enemigo.mesh; tiempoEfectoParticulas = 0; }
+                        if (personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones,(int)GuiController.Instance.Modifiers["golpe"])) { particulas_estrellas.m_v3Pos = personaje1.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh = personaje1.Enemigo.mesh; tiempoEfectoParticulas = 0; }
                     }
                     else
                     {
                         if (personaje1.actions.kick)
                         {
                             if (personaje1.mesh.PlayLoop) { personaje1.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); }
-                            if (personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones,3)) { tiempoEfectoParticulas = 0; particulas_estrellas.m_v3Pos = personaje1.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh = personaje1.Enemigo.mesh; }
+                            if (personaje1.verificarColision(personaje1.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje1.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje1.Enemigo.Spheres.Bones,(int)GuiController.Instance.Modifiers["patada"])) { tiempoEfectoParticulas = 0; particulas_estrellas.m_v3Pos = personaje1.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh = personaje1.Enemigo.mesh; }
 
                         }
                         else
@@ -1092,7 +1094,7 @@ namespace AlumnoEjemplos.overflowDT
                     if (personaje2.actions.punch)
                     {
                         if (personaje2.mesh.PlayLoop) { personaje2.mesh.playAnimation("Pegar", false, 50); loadSound(mediaPath + "Sound\\puñetazo.wav"); sound.play(false); }
-                        if (personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones,2)) { particulas_estrellas2.m_v3Pos = personaje2.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh2 = personaje2.Enemigo.mesh; tiempoEfectoParticulas2 = 0; };
+                        if (personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 L Hand"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones,(int)GuiController.Instance.Modifiers["golpe"])) { particulas_estrellas2.m_v3Pos = personaje2.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh2 = personaje2.Enemigo.mesh; tiempoEfectoParticulas2 = 0; };
                     }
                     else
                     {
@@ -1102,7 +1104,7 @@ namespace AlumnoEjemplos.overflowDT
                             {
                                 personaje2.mesh.playAnimation("Patear", false, 60); loadSound(mediaPath + "Sound\\golpe sordo.wav"); sound.play(false); if (Math.Abs(personaje2.mesh.Position.X - personaje2.Enemigo.mesh.Position.X) < 2.5f) personaje2.move(new Vector3(-personaje2.Direccion * 0.5f, 0, 0));
                             }
-                            if(personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones,3)){ particulas_estrellas2.m_v3Pos = personaje2.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh2 = personaje2.Enemigo.mesh; tiempoEfectoParticulas2 = 0; };
+                            if (personaje2.verificarColision(personaje2.Spheres.Bones["Bip01 L Foot"].bonesphere.Center, personaje2.Spheres.Bones["Bip01 R Foot"].bonesphere.Radius, personaje2.Enemigo.Spheres.Bones, (int)GuiController.Instance.Modifiers["patada"])) { particulas_estrellas2.m_v3Pos = personaje2.Enemigo.mesh.Position + new Vector3(0, 3, 0); particle_mesh2 = personaje2.Enemigo.mesh; tiempoEfectoParticulas2 = 0; };
 
                         }
                         else
