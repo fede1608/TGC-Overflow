@@ -858,7 +858,7 @@ namespace AlumnoEjemplos.overflowDT
                 {
 
                     personaje1.actions.jumping = true;
-                    collisionManager.GravityEnabled = false;
+                    //collisionManager.GravityEnabled = false;
                     gravity = false;
                 }
                 #endregion
