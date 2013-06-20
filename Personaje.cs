@@ -157,11 +157,7 @@ namespace AlumnoEjemplos.overflowDT
 
        }
 
-        public void metodoEjemplo(int variable)
-        {
-        //comment
-            
-        }
+       
         public void sacarPoder(Poder pow)
         {
             poder.Remove(pow);
@@ -176,14 +172,10 @@ namespace AlumnoEjemplos.overflowDT
             if (vida >= 0) life-=vida;
             if (life < 0) life = 0;
         }
-        public void setEffect(Effect ef)
-        {
-            //mesh.Effect = ef;
-
-        }
+        
         public void move(Vector3 movement)
         {
-            //if (movement != new Vector3 (0,0,0))
+            
                 mesh.move(movement);
                 spheres.GlobalSphere.moveCenter(movement);
             //controlar colisión con el Suelo
@@ -208,10 +200,7 @@ namespace AlumnoEjemplos.overflowDT
                 enemigo.Spheres.GlobalSphere.moveCenter(new Vector3(1880-mesh.Position.X, 0, 0));
             }
             
-            //GuiController.Instance.UserVars.setValue("camZ", mesh.BoundingBox.PMax.X);   
-            //mesh.Position += movement;
-            //mesh.createBoundingBox();
-            //mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + movement , movement  + new Vector3(1, 0, 1));
+            
         }
         public bool tirarPoder(bool toasty)
         {
@@ -223,7 +212,7 @@ namespace AlumnoEjemplos.overflowDT
                 if (luz & energia >= 50 & toasty) { luz = false; pow.setLight(0); poderLuz = pow; energia -= 50; }
                 else energia -= 10;
                 poder.Add(pow);
-                //actions.power = false;
+                
                 return true;
             }
 
@@ -245,7 +234,7 @@ namespace AlumnoEjemplos.overflowDT
         //setea la position del personaje
             mesh.Position = vec3;
             GuiController.Instance.UserVars.setValue("camZ", mesh.BoundingBox.PMax);   
-            //mesh.BoundingBox.setExtremes(new Vector3(-1, 6.2f, -1) + vec3, vec3 + new Vector3(1, 0, 1));
+           
             spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
         }
         public Vector3 getPosition()
@@ -257,7 +246,7 @@ namespace AlumnoEjemplos.overflowDT
         {
         //setea la rotacion del pj
          mesh.rotateY(radianes);
-         //direccion = (radianes == Geometry.DegreeToRadian(270f)) ? 1 : -1; ;
+         
         }
 
 
@@ -278,8 +267,7 @@ namespace AlumnoEjemplos.overflowDT
                     actions.ptoGolpe = Vector3.Normalize(distancia) * par.Value.bonesphere.Radius;
                     Enemigo.actions.ptoGolpe = actions.ptoGolpe;
                     return true;
-                    //if (actions.punch && !mesh.PlayLoop) actions.punch = false;
-                    //if (actions.kick && !mesh.PlayLoop) actions.kick = false;
+                   
                     
                 }
                 //GuiController.Instance.Logger.log(par.Key);
@@ -317,16 +305,7 @@ namespace AlumnoEjemplos.overflowDT
                     setColor(colorPj);
                 }
             }
-            //mesh.move(movementVector * elapsedTime);
-            //globalSphere.moveCenter(movementVector * elapsedTime);
-
-           // Vector3 realMovement = collisionManager.moveCharacter(spheres.GlobalSphere, movementVector, fightGameManager.ObjetosColisionables);
-           // mesh.move(realMovement);
-           // mesh.BoundingBox.Position = vec3;
-            //spheres.GlobalSphere.moveCenter((mesh.Position.X - spheres.GlobalSphere.Position.X,); //= new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(), new Vector3(2, mesh.BoundingBox.calculateBoxRadius(), 2));
            
-            //objCol.Clear();
-            //objCol.Add(BoundingBoxCollider.fromBoundingBox(enemigo.mesh.BoundingBox));
             
             foreach (Poder pow in poder)
             {
@@ -351,21 +330,22 @@ namespace AlumnoEjemplos.overflowDT
             {
                 Vector3 vr = mesh.getBoneByName(par.Key).StartPosition;
                 
-                //mesh.getBoneByName(par.Key).MatFinal.Scale(new Vector3(0.05f, 0.05f, 0.05f));
+                
                 Matrix transf =  par.Value.offset
                               * mesh.getBoneByName(par.Key).MatFinal
                               * Matrix.RotationYawPitchRoll(mesh.Rotation.Y, 0, 0)  
                               * Matrix.Translation(mesh.Position);
-                //transf.Scale(new Vector3(0.05f, 0.05f, 0.05f));
+                
                 Vector3 center = Vector3.TransformCoordinate(vr, transf);
-                //magic happens in your brain while pooping 
+
+                //magic happens in your brain while pooping (escalador de las MBS)
                 center = center - mesh.Position;
                 center = center * 0.05f;
                 if(actions.moving&&( par.Key=="Bip01 R Hand"||par.Key=="Bip01 L Hand"||par.Key=="Bip01 R Forearm"||par.Key=="Bip01 L Forearm"||par.Key=="Bip01 R UpperArm"||par.Key=="Bip01 L UpperArm")) center.Z *= -1.0f;
                 if ((actions.power || actions.punch) && (par.Key == "Bip01 L Hand")) { center.X *= 0.6f; center.Y *= 1.3f; }
-                
                 center = center + mesh.Position;
                 //here ends magic
+
                 par.Value.bonesphere.setCenter(center);
             }
         }

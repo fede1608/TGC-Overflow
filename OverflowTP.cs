@@ -111,7 +111,7 @@ namespace AlumnoEjemplos.overflowDT
         List<Collider> objColtmp=new List<Collider>();
         List<Collider> objColtmp2 = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
-        //PSExplosion ps;
+        
 
         TgcText2d clock1;
         TgcText2d clock2;
@@ -205,14 +205,6 @@ namespace AlumnoEjemplos.overflowDT
             GuiController.Instance.UserVars.setValue("Vida2", 100);
 
             ///////////////MODIFIERS//////////////////
-
-            ////Crear un modifier para un valor FLOAT
-            //GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 300f, 40f);
-
-            ////Crear un modifier para un ComboBox con opciones
-            //string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
-            //GuiController.Instance.Modifiers.addInterval("valorIntervalo", opciones, 0);
-
             ////Crear un modifier para modificar un vértice
             //GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
             GuiController.Instance.Modifiers.addBoolean("boundingbox", "Ver Bounding Box y las B. Spheres", false);
@@ -431,51 +423,18 @@ namespace AlumnoEjemplos.overflowDT
                 //Los objetos del layer "TriangleCollision" son colisiones a nivel de triangulo
                 if (mesh.Name == "Room-1-Floor-0")
                 {
-                    objetosColisionables.Add(TriangleMeshCollider.fromMesh(mesh));
+                    //objetosColisionables.Add(TriangleMeshCollider.fromMesh(mesh));
                     bb_piso = mesh.BoundingBox;
                 }
-                //El resto de los objetos son colisiones de BoundingBox. Las colisiones a nivel de triangulo son muy costosas asi que deben utilizarse solo
-                //donde es extremadamente necesario (por ejemplo en el piso). El resto se simplifica con un BoundingBox
-                else
-                {
-                   // objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-                }
+                
             }
             
-            //objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(personaje2.mesh.BoundingBox));
-           // objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(personaje2.Spheres.GlobalSphere));
-            //Crear manejador de colisiones
-            collisionManager = new ElipsoidCollisionManager();
-            collisionManager.GravityEnabled = true;
+             //Crear manejador de colisiones
+            //collisionManager = new ElipsoidCollisionManager();
+            //collisionManager.GravityEnabled = true;
 
-
-
-            ///////////////LISTAS EN C#//////////////////
-            //crear
-            List<string> lista = new List<string>();
-
-            //agregar elementos
-            lista.Add("elemento1");
-            lista.Add("elemento2");
-
-            //obtener elementos
-            string elemento1 = lista[0];
-
-            //bucle foreach
-            foreach (string elemento in lista)
-            {
-                //Loggear por consola del Framework
-                GuiController.Instance.Logger.log(elemento);
-            }
-
-            //bucle for
-            for (int i = 0; i < lista.Count; i++)
-            {
-                string element = lista[i];
-            }
             inicializarSistemaDeParticulas();
-            //ps = new PSExplosion(new Vector(personaje1.mesh.Position.X, personaje1.mesh.Position.Y, personaje1.mesh.Position.Z), Color.Red);
-        }
+            }
 
         void mesh_AnimationEnds(TgcSkeletalMesh mesh)
         {
@@ -803,19 +762,6 @@ namespace AlumnoEjemplos.overflowDT
             #endregion
 
 
-            
-            
-
-            //Obtener valor de UserVar (hay que castear)
-            //int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
-
-
-            //Obtener valores de Modifiers
-            //float distanciaCam = (float)GuiController.Instance.Modifiers["distanciaCam"];
-            //string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
-            //Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
-            //GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
-
             if (estadoPelea == 1)
             {
                 #region Pelea Activa
@@ -1124,11 +1070,7 @@ namespace AlumnoEjemplos.overflowDT
                 personaje1.actions.moveForward = personaje1.actions.jump = personaje2.actions.moveForward = personaje2.actions.jump = 0;
             }
 
-            //Capturar Input Mouse
-            //if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
-            //{
-            //    //Boton izq apretado
-            //}
+           
 
             skyBox.render();
             //Renderiza escenario
@@ -1264,7 +1206,7 @@ namespace AlumnoEjemplos.overflowDT
             
                 estadoPelea = 0;
                 personaje1.reiniciarStats(new Vector3(1900f, 0f, -3209f), Color.White);
-                personaje2.reiniciarStats(new Vector3(1956f, 0f, -3209f), Color.Salmon);
+                personaje2.reiniciarStats(new Vector3(1956f, 0f, -3209f), Color.White);
                 clock = 90;
                 estado = true;
             }

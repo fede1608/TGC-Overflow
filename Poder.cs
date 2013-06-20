@@ -76,10 +76,10 @@ namespace AlumnoEjemplos.overflowDT
                     owner.Enemigo.restarVida(2);
                     if (luz) { owner.Enemigo.restarVida(3); owner.Enemigo.actions.frozen = true; owner._fightGameManager.loadSound(owner._fightGameManager.MediaMPath + "Music\\Toasty!.wav"); owner._fightGameManager.Sound.play(false); }
                     disappear();
-                    //owner.sacarPoder(this);
+                    
                 }
             }
-            //if(luz)  owner._fightGameManager.LightMeshes[numluz].Position = this.mesh.Position;
+            
         }
 
 
