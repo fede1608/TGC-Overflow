@@ -133,7 +133,7 @@ namespace AlumnoEjemplos.overflowDT
            mesh.Scale = new Vector3(0.05f, 0.05f, 0.05f);
            
             
-           mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, fightGameManager.TexturePath + "uvw.jpg") });
+           mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, fightGameManager.MediaMPath + "\\uvw7.jpg") });
            spheres.getVerticesForBox(fightGameManager.MediaPath + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml", mesh,0.05f);
            
            spheres.GlobalSphere = new TgcElipsoid(mesh.BoundingBox.calculateBoxCenter(),new Vector3(2,mesh.BoundingBox.calculateBoxRadius(),2));
