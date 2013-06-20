@@ -530,7 +530,7 @@ namespace AlumnoEjemplos.overflowDT
 
             if (tiempoEfectoParticulas < 0.3f)
             {
-                particulas_estrellas.m_fScale = 0.05f;
+                particulas_estrellas.m_fScale = 0.025f;
                 particulas_estrellas.m_iDispersion = 250;
                 particulas_estrellas.m_iFromColor = Color.Red;
                 particulas_estrellas.m_iToColor = Color.Red;
@@ -540,7 +540,7 @@ namespace AlumnoEjemplos.overflowDT
             }
             if (tiempoEfectoParticulas2 < 0.3f)
             {
-                particulas_estrellas2.m_fScale = 0.05f;
+                particulas_estrellas2.m_fScale = 0.025f;
                 particulas_estrellas2.m_iDispersion = 250;
                 particulas_estrellas2.m_iFromColor = Color.Red;
                 particulas_estrellas2.m_iToColor = Color.Red;
@@ -1432,7 +1432,7 @@ namespace AlumnoEjemplos.overflowDT
                 particulas_humo[i].m_fCreationParticleFreq = 2f;
                 particulas_humo[i].m_iFromColor = Color.Gray;
                 particulas_humo[i].m_iToColor = Color.Gray;
-                particulas_humo[i].m_fScale = 0.5f;
+                particulas_humo[i].m_fScale = 0.1f;
                 particulas_humo[i].m_Gravity = new Vector3(0f, 0f, -0.9f);
                 particulas_humo[i].m_fParticleLiveTime = 1100f;
                 particulas_humo[i].m_bUseGravity = true;
@@ -1444,7 +1444,7 @@ namespace AlumnoEjemplos.overflowDT
             particulas_estrellas.m_fCreationParticleFreq = 0.25f;
             particulas_estrellas.m_iFromColor = Color.Yellow;
             particulas_estrellas.m_iToColor = Color.YellowGreen;
-            particulas_estrellas.m_fScale = 0.15f;
+            particulas_estrellas.m_fScale = 0.05f;
             particulas_estrellas.m_Gravity = new Vector3(0.4f, -2f, 0);
             particulas_estrellas.m_fParticleLiveTime = 250f;
             particulas_estrellas.m_bUseGravity = true;
@@ -1453,7 +1453,7 @@ namespace AlumnoEjemplos.overflowDT
             particulas_estrellas2.m_fCreationParticleFreq = 0.25f;
             particulas_estrellas2.m_iFromColor = Color.Yellow;
             particulas_estrellas2.m_iToColor = Color.YellowGreen;
-            particulas_estrellas2.m_fScale = 0.15f;
+            particulas_estrellas2.m_fScale = 0.05f;
             particulas_estrellas2.m_Gravity = new Vector3(0.4f, -2f, 0);
             particulas_estrellas2.m_fParticleLiveTime = 250f;
             particulas_estrellas2.m_bUseGravity = true;

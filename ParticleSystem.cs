@@ -207,7 +207,7 @@ namespace AlumnoEjemplos.overflowDT
 				p.m_v3Speed.Z = fNum * 2.0f;
 
 				// Modifico la escala de manera randómica
-				fNum = m_randGen.Next(100) / 5000.0f;
+				fNum = m_randGen.Next(100) / 10000.0f;
 				p.m_pointSprite[0].Scale = m_fScale + fNum;
 
 			}
@@ -253,12 +253,12 @@ namespace AlumnoEjemplos.overflowDT
         public System.Drawing.Color m_iToColor = System.Drawing.Color.FromArgb( 0x00,0xff,0x45, 0x00 );
 
 		// Escala por defecto de la partícula
-		public float m_fScale = 0.1f;
+		public float m_fScale = 0.01f;
         public Mesh m_mesh;
 		// Gravedad por defecto
 		public Vector3 m_Gravity = new Vector3(0.0f, +0.6f, 0f);
 		// Tiempo de vida por defecto de la partícula
-		public float m_fParticleLiveTime = 1100f;
+		public float m_fParticleLiveTime = 800f;
 
 		// Indica si se usa o no la gravedad
 		public bool m_bUseGravity = true;
