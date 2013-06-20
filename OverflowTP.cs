@@ -273,8 +273,10 @@ namespace AlumnoEjemplos.overflowDT
             personaje2._fightGameManager = this;
             personaje1.colorPj=(Color.White);
             personaje1.setColor(Color.White);
-            personaje2.colorPj=(Color.Salmon);
-            personaje2.setColor(Color.Salmon);
+            //personaje2.colorPj=(Color.Salmon);
+            //personaje2.setColor(Color.Salmon);
+            personaje2.mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, MediaMPath + "\\uvw9.jpg") });
+
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(new Vector3((personaje2.getPosition().X + personaje1.getPosition().X) / 2,
                                                                             (personaje2.getPosition().Y + personaje1.getPosition().Y) / 2,
@@ -1345,8 +1347,16 @@ namespace AlumnoEjemplos.overflowDT
                         {
                             personaje2.actions.power = true; personaje2.actions.toasty = (personaje2.energia >= 50 & rndval1>45);
                             personaje2.actions.moveForward = -personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
+                            personaje2.actions.moving = true;
+                            animation2 = "CaminandoRev";
                         }
                         if (rndval1 >= 75 & rndval1 < 95)
+                        {
+                            personaje2.actions.moveForward = personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
+                            personaje2.actions.moving = true;
+                            animation2 = "Caminando";
+                        }
+                        if (rndval1 >= 65 & distancia >2)
                         {
                             personaje2.actions.moveForward = personaje2.Direccion * personaje2.movementVector.X * elapsedTime;
                             personaje2.actions.moving = true;
