@@ -206,18 +206,20 @@ namespace AlumnoEjemplos.overflowDT
 
             ///////////////MODIFIERS//////////////////
 
-            //Crear un modifier para un valor FLOAT
-            GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 300f, 40f);
+            ////Crear un modifier para un valor FLOAT
+            //GuiController.Instance.Modifiers.addFloat("distanciaCam", 1f, 300f, 40f);
 
-            //Crear un modifier para un ComboBox con opciones
-            string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
-            GuiController.Instance.Modifiers.addInterval("valorIntervalo", opciones, 0);
+            ////Crear un modifier para un ComboBox con opciones
+            //string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
+            //GuiController.Instance.Modifiers.addInterval("valorIntervalo", opciones, 0);
 
-            //Crear un modifier para modificar un vértice
-            GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
-            GuiController.Instance.Modifiers.addBoolean("boundingbox", "Ver las Bounding Box y las B. Spheres", false);
+            ////Crear un modifier para modificar un vértice
+            //GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
+            GuiController.Instance.Modifiers.addBoolean("boundingbox", "Ver Bounding Box y las B. Spheres", false);
             GuiController.Instance.Modifiers.addBoolean("IA/Pj2", "True para IA, False para Jugador 2",true);
-             GuiController.Instance.Modifiers.addBoolean("estado", "Estado de la IA true ataque false defensa",true);
+            GuiController.Instance.Modifiers.addBoolean("meshes", "Ver meshes del escenario", true);
+            GuiController.Instance.Modifiers.addBoolean("heightmap2", "Ver heightmap", true);
+             //GuiController.Instance.Modifiers.addBoolean("estado", "Estado de la IA true ataque false defensa",true);
             ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
             //Es la camara que viene por default, asi que no hace falta hacerlo siempre
             //GuiController.Instance.RotCamera.Enable = true;
@@ -684,7 +686,7 @@ namespace AlumnoEjemplos.overflowDT
             }
 
             //Renderizar terreno
-            terrain.render();
+            if ((bool)GuiController.Instance.Modifiers["heightmap2"]) terrain.render();
             
             //Fin de Rutinas de HM
             #endregion
@@ -764,7 +766,7 @@ namespace AlumnoEjemplos.overflowDT
                 
 
                 //Renderizar modelo
-                mesh.render();
+                    if ((bool)GuiController.Instance.Modifiers["meshes"]) mesh.render();
             }
             //terrain.Effect.SetValue("lightColor", lightColors);
             //terrain.Effect.SetValue("lightPosition", pointLightPositions);
@@ -774,11 +776,11 @@ namespace AlumnoEjemplos.overflowDT
             //terrain.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color)Color.White));
             //terrain.render();
             //Renderizar meshes de luz
-            for (int i = 0; i < lightMeshes.Length; i++)
-            {
-                TgcBox lightMesh = lightMeshes[i];
-                lightMesh.render();
-            }
+            //for (int i = 0; i < lightMeshes.Length; i++)
+            //{
+            //    TgcBox lightMesh = lightMeshes[i];
+            //    lightMesh.render();
+            //}
 
 
             ////////FINLUCES
@@ -793,9 +795,9 @@ namespace AlumnoEjemplos.overflowDT
 
 
             //Obtener valores de Modifiers
-            float distanciaCam = (float)GuiController.Instance.Modifiers["distanciaCam"];
-            string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
-            Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
+            //float distanciaCam = (float)GuiController.Instance.Modifiers["distanciaCam"];
+            //string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
+            //Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
             //GuiController.Instance.RotCamera.CameraDistance = distanciaCam;
 
             if (estadoPelea == 1)
