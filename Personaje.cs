@@ -261,7 +261,7 @@ namespace AlumnoEjemplos.overflowDT
         }
 
 
-        public bool verificarColision(Vector3 centro, float radio, Dictionary<string, BoundingMultiSphere.Sphere> huesos)
+        public bool verificarColision(Vector3 centro, float radio, Dictionary<string, BoundingMultiSphere.Sphere> huesos, int vida)
         {
             if (actions.hit) return false;
             Vector3 distancia;
@@ -273,7 +273,7 @@ namespace AlumnoEjemplos.overflowDT
                 distancia = centro - par.Value.bonesphere.Center;
                 if ((distancia.Length() <= radio + par.Value.bonesphere.Radius+0.3) && (par.Key != "Bip01 Neck"))
                 {
-                    enemigo.restarVida(2);
+                    enemigo.restarVida(vida);
                     actions.hit = true;
                     actions.ptoGolpe = Vector3.Normalize(distancia) * par.Value.bonesphere.Radius;
                     Enemigo.actions.ptoGolpe = actions.ptoGolpe;
